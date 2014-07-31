@@ -23,7 +23,10 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "common.h"
-#include <boost/scope_exit.hpp>
+#include "cntsocket.h"
+
+typedef std::shared_ptr<c_cnt_socket> client_ptr;
+vector<client_ptr> g_clients;
 
 int main(int argc, char *argv[])
 {
@@ -31,10 +34,9 @@ int main(int argc, char *argv[])
 	io_service io_srv;
 	tcp::acceptor server(io_srv);
 
+	// Thread for accept the client
 	thread acpt_thrd([&io_srv, &server]()
 	{
-		// Thread for accept the client
-
 		// tcp protocol 
 		tcp protocol = tcp::v4();
 
@@ -65,7 +67,11 @@ int main(int argc, char *argv[])
 			if (err)
 			{
 				delete client;
-				if (err.value() == boost::asio::error::interrupted)
+
+				if (err.value() == asio::error::interrupted)
+					return;
+
+				if (server.is_open() == false)
 					return;
 
 				cerr << "Could not accept client. error code = " << err.value() << "\n" + err.message() + '\n';
@@ -74,13 +80,14 @@ int main(int argc, char *argv[])
 			clog << "Client accepted. ip = " << client_epnt.address().to_string() << " port = "
 				<< client_epnt.port() << '\n';
 
-			client->write_some(buffer("Hi! Welcome to the pengchat3 server"));
-			delete client;
+			c_cnt_socket *cnt = new c_cnt_socket(client);
+			g_clients.push_back(client_ptr(cnt));
 		}
 	});
 
 	cin.get();
 	
+	g_clients.clear();
 	server.close();
 	if (acpt_thrd.joinable())
 		acpt_thrd.join();

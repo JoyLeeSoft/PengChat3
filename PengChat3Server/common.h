@@ -32,9 +32,14 @@
 #include <string>
 #include <thread>
 #include <memory>
+#include <vector>
+#include <array>
 
-// Async I/O
-#include <boost/asio.hpp>
+// Boost library
+#include <boost/noncopyable.hpp>
+#include <boost/tokenizer.hpp>
+
+#include <boost/asio.hpp> // Async I/O
 
 // Using namespaces
 using namespace std;
@@ -45,5 +50,10 @@ using namespace boost::asio::ip;
 
 // Defines constant
 #define SERVER_PORT_NUMBER 13333
+#define MAX_BYTES_NUMBER 1024
+
+// String typedefs
+typedef char char_utf8;
+typedef string string_utf8;
 
 #endif

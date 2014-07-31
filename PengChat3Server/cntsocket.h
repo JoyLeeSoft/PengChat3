@@ -27,7 +27,7 @@
 
 #include "common.h"
 
-class c_cnt_socket final
+class c_cnt_socket final : private boost::noncopyable
 {
 public:
 	c_cnt_socket(tcp::socket *client);
@@ -36,6 +36,14 @@ public:
 private:
 	typedef std::shared_ptr<tcp::socket> socket_ptr;
 	socket_ptr m_socket;
+	system::error_code m_latest_error;
+
+	thread m_recv_thrd;
+
+	std::array<char_utf8, MAX_BYTES_NUMBER> m_buf;
+
+private:
+	void recv_func();
 };
 
 #endif

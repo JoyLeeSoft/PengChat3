@@ -23,13 +23,32 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "cntsocket.h"
+#include <boost/scope_exit.hpp>
 
-c_cnt_socket::c_cnt_socket(tcp::socket *client) : m_socket(client)
+c_cnt_socket::c_cnt_socket(tcp::socket *client) : m_socket(client), m_recv_thrd(bind(&c_cnt_socket::recv_func,
+	this))
 {
 
 }
 
 c_cnt_socket::~c_cnt_socket()
 {
+	m_socket->close();
 
+	if (m_recv_thrd.joinable())
+		m_recv_thrd.join();
+}
+
+void c_cnt_socket::recv_func()
+{
+	while (true)
+	{
+		m_socket->read_some(buffer(m_buf, MAX_BYTES_NUMBER), m_latest_error);
+
+		if (m_latest_error == asio::error::connection_aborted)
+			return;
+
+		// Just test (like echo server)
+		m_socket->write_some(buffer(m_buf));
+	}
 }
