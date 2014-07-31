@@ -23,11 +23,11 @@
     <Text Include="makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common.h">
-      <Filter>common</Filter>
-    </ClInclude>
     <ClInclude Include="cntsocket.h">
       <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

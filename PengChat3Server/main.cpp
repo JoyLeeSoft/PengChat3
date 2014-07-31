@@ -23,48 +23,67 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "common.h"
+#include <boost/scope_exit.hpp>
 
 int main(int argc, char *argv[])
 {
 	// Basic I/O service object
 	io_service io_srv;
-
-	// tcp protocol 
-	tcp protocol = tcp::v4();
-
 	tcp::acceptor server(io_srv);
-	tcp::endpoint epnt(protocol, SERVER_PORT_NUMBER);
 
-	system::error_code err;
-	server.open(protocol, err);
-
-	if (err)
+	thread acpt_thrd([&io_srv, &server]()
 	{
-		cerr << "Could not create server. error code = " << err.value() << "\n" + err.message() + '\n';
-		return -1;
-	}
+		// Thread for accept the client
 
-	server.bind(epnt);
-	server.listen();
+		// tcp protocol 
+		tcp protocol = tcp::v4();
 
-	while (true)
-	{
-		tcp::socket *client = new tcp::socket(io_srv);
-		tcp::endpoint client_epnt;
+		tcp::endpoint epnt(protocol, SERVER_PORT_NUMBER);
 
-		server.accept(*client, client_epnt, err);
+		system::error_code err;
+		server.open(protocol, err);
 
 		if (err)
 		{
-			delete client;
-			cerr << "Could not accept client. error code = " << err.value() << "\n" + err.message() + '\n';
+			cerr << "Could not create server. Please press enter to exit."
+				<< "error code = " << err.value() << ' ' + err.message() + '\n';
+			return;
 		}
 
-		clog << "Client accepted. ip = " << client_epnt.address().to_string() << " port = " 
-			<< client_epnt.port() << '\n';
+		server.bind(epnt);
+		server.listen();
 
-		delete client;
-	}
+		clog << "PengChat3 server is running... Please press enter to exit server.\n";
+
+		while (true)
+		{
+			tcp::socket *client = new tcp::socket(io_srv);
+			tcp::endpoint client_epnt;
+
+			server.accept(*client, client_epnt, err);
+
+			if (err)
+			{
+				delete client;
+				if (err.value() == boost::asio::error::interrupted)
+					return;
+
+				cerr << "Could not accept client. error code = " << err.value() << "\n" + err.message() + '\n';
+			}
+
+			clog << "Client accepted. ip = " << client_epnt.address().to_string() << " port = "
+				<< client_epnt.port() << '\n';
+
+			client->write_some(buffer("Hi! Welcome to the pengchat3 server"));
+			delete client;
+		}
+	});
+
+	cin.get();
+	
+	server.close();
+	if (acpt_thrd.joinable())
+		acpt_thrd.join();
 
 	return 0;
 }
