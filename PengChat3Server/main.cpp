@@ -25,8 +25,10 @@
 #include "common.h"
 #include "cntsocket.h"
 
-typedef std::shared_ptr<c_cnt_socket> client_ptr;
-vector<client_ptr> g_clients;
+list<client_ptr> g_clients;
+
+const char_utf8 g_api_password[4] = { 0x00, 0x01, 0x00, 0x04 };
+bool m_delete_thrd_run = true;
 
 int main(int argc, char *argv[])
 {
@@ -80,14 +82,38 @@ int main(int argc, char *argv[])
 			clog << "Client accepted. ip = " << client_epnt.address().to_string() << " port = "
 				<< client_epnt.port() << '\n';
 
-			c_cnt_socket *cnt = new c_cnt_socket(client);
+			cnt_socket *cnt = new cnt_socket(client);
 			g_clients.push_back(client_ptr(cnt));
+		}
+	});
+	thread delete_thrd([]()
+	{
+		while (m_delete_thrd_run)
+		{
+			// CPU overload protection
+			this_thread::sleep_for(chrono::seconds(1));
+
+			if (g_clients.empty())
+				continue;
+
+			g_clients.remove_if([](const client_ptr &p)
+			{
+				return p->m_is_need_to_delete();
+			});
 		}
 	});
 
 	cin.get();
 	
+	// Clients shutdown
 	g_clients.clear();
+
+	// Delete thread shutdown
+	m_delete_thrd_run = false;
+	if (delete_thrd.joinable())
+		delete_thrd.join();
+
+	// Accept thread shutdown
 	server.close();
 	if (acpt_thrd.joinable())
 		acpt_thrd.join();

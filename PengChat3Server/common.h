@@ -32,7 +32,7 @@
 #include <string>
 #include <thread>
 #include <memory>
-#include <vector>
+#include <list>
 #include <array>
 
 // Boost library
@@ -49,11 +49,17 @@ using namespace boost::asio;
 using namespace boost::asio::ip;
 
 // Defines constant
-#define SERVER_PORT_NUMBER 13333
+#define SERVER_PORT_NUMBER 9999
 #define MAX_BYTES_NUMBER 1024
 
 // String typedefs
 typedef char char_utf8;
 typedef string string_utf8;
+
+class cnt_socket;
+typedef std::shared_ptr<cnt_socket> client_ptr;
+
+extern const char_utf8 g_api_password[4];
+extern list<client_ptr> g_clients;
 
 #endif

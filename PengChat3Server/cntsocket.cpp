@@ -23,32 +23,42 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "cntsocket.h"
-#include <boost/scope_exit.hpp>
 
-c_cnt_socket::c_cnt_socket(tcp::socket *client) : m_socket(client), m_recv_thrd(bind(&c_cnt_socket::recv_func,
-	this))
+cnt_socket::cnt_socket(tcp::socket *client) : m_socket(client), m_recv_thrd(bind(&cnt_socket::recv_func,
+	this)), m_is_real_client(false), m_need_to_delete(false)
 {
 
 }
 
-c_cnt_socket::~c_cnt_socket()
+cnt_socket::~cnt_socket()
 {
 	m_socket->close();
 
 	if (m_recv_thrd.joinable())
 		m_recv_thrd.join();
+
+#ifdef _DEBUG
+	printf("cnt_socket destroyed");
+#endif
 }
 
-void c_cnt_socket::recv_func()
+void cnt_socket::recv_func()
 {
 	while (true)
 	{
-		m_socket->read_some(buffer(m_buf, MAX_BYTES_NUMBER), m_latest_error);
+		std::size_t read_bytes = m_socket->read_some(buffer(m_buf, MAX_BYTES_NUMBER), m_latest_error);
 
 		if (m_latest_error == asio::error::connection_aborted)
 			return;
 
-		// Just test (like echo server)
-		m_socket->write_some(buffer(m_buf));
+		// If the client is not using PengChat3 API, delete this client (ex: telnet, hand-made tcp program)
+		if (m_is_real_client == false)
+		{
+			if (read_bytes == 4)
+				if (strcmp(m_buf.data(), g_api_password) == 0)
+					continue;
+
+			m_need_to_delete = true;
+		}
 	}
 }

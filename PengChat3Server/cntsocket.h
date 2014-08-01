@@ -27,11 +27,11 @@
 
 #include "common.h"
 
-class c_cnt_socket final : private boost::noncopyable
+class cnt_socket final : private boost::noncopyable
 {
 public:
-	c_cnt_socket(tcp::socket *client);
-	~c_cnt_socket();
+	cnt_socket(tcp::socket *client);
+	~cnt_socket();
 
 private:
 	typedef std::shared_ptr<tcp::socket> socket_ptr;
@@ -42,8 +42,13 @@ private:
 
 	std::array<char_utf8, MAX_BYTES_NUMBER> m_buf;
 
+	bool m_is_real_client, m_need_to_delete;
+
 private:
 	void recv_func();
+
+public:
+	bool m_is_need_to_delete() const { return m_need_to_delete; }
 };
 
 #endif
