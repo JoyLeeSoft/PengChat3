@@ -1,35 +1,43 @@
 ﻿<Window x:Class="PengChat3.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="PengChat3" Height="500" Width="800">
+        Title="PengChat3" Height="420" Width="600">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="355*"/>
-            <ColumnDefinition Width="170*"/>
-            <ColumnDefinition Width="267*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel HorizontalAlignment="Left" Height="469" Margin="1,0,0,0" VerticalAlignment="Top" Width="781" Grid.ColumnSpan="3">
-            <TabControl Height="468">
-                <TabItem x:Name="tabItem_Main">
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Height="auto" Width="auto" Source="Resources/bullet-blue.png"></Image>
-                            <TextBlock x:Name="textBlock_tabItemMain" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </TabItem.Header>
-
-                    <GroupBox x:Name="groupBox_Login" Width="300" Margin="0,0,475,234">
+        <TabControl HorizontalAlignment="Left" Height="389" VerticalAlignment="Top" Width="592">
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Height="auto" Width="auto" Source="Resources/bullet-blue.png"></Image>
+                        <TextBlock x:Name="textBlock_tabItemMain" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Background="White" Margin="0,0,0,2">
+                    <GroupBox HorizontalAlignment="Left" Margin="7,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.458,0.435" Height="160" Width="271">
                         <GroupBox.Header>
                             <StackPanel Orientation="Horizontal">
                                 <Image Height="auto" Width="auto" Source="Resources/groupbox-login.png"></Image>
                                 <TextBlock x:Name="textBlock_groupBoxLogin" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
                             </StackPanel>
                         </GroupBox.Header>
+                        <Grid HorizontalAlignment="Left" Height="136" VerticalAlignment="Top" Width="261" Margin="0,0,-2,-2">
+                            <Label x:Name="label_ID" HorizontalAlignment="Left" Margin="6,7,0,0" VerticalAlignment="Top" Width="60"/>
+                            <Label x:Name="label_PW" HorizontalAlignment="Left" Margin="6,38,0,0" VerticalAlignment="Top" Width="60"/>
+                            <Label x:Name="label_IP" HorizontalAlignment="Left" Margin="6,69,0,0" VerticalAlignment="Top" Width="100"/>
+                            <TextBox x:Name="textBox_ID" HorizontalAlignment="Left" Height="23" Margin="91,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="166" KeyDown="LoginTextboxes_KeyDown" TabIndex="0"/>
+                            <TextBox x:Name="textBox_IP" HorizontalAlignment="Left" Height="23" Margin="91,72,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="166" KeyDown="LoginTextboxes_KeyDown" TabIndex="2"/>
+                            <PasswordBox x:Name="passwordBox_PW" HorizontalAlignment="Left" Margin="91,41,0,0" VerticalAlignment="Top" Height="23" Width="166" KeyDown="LoginTextboxes_KeyDown" TabIndex="1"/>
+                            <Button HorizontalAlignment="Left" Margin="181,103,0,0" VerticalAlignment="Top" Width="75" Background="Yellow" Height="26" Click="LoginButton_Click" TabIndex="3">
+                                <Button.Content>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Height="auto" Width="auto" Source="Resources/login.png"></Image>
+                                        <TextBlock x:Name="textBlock_LoginButton" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+                        </Grid>
                     </GroupBox>
-                </TabItem>
-            </TabControl>
-
-        </StackPanel>
-
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

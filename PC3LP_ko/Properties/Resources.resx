@@ -117,10 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Str_EmptyLabel" xml:space="preserve">
+    <value>모든 입력란을 채워주십시요!</value>
+  </data>
+  <data name="Str_ID" xml:space="preserve">
+    <value>아이디</value>
+  </data>
+  <data name="Str_IP" xml:space="preserve">
+    <value>서버주소</value>
+  </data>
   <data name="Str_Login" xml:space="preserve">
     <value>로그인</value>
   </data>
   <data name="Str_MainPage" xml:space="preserve">
     <value>메인 화면</value>
+  </data>
+  <data name="Str_PW" xml:space="preserve">
+    <value>비밀번호</value>
   </data>
 </root>

@@ -61,6 +61,33 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   모든 입력란을 채워주십시요!과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_EmptyLabel {
+            get {
+                return ResourceManager.GetString("Str_EmptyLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   아이디과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_ID {
+            get {
+                return ResourceManager.GetString("Str_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   서버주소과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_IP {
+            get {
+                return ResourceManager.GetString("Str_IP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   로그인과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_Login {
@@ -75,6 +102,15 @@ namespace PC3LP_ko.Properties {
         internal static string Str_MainPage {
             get {
                 return ResourceManager.GetString("Str_MainPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   비밀번호과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_PW {
+            get {
+                return ResourceManager.GetString("Str_PW", resourceCulture);
             }
         }
     }

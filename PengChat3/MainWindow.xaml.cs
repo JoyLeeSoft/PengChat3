@@ -26,7 +26,31 @@ namespace PengChat3
 #region Control settings
             textBlock_tabItemMain.Text = ResourceManager.GetStringByKey("Str_MainPage");
             textBlock_groupBoxLogin.Text = ResourceManager.GetStringByKey("Str_Login");
+            label_ID.Content = ResourceManager.GetStringByKey("Str_ID") + " : ";
+            label_PW.Content = ResourceManager.GetStringByKey("Str_PW") + " : ";
+            label_IP.Content = ResourceManager.GetStringByKey("Str_IP") + " : ";
+            textBlock_LoginButton.Text = ResourceManager.GetStringByKey("Str_Login");
 #endregion
+
+            textBox_ID.Focus();
+        }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (textBox_ID.Text != "" && passwordBox_PW.Password != "" && textBox_IP.Text != "")
+            {
+
+            }
+            else
+            {
+                Utility.Error(ResourceManager.GetStringByKey("Str_EmptyLabel"));
+            }
+        }
+
+        private void LoginTextboxes_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                LoginButton_Click(null, null);
         }
     }
 }
