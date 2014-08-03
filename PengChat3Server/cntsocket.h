@@ -40,15 +40,24 @@ private:
 
 	thread m_recv_thrd;
 
-	std::array<char_utf8, MAX_BYTES_NUMBER> m_buf;
+	std::array<packet_type, MAX_BYTES_NUMBER> m_buf;
+	vector<packet_type> m_temp_buf;
 
-	bool m_is_real_client, m_need_to_delete;
+	struct client_state 
+	{
+	public:
+		bool is_real_client, need_to_delete, is_logged;
+	} m_client_state;
 
 private:
 	void recv_func();
+	bool packet_processor(packet_header_type header, const vector<packet_type> &packet);
+
+	bool on_check_real(const vector<packet_type> &packet);
+	bool on_login(const string_utf8 &id, const string_utf8 &pw);
 
 public:
-	bool m_is_need_to_delete() const { return m_need_to_delete; }
+	bool is_need_to_delete() const { return m_client_state.need_to_delete; }
 };
 
 #endif

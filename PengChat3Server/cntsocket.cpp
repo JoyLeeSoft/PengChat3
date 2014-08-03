@@ -23,9 +23,14 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "cntsocket.h"
+#include "utility.h"
+#include "protocol.h"
+#include "db.h"
 
-cnt_socket::cnt_socket(tcp::socket *client) : m_socket(client), m_recv_thrd(bind(&cnt_socket::recv_func,
-	this)), m_is_real_client(false), m_need_to_delete(false)
+extern db *g_db;
+
+cnt_socket::cnt_socket(tcp::socket *client) : m_socket(client), m_client_state({false, false, false}),
+	m_recv_thrd(bind(&cnt_socket::recv_func, this))
 {
 
 }
@@ -51,14 +56,96 @@ void cnt_socket::recv_func()
 		if (m_latest_error == asio::error::connection_aborted)
 			return;
 
-		// If the client is not using PengChat3 API, delete this client (ex: telnet, hand-made tcp program)
-		if (m_is_real_client == false)
-		{
-			if (read_bytes == 4)
-				if (strcmp(m_buf.data(), g_api_password) == 0)
-					continue;
+		// Add packet into the buffer
+		m_temp_buf.insert(m_temp_buf.end(), m_buf.begin(), m_buf.end());
 
-			m_need_to_delete = true;
+		// If the packet is not perfect
+		if (*(m_buf.end() - 1) != PROTOCOL_SEPARATOR)
+		{
+			continue;
 		}
+		else
+		{
+			// Processing packets
+			for (auto packet : split<packet_type>(m_temp_buf, PROTOCOL_SEPARATOR))
+			{
+				if (packet_processor(unpacking_array<packet_header_type>(packet.data()), // Packet header unpacking
+					vector<packet_type>(packet.begin() + sizeof(packet_header_type), packet.end())) == false) // Packet unpacking
+				{
+					break;
+				}
+			}
+		}
+	}
+}
+
+bool cnt_socket::packet_processor(packet_header_type header, const vector<packet_type> &packet)
+{
+	// When the first call
+	if (m_client_state.is_real_client == false)
+	{
+		// Need to check real
+		if (header != (packet_header_type)packet_header::packet_check_real)
+		{
+			m_client_state.need_to_delete = true;
+			return false;
+		}
+	}
+
+	switch ((packet_header)header)
+	{
+	// Check client is real
+	case packet_header::packet_check_real:
+		return on_check_real(packet);
+	
+	// Login 
+	case packet_header::packet_login:
+		{
+			auto id_and_pw = split<packet_type>(packet, '\n');
+			if (id_and_pw.size() == 2)
+				return on_login(string_utf8(id_and_pw[0].begin(), id_and_pw[0].end()),
+				string_utf8(id_and_pw[1].begin(), id_and_pw[1].end()));
+			else
+				return false;
+		}
+		break;
+		
+	default:
+		return false;
+	}
+}
+
+bool cnt_socket::on_check_real(const vector<packet_type> &packet)
+{
+	// If the client is not using PengChat3 API, delete this client (ex: telnet, hand-made tcp program)
+	if (g_api_password == packet)
+	{
+		m_client_state.is_real_client = true;
+		return true;
+	}
+	else
+	{
+		m_client_state.need_to_delete = true;
+		return false;
+	}
+}
+
+bool cnt_socket::on_login(const string_utf8 &id, const string_utf8 &pw)
+{
+	string_utf8 nick;
+	
+	try
+	{
+		g_db->find_nick(id, pw, nick);
+		m_client_state.is_logged = true;
+
+		// send message
+		return true;
+	}
+	catch (runtime_error &e)
+	{
+		m_client_state.need_to_delete = true;
+		// log
+		return false;
 	}
 }

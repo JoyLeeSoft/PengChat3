@@ -22,49 +22,73 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef common_h_
-#define common_h_
+/*#include <sqlite3.h>
 
-// Common header files include
-
-// C++ standard library
-#include <cstdint>
-#include <iostream>
-#include <string>
-#include <thread>
-#include <memory>
-#include <list>
-#include <array>
-#include <exception>
-
-// Boost library
-#include <boost/noncopyable.hpp>
-#include <boost/tokenizer.hpp>
-
-#include <boost/asio.hpp> // Async I/O
-
-// Using namespaces
-using namespace std;
-
-using namespace boost;
-using namespace boost::asio;
-using namespace boost::asio::ip;
-
-// Defines constant
-#define SERVER_PORT_NUMBER 9999
-#define MAX_BYTES_NUMBER 1024
-
-// Packet typedefs
-typedef uint16_t packet_header_type;
-typedef uint8_t  packet_type;
-
-typedef char char_utf8;
-typedef string string_utf8;
-
-// Global variables
-class cnt_socket;
-typedef std::shared_ptr<cnt_socket> client_ptr;
-extern list<client_ptr> g_clients;
-extern const vector<packet_type> g_api_password;
-
+#ifdef _MSC_VER
+#pragma comment(lib, "sqlite3")
 #endif
+
+#include "sqlite3_db.h"
+
+sqlite3_db::sqlite3_db()
+{
+
+}
+
+sqlite3_db::~sqlite3_db()
+{
+
+}
+
+void sqlite3_db::find_nick(const string_utf8 &id, const string_utf8 &pw, string_utf8 &nick)
+{
+	using namespace boost;
+
+	sqlite3 *sql3;
+
+	if (sqlite3_open(DBName, &sql3) != SQLITE_OK)
+	{
+		errMsg = (const char_utf8 *)sqlite3_errmsg(sql3);
+		return false;
+	}
+
+	string_utf8 qry = (format("select Nick from %1% where Id = '%2%' and Pw = '%3%';") % MemberTableName % id % pw).str();
+	char_utf8 *err;
+
+	struct QueryResult
+	{
+		bool m_is_failed;
+		string_utf8 m_nick;
+	} result = { true, "" };
+
+	if (sqlite3_exec(sql3, qry.c_str(), [](void *param, int argc, char_utf8 **argv, char_utf8 **azColName)
+	{
+		QueryResult *p = (QueryResult *)param;
+
+		if (argc > 0)
+		{
+			p->m_is_failed = false;
+			p->m_nick = argv[0];
+		}
+
+		return 0;
+	}, &result, &err) != SQLITE_OK)
+	{
+		errMsg = err;
+		sqlite3_close(sql3);
+		return false;
+	}
+
+	if (result.m_is_failed)
+	{
+		errMsg = "Invalid Account";
+		sqlite3_close(sql3);
+		return false;
+	}
+
+	errMsg = "";
+	nick = result.m_nick;
+
+	sqlite3_close(sql3);
+	return true;
+}*/

@@ -22,49 +22,20 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef common_h_
-#define common_h_
+#ifndef protocol_h_
+#define protocol_h_
 
-// Common header files include
+#include "common.h"
 
-// C++ standard library
-#include <cstdint>
-#include <iostream>
-#include <string>
-#include <thread>
-#include <memory>
-#include <list>
-#include <array>
-#include <exception>
+#define PROTOCOL_SEPARATOR '\0'
 
-// Boost library
-#include <boost/noncopyable.hpp>
-#include <boost/tokenizer.hpp>
+enum class packet_header : packet_header_type
+{
+	// First packet, when connected to server, client need to send this packet with a few bytes
+	packet_check_real,
 
-#include <boost/asio.hpp> // Async I/O
-
-// Using namespaces
-using namespace std;
-
-using namespace boost;
-using namespace boost::asio;
-using namespace boost::asio::ip;
-
-// Defines constant
-#define SERVER_PORT_NUMBER 9999
-#define MAX_BYTES_NUMBER 1024
-
-// Packet typedefs
-typedef uint16_t packet_header_type;
-typedef uint8_t  packet_type;
-
-typedef char char_utf8;
-typedef string string_utf8;
-
-// Global variables
-class cnt_socket;
-typedef std::shared_ptr<cnt_socket> client_ptr;
-extern list<client_ptr> g_clients;
-extern const vector<packet_type> g_api_password;
+	// Login packet, when checked client is real, client need to send this
+	packet_login,
+};
 
 #endif

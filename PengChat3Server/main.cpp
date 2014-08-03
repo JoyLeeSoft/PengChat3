@@ -24,11 +24,16 @@
 
 #include "common.h"
 #include "cntsocket.h"
+#include "utility.h"
+#include "db.h"
+#include "null_db.h"
 
 list<client_ptr> g_clients;
 
-const char_utf8 g_api_password[4] = { 0x00, 0x01, 0x00, 0x04 };
+const vector<packet_type> g_api_password = { 0x00, 0x01, 0x00, 0x04 };
 bool m_delete_thrd_run = true;
+
+db *g_db;
 
 int main(int argc, char *argv[])
 {
@@ -56,6 +61,11 @@ int main(int argc, char *argv[])
 
 		server.bind(epnt);
 		server.listen();
+
+		g_db = 
+#ifdef PENGCHAT3_DB_NULL
+		new null_db();
+#endif
 
 		clog << "PengChat3 server is running... Please press enter to exit server.\n";
 
@@ -98,7 +108,7 @@ int main(int argc, char *argv[])
 
 			g_clients.remove_if([](const client_ptr &p)
 			{
-				return p->m_is_need_to_delete();
+				return p->is_need_to_delete();
 			});
 		}
 	});
@@ -107,6 +117,9 @@ int main(int argc, char *argv[])
 	
 	// Clients shutdown
 	g_clients.clear();
+
+	// DB shutdown
+	delete g_db;
 
 	// Delete thread shutdown
 	m_delete_thrd_run = false;

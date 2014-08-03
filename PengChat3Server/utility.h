@@ -22,49 +22,44 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef common_h_
-#define common_h_
+#ifndef utility_h_
+#define utility_h_
 
-// Common header files include
+#include "common.h"
 
-// C++ standard library
-#include <cstdint>
-#include <iostream>
-#include <string>
-#include <thread>
-#include <memory>
-#include <list>
-#include <array>
-#include <exception>
+template <typename T> inline const T unpacking_array(const packet_type *data)
+{
+	return *(reinterpret_cast<const T *>(data));
+}
 
-// Boost library
-#include <boost/noncopyable.hpp>
-#include <boost/tokenizer.hpp>
+template <typename T> inline vector<packet_type> packing_array(T data)
+{
+	return vector<packet_type>(reinterpret_cast<packet_type *>(&data), reinterpret_cast<packet_type *>(&data + 1));
+}
 
-#include <boost/asio.hpp> // Async I/O
+/*template <> inline vector<char> to_byte_array(const char *data)
+{
+	return vector<char>((const char *)data, (const char *)data + strlen(data));
+}*/
 
-// Using namespaces
-using namespace std;
+template<typename T> inline vector<vector<T> > split(const vector<T> &vec, const T &token)
+{
+	vector<vector<T> > ret;
+	ret.push_back(vector<T>());
+	int idx = 0;
+	
+	for (typename vector<T>::const_iterator it = vec.begin(); it != vec.end(); it++)
+	{
+		if (*it != token)
+			ret.operator[](idx).push_back(*it);
+		else
+		{
+			idx++;
+			ret.push_back(vector<T>());
+		}
+	}
 
-using namespace boost;
-using namespace boost::asio;
-using namespace boost::asio::ip;
-
-// Defines constant
-#define SERVER_PORT_NUMBER 9999
-#define MAX_BYTES_NUMBER 1024
-
-// Packet typedefs
-typedef uint16_t packet_header_type;
-typedef uint8_t  packet_type;
-
-typedef char char_utf8;
-typedef string string_utf8;
-
-// Global variables
-class cnt_socket;
-typedef std::shared_ptr<cnt_socket> client_ptr;
-extern list<client_ptr> g_clients;
-extern const vector<packet_type> g_api_password;
+	return ret;
+}
 
 #endif

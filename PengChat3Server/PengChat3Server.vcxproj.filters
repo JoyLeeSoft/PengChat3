@@ -7,7 +7,22 @@
     <Filter Include="common">
       <UniqueIdentifier>{eeadcec9-6e4f-4ea3-9e6c-6639001f4bdc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="client">
+    <Filter Include="protocol">
+      <UniqueIdentifier>{ed9d9ba5-a350-44b3-9b55-5b632d1dd521}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utility">
+      <UniqueIdentifier>{29155ec6-885f-460a-9358-e4c82a1c8fab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="database">
+      <UniqueIdentifier>{cb0d30bb-f809-485d-9e93-5c916ae22ddb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="database\sqlite3">
+      <UniqueIdentifier>{30bea1fc-1baf-4dcd-940f-b92776d00287}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="database\null">
+      <UniqueIdentifier>{b490c34e-b69b-41f1-8a51-5c87751a99df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="socket">
       <UniqueIdentifier>{561abec8-f2d6-4613-8028-47769811f7ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -16,7 +31,13 @@
       <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="cntsocket.cpp">
-      <Filter>client</Filter>
+      <Filter>socket</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite3_db.cpp">
+      <Filter>database\sqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="null_db.cpp">
+      <Filter>database\null</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -24,10 +45,25 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cntsocket.h">
-      <Filter>client</Filter>
+      <Filter>socket</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="db.h">
+      <Filter>database</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite3_db.h">
+      <Filter>database\sqlite3</Filter>
+    </ClInclude>
+    <ClInclude Include="null_db.h">
+      <Filter>database\null</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
