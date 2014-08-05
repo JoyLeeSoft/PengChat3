@@ -61,7 +61,43 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
-        ///   모든 입력란을 채워주십시요!과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   PengChat3 서버에 연결할수 없습니다과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_CannotConnectToServer {
+            get {
+                return ResourceManager.GetString("Str_CannotConnectToServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   연결 정보과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_ConnectionInfo {
+            get {
+                return ResourceManager.GetString("Str_ConnectionInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   방 만들기과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_CreateRoom {
+            get {
+                return ResourceManager.GetString("Str_CreateRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   삭제과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_Delete {
+            get {
+                return ResourceManager.GetString("Str_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   모든 입력란을 채워주세요과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_EmptyLabel {
             get {
@@ -88,11 +124,29 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   비밀번호 사용여부과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_IsNeedPW {
+            get {
+                return ResourceManager.GetString("Str_IsNeedPW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   로그인과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_Login {
             get {
                 return ResourceManager.GetString("Str_Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   로그아웃과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_Logout {
+            get {
+                return ResourceManager.GetString("Str_Logout", resourceCulture);
             }
         }
         
@@ -106,11 +160,65 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   방장과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_Master {
+            get {
+                return ResourceManager.GetString("Str_Master", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   방이 선택되지 않았습니다과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_NoSelectedRoom {
+            get {
+                return ResourceManager.GetString("Str_NoSelectedRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   접속자 수과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_NumOfMember {
+            get {
+                return ResourceManager.GetString("Str_NumOfMember", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   비밀번호과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_PW {
             get {
                 return ResourceManager.GetString("Str_PW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   방 정보과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_RoomInfo {
+            get {
+                return ResourceManager.GetString("Str_RoomInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   방제과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_RoomName {
+            get {
+                return ResourceManager.GetString("Str_RoomName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   입장과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_Signin {
+            get {
+                return ResourceManager.GetString("Str_Signin", resourceCulture);
             }
         }
     }

@@ -54,6 +54,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CntComboBoxItem.cs" />
+    <Compile Include="MainWindow.xaml.utility.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -109,6 +111,21 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\groupbox-login.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\connection-info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PC3API_dn\PC3API_dn.csproj">
+      <Project>{73460710-fc73-49ab-a328-9e79b9274faa}</Project>
+      <Name>PC3API_dn</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\create-room.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

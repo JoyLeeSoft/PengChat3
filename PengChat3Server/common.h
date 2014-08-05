@@ -51,11 +51,11 @@ using namespace boost::asio;
 using namespace boost::asio::ip;
 
 // Defines constant
-#define SERVER_PORT_NUMBER 9999
+#define SERVER_PORT_NUMBER 13333
 #define MAX_BYTES_NUMBER 1024
 
 // Packet typedefs
-typedef uint16_t packet_header_type;
+typedef int16_t packet_header_type;
 typedef uint8_t  packet_type;
 
 typedef char char_utf8;
@@ -65,6 +65,6 @@ typedef string string_utf8;
 class cnt_socket;
 typedef std::shared_ptr<cnt_socket> client_ptr;
 extern list<client_ptr> g_clients;
-extern const vector<packet_type> g_api_password;
+extern const vector<packet_type> g_magic_number;
 
 #endif

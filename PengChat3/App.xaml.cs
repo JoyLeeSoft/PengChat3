@@ -12,6 +12,8 @@ namespace PengChat3
     /// </summary>
     public partial class App : Application
     {
+        internal static int Port = 13333;
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             // PengChat3 registry
@@ -35,9 +37,9 @@ namespace PengChat3
             {
                 ResourceManager.LoadResource(LanguagePackDll, "PC3LP_ko.Properties.Resources");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Utility.Error("Could not load language pack \"" + LanguagePackDll + "\"", true);
+                Utility.Error("Could not load language pack \"" + LanguagePackDll + "\"\n" + ex.Message, true);
             }
         }
 

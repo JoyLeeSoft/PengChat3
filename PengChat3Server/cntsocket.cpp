@@ -55,6 +55,13 @@ void cnt_socket::recv_func()
 
 		if (m_latest_error == asio::error::connection_aborted)
 			return;
+	
+		if ((m_latest_error == asio::error::connection_reset) ||
+			(m_latest_error == asio::error::eof))
+		{
+			m_client_state.need_to_delete = true;
+			return;
+		}
 
 		// Add packet into the buffer
 		m_temp_buf.insert(m_temp_buf.end(), m_buf.begin(), m_buf.end());
@@ -66,15 +73,22 @@ void cnt_socket::recv_func()
 		}
 		else
 		{
+			vector<packet_type> readed = vector<packet_type>(m_temp_buf.begin(), m_temp_buf.begin() + read_bytes);
+
 			// Processing packets
-			for (auto packet : split<packet_type>(m_temp_buf, PROTOCOL_SEPARATOR))
+			for (auto packet : split<packet_type>(readed, PROTOCOL_SEPARATOR))
 			{
+				if (packet.empty())
+					continue;
+
 				if (packet_processor(unpacking_array<packet_header_type>(packet.data()), // Packet header unpacking
 					vector<packet_type>(packet.begin() + sizeof(packet_header_type), packet.end())) == false) // Packet unpacking
 				{
 					break;
 				}
 			}
+
+			m_temp_buf.clear();
 		}
 	}
 }
@@ -118,7 +132,7 @@ bool cnt_socket::packet_processor(packet_header_type header, const vector<packet
 bool cnt_socket::on_check_real(const vector<packet_type> &packet)
 {
 	// If the client is not using PengChat3 API, delete this client (ex: telnet, hand-made tcp program)
-	if (g_api_password == packet)
+	if (g_magic_number == packet)
 	{
 		m_client_state.is_real_client = true;
 		return true;

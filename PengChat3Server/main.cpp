@@ -30,7 +30,7 @@
 
 list<client_ptr> g_clients;
 
-const vector<packet_type> g_api_password = { 0x00, 0x01, 0x00, 0x04 };
+const vector<packet_type> g_magic_number = { 0x00, 0x01, 0x00, 0x04 };
 bool m_delete_thrd_run = true;
 
 db *g_db;

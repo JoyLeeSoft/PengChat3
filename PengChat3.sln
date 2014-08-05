@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PC3LP_ko", "PC3LP_ko\PC3LP_
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{6FD6EFB8-22D8-4FD6-9157-471159754E04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCAPI_dn", "PCAPI_dn\PCAPI_dn.csproj", "{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PC3API_dn", "PC3API_dn\PC3API_dn.csproj", "{73460710-FC73-49AB-A328-9E79B9274FAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,22 +63,22 @@ Global
 		{0A6349D5-4BCA-4DB7-9363-231F7641E60D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{0A6349D5-4BCA-4DB7-9363-231F7641E60D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0A6349D5-4BCA-4DB7-9363-231F7641E60D}.Release|Win32.ActiveCfg = Release|Any CPU
-		{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB}.Release|Win32.ActiveCfg = Release|Any CPU
+		{73460710-FC73-49AB-A328-9E79B9274FAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73460710-FC73-49AB-A328-9E79B9274FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73460710-FC73-49AB-A328-9E79B9274FAA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{73460710-FC73-49AB-A328-9E79B9274FAA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{73460710-FC73-49AB-A328-9E79B9274FAA}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{73460710-FC73-49AB-A328-9E79B9274FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73460710-FC73-49AB-A328-9E79B9274FAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73460710-FC73-49AB-A328-9E79B9274FAA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{73460710-FC73-49AB-A328-9E79B9274FAA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{73460710-FC73-49AB-A328-9E79B9274FAA}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0A6349D5-4BCA-4DB7-9363-231F7641E60D} = {CA551922-B4F1-4A09-8854-92E4D72F234A}
-		{8E1129D1-AEA3-4B5B-9CEA-8220EAE3B9EB} = {6FD6EFB8-22D8-4FD6-9157-471159754E04}
+		{73460710-FC73-49AB-A328-9E79B9274FAA} = {6FD6EFB8-22D8-4FD6-9157-471159754E04}
 	EndGlobalSection
 EndGlobal
