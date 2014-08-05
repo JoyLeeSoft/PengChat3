@@ -21,25 +21,25 @@ namespace PengChat3
                 Utility.Error("Could not open registry " + RegistryManager.DefaultPath, true);
 
             // Load language pack
-            string LanguagePackDll;
-            object temp = RegistryManager.ReadValue(RegistryManager.LanguagePackPath);
+            string LanguagePackName;
+            object temp = RegistryManager.ReadValue(RegistryManager.LanguagePackName);
 
             // If the value is exists
             if (temp != null)
-                LanguagePackDll = temp.ToString();
+                LanguagePackName = temp.ToString();
             else
             {
-                RegistryManager.WriteValue(RegistryManager.LanguagePackPath, "PC3LP_ko.dll");
-                LanguagePackDll = RegistryManager.ReadValue(RegistryManager.LanguagePackPath).ToString();
+                RegistryManager.WriteValue(RegistryManager.LanguagePackName, "PC3LP_ko");
+                LanguagePackName = RegistryManager.ReadValue(RegistryManager.LanguagePackName).ToString();
             }
 
             try
             {
-                ResourceManager.LoadResource(LanguagePackDll, "PC3LP_ko.Properties.Resources");
+                ResourceManager.LoadResource(LanguagePackName + ".dll", LanguagePackName + ".Properties.Resources");
             }
             catch (Exception ex)
             {
-                Utility.Error("Could not load language pack \"" + LanguagePackDll + "\"\n" + ex.Message, true);
+                Utility.Error("Could not load language pack \"" + LanguagePackName + "\"\n" + ex.Message, true);
             }
         }
 

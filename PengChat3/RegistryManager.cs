@@ -6,7 +6,7 @@ namespace PengChat3
     internal sealed class RegistryManager
     {
         public const string DefaultPath = @"Software\PengChat3";
-        public const string LanguagePackPath = "LanguagePackPath";
+        public const string LanguagePackName = "LanguagePackName";
         private static RegistryKey Key;
 
         public static bool OpenRegistry()

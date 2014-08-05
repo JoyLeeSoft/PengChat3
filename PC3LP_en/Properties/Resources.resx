@@ -136,7 +136,7 @@
     <value>ID</value>
   </data>
   <data name="Str_IP" xml:space="preserve">
-    <value>Server address</value>
+    <value>IP</value>
   </data>
   <data name="Str_IsNeedPW" xml:space="preserve">
     <value>Need password</value>
