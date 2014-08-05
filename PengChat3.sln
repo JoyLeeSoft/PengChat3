@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PengChat3Server", "PengChat3Server\PengChat3Server.vcxproj", "{805AD27D-9BFF-441A-A254-F982F543FE5E}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{6FD6EFB8-22D8-4FD6-9157-471159754E04}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PC3API_dn", "PC3API_dn\PC3API_dn.csproj", "{73460710-FC73-49AB-A328-9E79B9274FAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PC3LP_en", "PC3LP_en\PC3LP_en.csproj", "{2A8F14FF-822C-4457-8D20-A91C6814CEFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,12 +75,23 @@ Global
 		{73460710-FC73-49AB-A328-9E79B9274FAA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{73460710-FC73-49AB-A328-9E79B9274FAA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{73460710-FC73-49AB-A328-9E79B9274FAA}.Release|Win32.ActiveCfg = Release|Any CPU
+		{2A8F14FF-822C-4457-8D20-A91C6814CEFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A8F14FF-822C-4457-8D20-A91C6814CEFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A8F14FF-822C-4457-8D20-A91C6814CEFF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2A8F14FF-822C-4457-8D20-A91C6814CEFF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2A8F14FF-822C-4457-8D20-A91C6814CEFF}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{2A8F14FF-822C-4457-8D20-A91C6814CEFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A8F14FF-822C-4457-8D20-A91C6814CEFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A8F14FF-822C-4457-8D20-A91C6814CEFF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2A8F14FF-822C-4457-8D20-A91C6814CEFF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2A8F14FF-822C-4457-8D20-A91C6814CEFF}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0A6349D5-4BCA-4DB7-9363-231F7641E60D} = {CA551922-B4F1-4A09-8854-92E4D72F234A}
+		{2A8F14FF-822C-4457-8D20-A91C6814CEFF} = {CA551922-B4F1-4A09-8854-92E4D72F234A}
 		{73460710-FC73-49AB-A328-9E79B9274FAA} = {6FD6EFB8-22D8-4FD6-9157-471159754E04}
 	EndGlobalSection
 EndGlobal
