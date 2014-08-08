@@ -34,7 +34,7 @@ public:
 	virtual ~sqlite3_db();
 
 public:
-	virtual void find_nick(const string_utf8 &id, const string_utf8 &pw, string_utf8 &nick);
+	virtual void find_nick(const string_utf8 &id, const string_utf8 &pw, string_utf8 &nick) override;
 };
 
 #endif

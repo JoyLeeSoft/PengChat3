@@ -27,7 +27,7 @@
 
 #include "common.h"
 
-class db abstract
+class db
 {
 public:
 	virtual ~db() { }
