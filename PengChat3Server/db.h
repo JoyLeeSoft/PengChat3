@@ -33,7 +33,7 @@ public:
 	virtual ~db() { }
 
 public:
-	virtual void find_nick(const string_utf8 &id, const string_utf8 &pw, string_utf8 &nick) = 0;
+	virtual void find_nick(const packet &id, const packet &pw, packet &nick) = 0;
 };
 
 #endif

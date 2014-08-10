@@ -50,21 +50,25 @@ using namespace boost;
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
-// Defines constant
-#define SERVER_PORT_NUMBER 13333
-#define MAX_BYTES_NUMBER 1024
-
 // Packet typedefs
-typedef int16_t packet_header_type;
-typedef uint8_t  packet_type;
-
-typedef char char_utf8;
-typedef string string_utf8;
+typedef char packet_type;
+typedef string packet;
 
 // Global variables
 class cnt_socket;
 typedef std::shared_ptr<cnt_socket> client_ptr;
 extern list<client_ptr> g_clients;
-extern const vector<packet_type> g_magic_number;
+
+// Defines constant
+#define SERVER_PORT_NUMBER 13333
+#define MAX_BYTES_NUMBER 1024
+#define PACKET_HEADER_SIZE 4
+#define EOP (packet_type)'\0'
+
+// Warnings
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#define _SCL_SECURE_NO_WARNINGS
+#endif
 
 #endif

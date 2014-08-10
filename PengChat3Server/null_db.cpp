@@ -35,7 +35,7 @@ null_db::~null_db()
 }
 
 // This is a not database. just set nickname to id
-void null_db::find_nick(const string_utf8 &id, const string_utf8 &pw, string_utf8 &nick)
+void null_db::find_nick(const packet &id, const packet &pw, packet &nick)
 {
 	nick = id;
 }

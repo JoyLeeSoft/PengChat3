@@ -40,7 +40,7 @@ sqlite3_db::~sqlite3_db()
 
 }
 
-void sqlite3_db::find_nick(const string_utf8 &id, const string_utf8 &pw, string_utf8 &nick)
+void sqlite3_db::find_nick(const packet &id, const string_utf8 &pw, string_utf8 &nick)
 {
 	using namespace boost;
 

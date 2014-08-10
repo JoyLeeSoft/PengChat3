@@ -27,15 +27,9 @@
 
 #include "common.h"
 
-#define PROTOCOL_SEPARATOR '\0'
+const packet_type MAGIC_NUMBER[] = { 0x01, 0x04, 0x03, 0x09, 0x00 };
 
-enum class packet_header : packet_header_type
-{
-	// First packet, when connected to server, client need to send this packet with a few bytes
-	packet_check_real,
-
-	// Login packet, when checked client is real, client need to send this
-	packet_login,
-};
+const packet_type PROTOCOL_CHECK_REAL[] = { 'C', 'H', 'C', 'K', 0x00 };
+const packet_type PROTOCOL_LOGIN[] = { 'L', 'G', 'I', 'N', 0x00 };
 
 #endif

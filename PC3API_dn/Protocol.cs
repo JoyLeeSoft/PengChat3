@@ -1,10 +1,10 @@
 ﻿using System;
 
-enum ProtocolHeader : short
+namespace PC3API_dn
 {
-    // First packet, when connected to server, client need to send this packet with a few bytes
-    packet_check_real,
-
-    // Login packet, when checked client is real, client need to send this
-    packet_login,
+    internal static class Protocol
+    {
+        public const string PROTOCOL_CHECK = "CHCK";
+        public const string PROTOCOL_LOGIN = "LGIN";
+    }
 }

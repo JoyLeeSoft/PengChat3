@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PengChat3Server", "PengChat3Server\PengChat3Server.vcxproj", "{805AD27D-9BFF-441A-A254-F982F543FE5E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BCC8660D-3B54-45E5-B622-C2F9D2775639}"
-	ProjectSection(SolutionItems) = preProject
-		cygwin.bat = cygwin.bat
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PengChat3", "PengChat3\PengChat3.csproj", "{AC8B4A17-DAC8-4F30-86A4-98D1A72762B0}"
 	ProjectSection(ProjectDependencies) = postProject

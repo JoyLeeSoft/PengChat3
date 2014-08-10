@@ -29,8 +29,8 @@
 
 extern db *g_db;
 
-cnt_socket::cnt_socket(tcp::socket *client) : m_socket(client), m_client_state({false, false, false}),
-	m_recv_thrd(bind(&cnt_socket::recv_func, this))
+cnt_socket::cnt_socket(tcp::socket *client) : m_socket(client), m_client_state({ false, false, false }),
+m_recv_thrd(bind(&cnt_socket::recv_func, this))
 {
 
 }
@@ -49,13 +49,20 @@ cnt_socket::~cnt_socket()
 
 void cnt_socket::recv_func()
 {
+	vector<packet_type> buf(MAX_BYTES_NUMBER);
+	vector<packet_type> real_buf(MAX_BYTES_NUMBER);
+	size_t i = 0, j = 0, packet_size = 0;
+
 	while (true)
 	{
-		std::size_t read_bytes = m_socket->read_some(buffer(m_buf, MAX_BYTES_NUMBER), m_latest_error);
+		size_t read_bytes = m_socket->read_some(buffer(buf, MAX_BYTES_NUMBER), m_latest_error);
+
+		if (read_bytes <= 0)
+			return;
 
 		if (m_latest_error == asio::error::connection_aborted)
 			return;
-	
+
 		if ((m_latest_error == asio::error::connection_reset) ||
 			(m_latest_error == asio::error::eof))
 		{
@@ -63,76 +70,75 @@ void cnt_socket::recv_func()
 			return;
 		}
 
-		// Add packet into the buffer
-		m_temp_buf.insert(m_temp_buf.end(), m_buf.begin(), m_buf.end());
+		buf.erase(buf.begin() + read_bytes, buf.end());
 
-		// If the packet is not perfect
-		if (*(m_buf.end() - 1) != PROTOCOL_SEPARATOR)
+		for (i = 0; i < read_bytes; i++)
 		{
-			continue;
-		}
-		else
-		{
-			vector<packet_type> readed = vector<packet_type>(m_temp_buf.begin(), m_temp_buf.begin() + read_bytes);
+			real_buf[j] = buf[i];
+			packet_size++;
 
-			// Processing packets
-			for (auto packet : split<packet_type>(readed, PROTOCOL_SEPARATOR))
+			if (buf[i] == EOP)
 			{
-				if (packet.empty())
-					continue;
-
-				if (packet_processor(unpacking_array<packet_header_type>(packet.data()), // Packet header unpacking
-					vector<packet_type>(packet.begin() + sizeof(packet_header_type), packet.end())) == false) // Packet unpacking
+				if (packet_processor(packet(real_buf.begin(), real_buf.begin() + packet_size - 1)) == false)
 				{
-					break;
+					
 				}
+				j = 0;
+				packet_size = 0;
 			}
-
-			m_temp_buf.clear();
+			else
+			{
+				j++;
+			}
 		}
+		if (j != 0)
+		{
+			real_buf[j] = EOP;
+			if (packet_processor(packet(real_buf.begin(), real_buf.begin() + j - 1)) == false)
+			{
+				
+			}
+		}
+
 	}
 }
 
-bool cnt_socket::packet_processor(packet_header_type header, const vector<packet_type> &packet)
+bool cnt_socket::packet_processor(packet &pack)
 {
+	packet header(pack.begin(), pack.begin() + PACKET_HEADER_SIZE);
+	pack.erase(pack.begin(), pack.begin() + PACKET_HEADER_SIZE);
+
 	// When the first call
 	if (m_client_state.is_real_client == false)
 	{
 		// Need to check real
-		if (header != (packet_header_type)packet_header::packet_check_real)
+		if (header.compare(PROTOCOL_CHECK_REAL) == 0)
+		{
+			return on_check_real(pack);
+		}
+		else
 		{
 			m_client_state.need_to_delete = true;
 			return false;
 		}
 	}
 
-	switch ((packet_header)header)
+	if (header.compare(PROTOCOL_LOGIN) == 0)
 	{
-	// Check client is real
-	case packet_header::packet_check_real:
-		return on_check_real(packet);
-	
-	// Login 
-	case packet_header::packet_login:
-		{
-			auto id_and_pw = split<packet_type>(packet, '\n');
-			if (id_and_pw.size() == 2)
-				return on_login(string_utf8(id_and_pw[0].begin(), id_and_pw[0].end()),
-				string_utf8(id_and_pw[1].begin(), id_and_pw[1].end()));
-			else
-				return false;
-		}
-		break;
-		
-	default:
-		return false;
+		auto id_and_pw = split_packet(pack, packet("\n"));
+		if (id_and_pw.size() == 2)
+			return on_login(id_and_pw[0], id_and_pw[1]);
+		else
+			return false;
 	}
+
+	return true;
 }
 
-bool cnt_socket::on_check_real(const vector<packet_type> &packet)
+bool cnt_socket::on_check_real(const packet &pack)
 {
 	// If the client is not using PengChat3 API, delete this client (ex: telnet, hand-made tcp program)
-	if (g_magic_number == packet)
+	if (pack.compare(MAGIC_NUMBER) == 0)
 	{
 		m_client_state.is_real_client = true;
 		return true;
@@ -144,10 +150,10 @@ bool cnt_socket::on_check_real(const vector<packet_type> &packet)
 	}
 }
 
-bool cnt_socket::on_login(const string_utf8 &id, const string_utf8 &pw)
+bool cnt_socket::on_login(const packet &id, const packet &pw)
 {
-	string_utf8 nick;
-	
+	packet nick;
+
 	try
 	{
 		g_db->find_nick(id, pw, nick);
@@ -156,7 +162,7 @@ bool cnt_socket::on_login(const string_utf8 &id, const string_utf8 &pw)
 		// send message
 		return true;
 	}
-	catch (runtime_error &e)
+	catch (runtime_error &)
 	{
 		m_client_state.need_to_delete = true;
 		// log

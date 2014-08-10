@@ -29,9 +29,7 @@
 #include "null_db.h"
 
 list<client_ptr> g_clients;
-
-const vector<packet_type> g_magic_number = { 0x00, 0x01, 0x00, 0x04 };
-bool m_delete_thrd_run = true;
+bool delete_thrd_run = true;
 
 db *g_db;
 
@@ -98,7 +96,7 @@ int main(int argc, char *argv[])
 	});
 	thread delete_thrd([]()
 	{
-		while (m_delete_thrd_run)
+		while (delete_thrd_run)
 		{
 			// CPU overload protection
 			this_thread::sleep_for(chrono::seconds(1));
@@ -122,7 +120,7 @@ int main(int argc, char *argv[])
 	delete g_db;
 
 	// Delete thread shutdown
-	m_delete_thrd_run = false;
+	delete_thrd_run = false;
 	if (delete_thrd.joinable())
 		delete_thrd.join();
 

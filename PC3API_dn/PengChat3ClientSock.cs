@@ -6,9 +6,9 @@ namespace PC3API_dn
 {
     public class PengChat3ClientSock : IDisposable
     {
-        private readonly Encoding DefaultEncoding = Encoding.UTF8;
-        private readonly char ProtocolSeparator = '\0';
-        private readonly byte[] MagicNumber = { 0x00, 0x01, 0x00, 0x04 };
+        private static readonly Encoding DefaultEncoding = Encoding.UTF8;
+        private static readonly string MagicNumber = Encoding.UTF8.GetString(new byte[] { 0x01, 0x04, 0x03, 0x09 });
+        private static readonly byte[] EOP = new byte[1] { (byte)'\0' };
 
         private TcpClient Client;
         private NetworkStream Stream;
@@ -75,24 +75,19 @@ namespace PC3API_dn
             ConnectedIP = ip;
             ConnectedPort = port;
 
-            //SendPacket(ProtocolHeader.packet_check_real, MagicNumber);
-            //SendPacket(ProtocolHeader.packet_login, DefaultEncoding.GetBytes(id + '\n' + pw));
+            SendPacket(Protocol.PROTOCOL_CHECK, MagicNumber);
+            SendPacket(Protocol.PROTOCOL_LOGIN, id + '\n' + pw);
         }
 
-        private void SendPacket(ProtocolHeader header, byte[] data = null)
+        private void SendPacket(string header, string data)
         {
-            byte[] buf;
+            byte[] buf = new byte[header.Length + data.Length + 1];
 
-            if (data != null)
-            {
-                //buf = Utility.CombineArray(BitConverter.GetBytes((short)header), data, ProtocolSeparator);
-            }
-            else
-            {
-                //buf = Utility.CombineArray(BitConverter.GetBytes((short)header), ProtocolSeparator);
-            }
+            buf = Utility.CombineArray(DefaultEncoding.GetBytes(header),
+                                       DefaultEncoding.GetBytes(data), 
+                                       EOP);
 
-            //Stream.Write(buf, 0, buf.Length);
+            Stream.Write(buf, 0, buf.Length);
         }
     }
 }

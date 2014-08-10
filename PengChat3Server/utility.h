@@ -32,9 +32,9 @@ template <typename T> inline const T unpacking_array(const packet_type *data)
 	return *(reinterpret_cast<const T *>(data));
 }
 
-template <typename T> inline vector<packet_type> packing_array(T data)
+template <typename T> inline packet packing_array(T data)
 {
-	return vector<packet_type>(reinterpret_cast<packet_type *>(&data), reinterpret_cast<packet_type *>(&data + 1));
+	return packet(reinterpret_cast<packet_type *>(&data), reinterpret_cast<packet_type *>(&data + 1));
 }
 
 /*template <> inline vector<char> to_byte_array(const char *data)
@@ -42,7 +42,7 @@ template <typename T> inline vector<packet_type> packing_array(T data)
 	return vector<char>((const char *)data, (const char *)data + strlen(data));
 }*/
 
-template<typename T> inline vector<vector<T> > split(const vector<T> &vec, const T &token)
+/*template<typename T> inline vector<vector<T> > split(const vector<T> &vec, const T &token)
 {
 	vector<vector<T> > ret;
 	ret.push_back(vector<T>());
@@ -60,6 +60,13 @@ template<typename T> inline vector<vector<T> > split(const vector<T> &vec, const
 	}
 
 	return ret;
+}*/
+
+inline vector<packet> split_packet(packet &pack, packet &token)
+{
+	tokenizer<char_separator<packet_type>, packet::const_iterator, packet> 
+		temp(pack, char_separator<packet_type>(token.c_str()));
+	return vector<packet>(temp.begin(), temp.end());
 }
 
 #endif
