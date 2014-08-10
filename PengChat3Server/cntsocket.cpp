@@ -50,7 +50,7 @@ cnt_socket::~cnt_socket()
 void cnt_socket::recv_func()
 {
 	vector<packet_type> buf(MAX_BYTES_NUMBER);
-	vector<packet_type> real_buf(MAX_BYTES_NUMBER);
+	vector<packet_type> real_buf(MAX_BYTES_NUMBER + 1);
 	size_t i = 0, j = 0, packet_size = 0;
 
 	while (true)
@@ -58,17 +58,14 @@ void cnt_socket::recv_func()
 		size_t read_bytes = m_socket->read_some(buffer(buf, MAX_BYTES_NUMBER), m_latest_error);
 
 		if (read_bytes <= 0)
-			return;
+			goto delete_client;
 
 		if (m_latest_error == asio::error::connection_aborted)
-			return;
+			goto delete_client;
 
 		if ((m_latest_error == asio::error::connection_reset) ||
 			(m_latest_error == asio::error::eof))
-		{
-			m_client_state.need_to_delete = true;
-			return;
-		}
+			goto delete_client;
 
 		buf.erase(buf.begin() + read_bytes, buf.end());
 
@@ -81,7 +78,7 @@ void cnt_socket::recv_func()
 			{
 				if (packet_processor(packet(real_buf.begin(), real_buf.begin() + packet_size - 1)) == false)
 				{
-					
+					goto delete_client;
 				}
 				j = 0;
 				packet_size = 0;
@@ -96,15 +93,22 @@ void cnt_socket::recv_func()
 			real_buf[j] = EOP;
 			if (packet_processor(packet(real_buf.begin(), real_buf.begin() + j - 1)) == false)
 			{
-				
+				goto delete_client;
 			}
 		}
 
 	}
+
+delete_client:
+	m_client_state.need_to_delete = true;
 }
 
 bool cnt_socket::packet_processor(packet &pack)
 {
+	// If is not real packet
+	if (pack.size() < PACKET_HEADER_SIZE)
+		return false;
+
 	packet header(pack.begin(), pack.begin() + PACKET_HEADER_SIZE);
 	pack.erase(pack.begin(), pack.begin() + PACKET_HEADER_SIZE);
 

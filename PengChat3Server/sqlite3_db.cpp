@@ -40,7 +40,7 @@ sqlite3_db::~sqlite3_db()
 
 }
 
-void sqlite3_db::find_nick(const packet &id, const string_utf8 &pw, string_utf8 &nick)
+void sqlite3_db::find_nick(const packet &id, const packet &pw, packet &nick)
 {
 	using namespace boost;
 
@@ -52,13 +52,13 @@ void sqlite3_db::find_nick(const packet &id, const string_utf8 &pw, string_utf8 
 		return false;
 	}
 
-	string_utf8 qry = (format("select Nick from %1% where Id = '%2%' and Pw = '%3%';") % MemberTableName % id % pw).str();
+	packet qry = (format("select Nick from %1% where Id = '%2%' and Pw = '%3%';") % MemberTableName % id % pw).str();
 	char_utf8 *err;
 
 	struct QueryResult
 	{
 		bool m_is_failed;
-		string_utf8 m_nick;
+		packet m_nick;
 	} result = { true, "" };
 
 	if (sqlite3_exec(sql3, qry.c_str(), [](void *param, int argc, char_utf8 **argv, char_utf8 **azColName)

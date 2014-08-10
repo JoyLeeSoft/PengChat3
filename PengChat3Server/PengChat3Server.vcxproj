@@ -47,7 +47,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(BOOST_DIRECTORY)\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(BOOST_STAGE_32)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(BOOST_STAGE_32_MSVC)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

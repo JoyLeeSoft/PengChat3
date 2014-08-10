@@ -34,11 +34,7 @@ public:
 	virtual ~null_db();
 
 public:
-<<<<<<< HEAD
-	virtual void find_nick(const packet &id, const packet &pw, packet &nick);
-=======
-	virtual void find_nick(const string_utf8 &id, const string_utf8 &pw, string_utf8 &nick) override;
->>>>>>> 5eb1aba20fa2094668e8eda2710e4a4dd8894867
+	virtual void find_nick(const packet &id, const packet &pw, packet &nick) override;
 };
 
 #endif
