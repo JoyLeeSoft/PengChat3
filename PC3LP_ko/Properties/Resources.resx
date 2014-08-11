@@ -135,6 +135,9 @@
   <data name="Str_ID" xml:space="preserve">
     <value>아이디</value>
   </data>
+  <data name="Str_InfoWindow" xml:space="preserve">
+    <value>알림 창</value>
+  </data>
   <data name="Str_IP" xml:space="preserve">
     <value>서버주소</value>
   </data>
@@ -170,5 +173,12 @@
   </data>
   <data name="Str_Signin" xml:space="preserve">
     <value>입장</value>
+  </data>
+  <data name="Str_NotSuccessedConnect" xml:space="preserve">
+    <value>PengChat3 서버에 접속하지 못했습니다.
+아이디와 비밀번호를 확인하여 주세요.</value>
+  </data>
+  <data name="Str_SuccessedConnect" xml:space="preserve">
+    <value>PengChat3 서버에 접속하였습니다.</value>
   </data>
 </root>

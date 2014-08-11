@@ -45,6 +45,7 @@ namespace PengChat3
             textBlock_DeleteRoomButton.Text = ResourceManager.GetStringByKey("Str_Delete");
             textBlock_LogoutButton.Text = ResourceManager.GetStringByKey("Str_Logout");
             textBlock_CreateRoomButton.Text = ResourceManager.GetStringByKey("Str_CreateRoom");
+            textBlock_GroupBoxInfo.Text = ResourceManager.GetStringByKey("Str_InfoWindow");
 #endregion
 
 #if TEST
@@ -91,19 +92,6 @@ namespace PengChat3
             else
             {
                 Utility.Error(ResourceManager.GetStringByKey("Str_EmptyLabel"));
-            }
-        }
-
-        void sock_OnLogin(object sender, LoginEventArgs e)
-        {
-            switch (e.ErrCode)
-            {
-                case LoginEventArgs.ErrorCode.Ok:
-                    MessageBox.Show("로그인 성공!");
-                    break;
-                case LoginEventArgs.ErrorCode.UnknownIdPw:
-                    MessageBox.Show("아디비번 확인바람");
-                    break;
             }
         }
 

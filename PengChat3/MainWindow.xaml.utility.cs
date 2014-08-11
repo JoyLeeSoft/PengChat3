@@ -52,5 +52,13 @@ namespace PengChat3
             NoImage.UriSource = new Uri(@"Resources\bullet-blue.png", UriKind.Relative);
             NoImage.EndInit();
         }
+
+        private void Logging(string msg)
+        {
+            Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate
+            {
+                textBox_Info.AppendText(msg + "\r\n");
+            }));
+        }
     }
 }

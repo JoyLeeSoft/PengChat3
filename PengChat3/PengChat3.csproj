@@ -55,6 +55,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CntComboBoxItem.cs" />
+    <Compile Include="MainWindow.xaml.sockevents.cs" />
     <Compile Include="MainWindow.xaml.utility.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -126,6 +127,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\create-room.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\info.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

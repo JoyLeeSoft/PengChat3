@@ -115,6 +115,15 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   알림 창과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_InfoWindow {
+            get {
+                return ResourceManager.GetString("Str_InfoWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   서버주소과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_IP {
@@ -178,6 +187,16 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   PengChat3 서버에 접속하지 못했습니다.
+        ///아이디와 비밀번호를 확인하여 주세요.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_NotSuccessedConnect {
+            get {
+                return ResourceManager.GetString("Str_NotSuccessedConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   접속자 수과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_NumOfMember {
@@ -219,6 +238,15 @@ namespace PC3LP_ko.Properties {
         internal static string Str_Signin {
             get {
                 return ResourceManager.GetString("Str_Signin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   PengChat3 서버에 접속하였습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_SuccessedConnect {
+            get {
+                return ResourceManager.GetString("Str_SuccessedConnect", resourceCulture);
             }
         }
     }

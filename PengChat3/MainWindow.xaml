@@ -95,6 +95,17 @@
                             </Button>
                         </Grid>
                     </GroupBox>
+                    <GroupBox HorizontalAlignment="Left" Margin="10,167,0,0" VerticalAlignment="Top" Width="268" Height="176">
+                        <GroupBox.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Height="auto" Width="auto" Source="Resources/info.png"/>
+                                <TextBlock x:Name="textBlock_GroupBoxInfo" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </GroupBox.Header>
+                        <Grid HorizontalAlignment="Left" Height="166" Margin="0,0,-2,-12" VerticalAlignment="Top" Width="258">
+                            <TextBox x:Name="textBox_Info" HorizontalAlignment="Left" Height="146" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="238" IsReadOnly="True" VerticalScrollBarVisibility="Visible" AcceptsReturn="True"/>
+                        </Grid>
+                    </GroupBox>
                 </Grid>
             </TabItem>
         </TabControl>

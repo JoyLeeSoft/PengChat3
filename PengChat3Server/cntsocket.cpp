@@ -163,7 +163,7 @@ bool cnt_socket::on_login(const packet &id, const packet &pw)
 		g_db->find_nick(id, pw, nick);
 		m_client_state.is_logged = true;
 
-		send_packet(PROTOCOL_LOGIN, nick);
+		send_packet(PROTOCOL_LOGIN, "");
 		return true;
 	}
 	catch (runtime_error &)
