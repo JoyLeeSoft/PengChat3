@@ -97,6 +97,15 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   PengChat3 서버와의 연결이 끊어졌습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_DisconnectedServer {
+            get {
+                return ResourceManager.GetString("Str_DisconnectedServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   모든 입력란을 채워주세요과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_EmptyLabel {
@@ -138,6 +147,15 @@ namespace PC3LP_ko.Properties {
         internal static string Str_IsNeedPW {
             get {
                 return ResourceManager.GetString("Str_IsNeedPW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   PengChat3 서버로부터 로그아웃 했습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_LoggedOut {
+            get {
+                return ResourceManager.GetString("Str_LoggedOut", resourceCulture);
             }
         }
         

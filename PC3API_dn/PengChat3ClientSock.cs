@@ -20,6 +20,8 @@ namespace PC3API_dn
 
         public bool IsConnected { get; private set; }
 
+        public bool IsLogged { get; private set; }
+
         public string ConnectedIP { get; private set; }
 
         public int ConnectedPort { get; private set; }
@@ -29,6 +31,7 @@ namespace PC3API_dn
         public PengChat3ClientSock()
         {
             IsConnected = false;
+            IsLogged = false;
             ConnectedIP = null;
             ConnectedPort = 0;
             Nickname = null;
@@ -41,7 +44,8 @@ namespace PC3API_dn
 
         public PengChat3ClientSock(string ip, int port, string id, string pw)
         {
-            Connect(ip, port, id, pw);
+            Connect(ip, port);
+            Login(id, pw);
         }
 
         public void Dispose()
@@ -63,6 +67,7 @@ namespace PC3API_dn
             // Delete unmanaged resources
             if (RecvThread != null)
             {
+                IsNormalClose = true;
                 Stream.Close();
                 RecvThread.Join();
                 RecvThread = null;
@@ -81,7 +86,7 @@ namespace PC3API_dn
             IsAlreadyDisposed = true;
         }
 
-        public void Connect(string ip, int port, string id, string pw)
+        public void Connect(string ip, int port)
         {
             Client = new TcpClient(ip, port);
             Stream = Client.GetStream();
@@ -92,9 +97,23 @@ namespace PC3API_dn
 
             RecvThread = new Thread(new ThreadStart(RecvThreadFunc));
             RecvThread.Start();
+        }
 
+        public void Login(string id, string pw)
+        {
             SendPacket(Protocol.PROTOCOL_CHECK, MagicNumber);
             SendPacket(Protocol.PROTOCOL_LOGIN, id + '\n' + pw);
+        }
+
+        public void Logout()
+        {
+            Dispose();
+
+            if (OnDisconnected != null)
+            {
+                OnDisconnected(this, new DisconnectedEventArgs(ConnectedIP, ConnectedPort,
+                    DisconnectedEventArgs.ErrorCode.Logout));
+            }
         }
 
         private void SendPacket(string header, string data)

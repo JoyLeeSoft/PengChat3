@@ -103,7 +103,7 @@
                             </StackPanel>
                         </GroupBox.Header>
                         <Grid HorizontalAlignment="Left" Height="166" Margin="0,0,-2,-12" VerticalAlignment="Top" Width="258">
-                            <TextBox x:Name="textBox_Info" HorizontalAlignment="Left" Height="146" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="238" IsReadOnly="True" VerticalScrollBarVisibility="Visible" AcceptsReturn="True"/>
+                            <TextBox x:Name="textBox_Info" HorizontalAlignment="Left" Height="146" Margin="0,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="258" IsReadOnly="True" VerticalScrollBarVisibility="Visible" AcceptsReturn="True"/>
                         </Grid>
                     </GroupBox>
                 </Grid>

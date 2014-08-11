@@ -5,6 +5,8 @@ namespace PC3API_dn
 {
     public partial class PengChat3ClientSock
     {
+        private bool IsNormalClose = false;
+
         private void RecvThreadFunc()
         {
             List<byte> buf = new List<byte>(new byte[MAX_BYTES_NUMBER]);
@@ -64,9 +66,13 @@ namespace PC3API_dn
             }
 
         delete_client:
-            if (OnClosed != null)
+            if (IsNormalClose == false)
             {
-                OnClosed(this, new ClosedEventArgs(ConnectedIP, ConnectedPort));
+                if (OnDisconnected != null)
+                {
+                    OnDisconnected(this, new DisconnectedEventArgs(ConnectedIP, ConnectedPort, 
+                        DisconnectedEventArgs.ErrorCode.ServerError));
+                }
             }
         }
 
@@ -83,15 +89,16 @@ namespace PC3API_dn
             {
                 if (pack != "")
                 {
+                    IsLogged = true;
                     Nickname = pack;
 
                     if (OnLogin != null)
-                        OnLogin(this, new LoginEventArgs(true, Nickname, LoginEventArgs.ErrorCode.Ok));
+                        OnLogin(this, new LoginEventArgs(ConnectedIP, ConnectedPort, Nickname, LoginEventArgs.ErrorCode.Ok));
                 }
                 else
                 {
                     if (OnLogin != null)
-                        OnLogin(this, new LoginEventArgs(false, Nickname, LoginEventArgs.ErrorCode.UnknownIdPw));
+                        OnLogin(this, new LoginEventArgs(null, 0, null, LoginEventArgs.ErrorCode.UnknownIdPw));
                 }
             }
         }

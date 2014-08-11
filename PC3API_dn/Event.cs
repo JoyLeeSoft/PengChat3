@@ -4,10 +4,12 @@ namespace PC3API_dn
 {
     public class LoginEventArgs : EventArgs
     {
-        public bool Successed { get; private set; }
+        public string ConnectedIP { get; private set; }
+        public int ConnectedPort { get; private set; }
+
         public string Nickname { get; private set; }
 
-        public enum ErrorCode : byte
+        public enum ErrorCode
         {
             Ok,
             UnknownIdPw,
@@ -15,27 +17,37 @@ namespace PC3API_dn
 
         public ErrorCode ErrCode { get; private set; }
 
-        public LoginEventArgs(bool successed, string nickname, ErrorCode errcode)
+        public LoginEventArgs(string ip, int port, string nickname, ErrorCode errcode)
         {
-            Successed = successed;
+            ConnectedIP = ip;
+            ConnectedPort = port;
             Nickname = nickname;
             ErrCode = errcode;
         }
     }
     public delegate void OnLoginDele(object sender, LoginEventArgs e);
 
-    public class ClosedEventArgs : EventArgs
+    public class DisconnectedEventArgs : EventArgs
     {
-        public string ClosedIP { get; private set; }
-        public int ClosedPort { get; private set; }
+        public string DisconnectedIP { get; private set; }
+        public int DisconnectedPort { get; private set; }
 
-        public ClosedEventArgs(string ip, int port)
+        public enum ErrorCode
         {
-            ClosedIP = ip;
-            ClosedPort = port;
+            Logout,
+            ServerError,
+        }
+
+        public ErrorCode ErrCode { get; private set; }
+
+        public DisconnectedEventArgs(string ip, int port, ErrorCode errcode)
+        {
+            DisconnectedIP = ip;
+            DisconnectedPort = port;
+            ErrCode = errcode;
         }
     }
-    public delegate void OnClosedDele(object sender, ClosedEventArgs e);
+    public delegate void OnDisconnectedDele(object sender, DisconnectedEventArgs e);
 
     public class RoomInfoEventArgs : EventArgs
     {
@@ -48,7 +60,7 @@ namespace PC3API_dn
 
     public class CreateRoomEventArgs : EventArgs
     {
-        public enum ErrorCode : byte
+        public enum ErrorCode
         {
             Ok,
             CapacityIsNegative,
@@ -65,7 +77,7 @@ namespace PC3API_dn
 
     public class DeleteRoomEventArgs : EventArgs
     {
-        public enum ErrorCode : byte
+        public enum ErrorCode
         {
             Ok,
 			PermissionError,
@@ -83,7 +95,7 @@ namespace PC3API_dn
 
     public class EnterToRoomEventArgs : EventArgs
     {
-        public enum ErrorCode : byte
+        public enum ErrorCode
         {
             Ok,
             ClientIsFull,
@@ -128,7 +140,7 @@ namespace PC3API_dn
     public partial class PengChat3ClientSock
     {
         public event OnLoginDele OnLogin;
-        public event OnClosedDele OnClosed;
+        public event OnDisconnectedDele OnDisconnected;
         public event OnRoomInfoDele OnRoomInfo;
         public event OnCreateRoomDele OnCreateRoom;
         public event OnDeleteRoomDele OnDeleteRoom;

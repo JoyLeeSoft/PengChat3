@@ -29,7 +29,6 @@
 #include "null_db.h"
 
 list<client_ptr> g_clients;
-bool delete_thrd_run = true;
 
 db *g_db;
 
@@ -94,7 +93,8 @@ int main(int argc, char *argv[])
 			g_clients.push_back(client_ptr(cnt));
 		}
 	});
-	thread delete_thrd([]()
+	bool delete_thrd_run = true;
+	thread delete_thrd([&delete_thrd_run]()
 	{
 		while (delete_thrd_run)
 		{

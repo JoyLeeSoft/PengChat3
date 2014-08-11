@@ -181,4 +181,10 @@
   <data name="Str_SuccessedConnect" xml:space="preserve">
     <value>PengChat3 서버에 접속하였습니다.</value>
   </data>
+  <data name="Str_DisconnectedServer" xml:space="preserve">
+    <value>PengChat3 서버와의 연결이 끊어졌습니다.</value>
+  </data>
+  <data name="Str_LoggedOut" xml:space="preserve">
+    <value>PengChat3 서버로부터 로그아웃 했습니다.</value>
+  </data>
 </root>

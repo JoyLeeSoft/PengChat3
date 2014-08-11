@@ -3,7 +3,7 @@ using PC3API_dn;
 
 namespace PengChat3
 {
-    public class CntComboBoxItem : ComboBoxItem
+    public class CntComboBoxItem
     {
         public string Text { get; set; }
 

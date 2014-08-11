@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace PengChat3
 {
@@ -55,9 +56,10 @@ namespace PengChat3
 
         private void Logging(string msg)
         {
-            Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
             {
                 textBox_Info.AppendText(msg + "\r\n");
+                textBox_Info.ScrollToEnd();
             }));
         }
     }

@@ -41,9 +41,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="makefile" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="cntsocket.h">
       <Filter>socket</Filter>
     </ClInclude>

@@ -27,7 +27,7 @@ namespace PengChat3
             InitializeComponent();
             InitImages();
 
-#region Control settings
+#region Control name settings
             textBlock_tabItemMain.Text = ResourceManager.GetStringByKey("Str_MainPage");
             textBlock_groupBoxLogin.Text = ResourceManager.GetStringByKey("Str_Login");
             label_ID.Content = ResourceManager.GetStringByKey("Str_ID") + " : ";
@@ -65,7 +65,9 @@ namespace PengChat3
                 try
                 {
                     sock.OnLogin += sock_OnLogin;
-                    sock.Connect(textBox_IP.Text, App.Port, textBox_ID.Text, passwordBox_PW.Password);
+                    sock.OnDisconnected += sock_OnDisconnected;
+                    sock.Connect(textBox_IP.Text, App.Port);
+                    sock.Login(textBox_ID.Text, passwordBox_PW.Password);
                 }
                 catch (Exception ex)
                 {
@@ -79,15 +81,6 @@ namespace PengChat3
 
                     return;
                 }
-
-                CntComboBoxItem item = new CntComboBoxItem();
-                item.Text = sock.ConnectedIP + ":" + sock.ConnectedPort.ToString();
-                item.Sock = sock;
-
-                comboBox_ConnectionInfo.Items.Add(item);
-                comboBox_ConnectionInfo.SelectedItem = item;
-
-                ChangeStatusConnectionInfoControls(System.Windows.Visibility.Visible);
             }
             else
             {
@@ -97,7 +90,7 @@ namespace PengChat3
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            ((CntComboBoxItem)comboBox_ConnectionInfo.SelectedItem).Sock.Dispose();
+            ((CntComboBoxItem)comboBox_ConnectionInfo.SelectedItem).Sock.Logout();
 
             comboBox_ConnectionInfo.Items.Remove(comboBox_ConnectionInfo.SelectedItem);
 
