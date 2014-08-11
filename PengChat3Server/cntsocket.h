@@ -55,6 +55,7 @@ private:
 
 public:
 	bool is_need_to_delete() const { return m_client_state.need_to_delete; }
+	void send_packet(const packet_type *header, const packet &pack);
 };
 
 #endif

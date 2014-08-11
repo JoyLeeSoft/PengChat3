@@ -63,6 +63,7 @@ namespace PengChat3
 
                 try
                 {
+                    sock.OnLogin += sock_OnLogin;
                     sock.Connect(textBox_IP.Text, App.Port, textBox_ID.Text, passwordBox_PW.Password);
                 }
                 catch (Exception ex)
@@ -93,6 +94,19 @@ namespace PengChat3
             }
         }
 
+        void sock_OnLogin(object sender, LoginEventArgs e)
+        {
+            switch (e.ErrCode)
+            {
+                case LoginEventArgs.ErrorCode.Ok:
+                    MessageBox.Show("로그인 성공!");
+                    break;
+                case LoginEventArgs.ErrorCode.UnknownIdPw:
+                    MessageBox.Show("아디비번 확인바람");
+                    break;
+            }
+        }
+
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             ((CntComboBoxItem)comboBox_ConnectionInfo.SelectedItem).Sock.Dispose();
@@ -109,6 +123,16 @@ namespace PengChat3
         {
             if (e.Key == Key.Enter)
                 LoginButton_Click(null, null);
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            foreach (CntComboBoxItem item in comboBox_ConnectionInfo.Items)
+            {
+                item.ShutdownSocket();
+            }
+
+            comboBox_ConnectionInfo.Items.Clear();
         }
     }
 }

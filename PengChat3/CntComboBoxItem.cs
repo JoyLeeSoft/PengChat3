@@ -1,14 +1,15 @@
-﻿using PC3API_dn;
+﻿using System.Windows.Controls;
+using PC3API_dn;
 
 namespace PengChat3
 {
-    public class CntComboBoxItem
+    public class CntComboBoxItem : ComboBoxItem
     {
         public string Text { get; set; }
 
         public PengChat3ClientSock Sock { get; set; }
 
-        ~CntComboBoxItem()
+        public void ShutdownSocket()
         {
             if (Sock != null)
             {

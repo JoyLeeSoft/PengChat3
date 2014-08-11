@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace PC3API_dn
 {
-    public class PengChat3ClientSock : IDisposable
+    public partial class PengChat3ClientSock : IDisposable
     {
+        private static readonly int MAX_BYTES_NUMBER = 1024;
+        private static readonly int PACKET_HEADER_SIZE = 4;
         private static readonly Encoding DefaultEncoding = Encoding.UTF8;
         private static readonly string MagicNumber = Encoding.UTF8.GetString(new byte[] { 0x01, 0x04, 0x03, 0x09 });
-        private static readonly byte[] EOP = new byte[1] { (byte)'\0' };
+        private static readonly byte EOP = (byte)'\0';
 
-        private TcpClient Client;
-        private NetworkStream Stream;
-        private bool IsAlreadyDisposed;
+        private TcpClient Client = null;
+        private NetworkStream Stream = null;
+        private bool IsAlreadyDisposed = false;
+        private Thread RecvThread = null;
 
         public bool IsConnected { get; private set; }
 
@@ -20,9 +24,14 @@ namespace PC3API_dn
 
         public int ConnectedPort { get; private set; }
 
+        public string Nickname { get; private set; }
+
         public PengChat3ClientSock()
         {
             IsConnected = false;
+            ConnectedIP = null;
+            ConnectedPort = 0;
+            Nickname = null;
         }
 
         ~PengChat3ClientSock()
@@ -52,6 +61,12 @@ namespace PC3API_dn
             }
 
             // Delete unmanaged resources
+            if (RecvThread != null)
+            {
+                Stream.Close();
+                RecvThread.Join();
+                RecvThread = null;
+            }
             if (Stream != null)
             {
                 Stream.Close();
@@ -75,6 +90,9 @@ namespace PC3API_dn
             ConnectedIP = ip;
             ConnectedPort = port;
 
+            RecvThread = new Thread(new ThreadStart(RecvThreadFunc));
+            RecvThread.Start();
+
             SendPacket(Protocol.PROTOCOL_CHECK, MagicNumber);
             SendPacket(Protocol.PROTOCOL_LOGIN, id + '\n' + pw);
         }
@@ -84,8 +102,8 @@ namespace PC3API_dn
             byte[] buf = new byte[header.Length + data.Length + 1];
 
             buf = Utility.CombineArray(DefaultEncoding.GetBytes(header),
-                                       DefaultEncoding.GetBytes(data), 
-                                       EOP);
+                                       DefaultEncoding.GetBytes(data),
+                                       new byte[1] { EOP });
 
             Stream.Write(buf, 0, buf.Length);
         }

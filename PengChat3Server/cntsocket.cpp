@@ -163,13 +163,21 @@ bool cnt_socket::on_login(const packet &id, const packet &pw)
 		g_db->find_nick(id, pw, nick);
 		m_client_state.is_logged = true;
 
-		// send message
+		send_packet(PROTOCOL_LOGIN, nick);
 		return true;
 	}
 	catch (runtime_error &)
 	{
 		m_client_state.need_to_delete = true;
-		// log
+		
+		send_packet(PROTOCOL_LOGIN, "");
 		return false;
 	}
+}
+
+void cnt_socket::send_packet(const packet_type *header, const packet &pack)
+{
+	packet temp = header + pack + EOP;
+
+	m_socket->write_some(buffer(temp, temp.size()), m_latest_error);
 }
