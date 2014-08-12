@@ -27,22 +27,23 @@
 #include "utility.h"
 #include "db.h"
 #include "null_db.h"
+#include "room.h"
 
-list<client_ptr> g_clients;
+list<cnt_socket *> g_clients;
 
 db *g_db;
+
+mutex g_clients_mutex;
 
 int main(int argc, char *argv[])
 {
 #if defined(_WIN32) || defined(_WIN64)
-	EnableMenuItem(GetSystemMenu(GetConsoleWindow(), FALSE), SC_CLOSE, MF_GRAYED);
+	EnableMenuItem(GetSystemMenu(GetConsoleWindow(), FALSE), SC_CLOSE, MF_DISABLED);
 #endif
 
 	// Basic I/O service object
 	io_service io_srv;
 	tcp::acceptor server(io_srv);
-
-	bool delete_thrd_run = false;
 
 	// Thread for accept the client
 	thread acpt_thrd([&io_srv, &server]()
@@ -96,45 +97,28 @@ int main(int argc, char *argv[])
 				<< client_epnt.port() << '\n';
 
 			cnt_socket *cnt = new cnt_socket(client);
-			g_clients.push_back(client_ptr(cnt));
-		}
-	});
-
-	delete_thrd_run = true;
-	thread delete_thrd([&delete_thrd_run]()
-	{
-		while (delete_thrd_run)
-		{
-			// CPU overload protection
-			this_thread::sleep_for(chrono::seconds(1));
-
-			if (g_clients.empty())
-				continue;
-
-			g_clients.remove_if([](const client_ptr &p)
-			{
-				return p->is_need_to_delete();
-			});
+			g_clients.push_back(cnt);
 		}
 	});
 
 	cin.get();
 	
 	// Clients shutdown
+	for (auto client : g_clients)
+		delete client;
 	g_clients.clear();
 
 	// DB shutdown
 	delete g_db;
 
-	// Delete thread shutdown
-	delete_thrd_run = false;
-	if (delete_thrd.joinable())
-		delete_thrd.join();
-
 	// Accept thread shutdown
 	server.close();
 	if (acpt_thrd.joinable())
 		acpt_thrd.join();
+
+#if defined(_WIN32) || defined(_WIN64)
+	EnableMenuItem(GetSystemMenu(GetConsoleWindow(), FALSE), SC_CLOSE, MF_ENABLED);
+#endif
 
 	return 0;
 }

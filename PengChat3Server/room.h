@@ -22,43 +22,17 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef cntsocket_h_
-#define cntsocket_h_
+#ifndef room_h_
+#define room_h_
 
 #include "common.h"
 
-class cnt_socket final : private boost::noncopyable
+struct room
 {
-public:
-	cnt_socket(tcp::socket *client);
-	~cnt_socket();
-
-private:
-	typedef std::shared_ptr<tcp::socket> socket_ptr;
-	socket_ptr m_socket;
-	system::error_code m_latest_error;
-
-	thread m_recv_thrd;
-
-	struct client_state 
-	{
-	public:
-		bool is_real_client, is_logged;
-	} m_client_state;
-
-	bool m_no_need_join;
-
-private:
-	void recv_func();
-	bool packet_processor(packet &pack);
-
-	bool on_check_real(const packet &pack);
-	bool on_login(const packet &id, const packet &pw);
-	void on_get_room_info();
-
-public:
-	void send_packet(const packet_type *header, const packet &pack);
-	void close() { m_socket->close(); }
+	string name;
+	string master;
+	string password;
+	uint16_t max_num;
 };
 
 #endif

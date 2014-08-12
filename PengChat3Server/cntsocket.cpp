@@ -29,8 +29,8 @@
 
 extern db *g_db;
 
-cnt_socket::cnt_socket(tcp::socket *client) : m_socket(client), m_client_state({ false, false, false }),
-m_recv_thrd(bind(&cnt_socket::recv_func, this))
+cnt_socket::cnt_socket(tcp::socket *client) : m_socket(client), m_client_state({ false, false }),
+	m_recv_thrd(bind(&cnt_socket::recv_func, this)), m_no_need_join(false)
 {
 
 }
@@ -39,12 +39,11 @@ cnt_socket::~cnt_socket()
 {
 	m_socket->close();
 
-	if (m_recv_thrd.joinable())
-		m_recv_thrd.join();
+	if (m_no_need_join == false)
+		if (m_recv_thrd.joinable())
+			m_recv_thrd.join();
 
-#ifdef _DEBUG
-	printf("cnt_socket destroyed");
-#endif
+	printf("cnt_socket destroyed\n");
 }
 
 void cnt_socket::recv_func()
@@ -57,14 +56,15 @@ void cnt_socket::recv_func()
 	{
 		size_t read_bytes = m_socket->read_some(buffer(buf, MAX_BYTES_NUMBER), m_latest_error);
 
-		if (read_bytes <= 0)
-			goto delete_client;
-
+		// When server is closing
 		if (m_latest_error == asio::error::connection_aborted)
-			goto delete_client;
+			return;
 
 		if ((m_latest_error == asio::error::connection_reset) ||
 			(m_latest_error == asio::error::eof))
+			goto delete_client;
+
+		if (read_bytes <= 0)
 			goto delete_client;
 
 		buf.erase(buf.begin() + read_bytes, buf.end());
@@ -100,7 +100,15 @@ void cnt_socket::recv_func()
 	}
 
 delete_client:
-	m_client_state.need_to_delete = true;
+	m_recv_thrd.detach();
+	{
+		extern mutex g_clients_mutex;
+		lock_guard<mutex> lg(g_clients_mutex);
+		g_clients.remove(this);
+	}
+
+	m_no_need_join = true;
+	delete this;
 }
 
 bool cnt_socket::packet_processor(packet &pack)
@@ -122,7 +130,6 @@ bool cnt_socket::packet_processor(packet &pack)
 		}
 		else
 		{
-			m_client_state.need_to_delete = true;
 			return false;
 		}
 	}
@@ -153,7 +160,6 @@ bool cnt_socket::on_check_real(const packet &pack)
 	}
 	else
 	{
-		m_client_state.need_to_delete = true;
 		return false;
 	}
 }
@@ -173,8 +179,6 @@ bool cnt_socket::on_login(const packet &id, const packet &pw)
 	}
 	catch (runtime_error &)
 	{
-		m_client_state.need_to_delete = true;
-		
 		send_packet(PROTOCOL_LOGIN, "");
 		return false;
 	}

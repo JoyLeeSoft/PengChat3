@@ -31,11 +31,12 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
-#include <thread>
 #include <memory>
 #include <list>
 #include <array>
 #include <exception>
+#include <thread>
+#include <mutex>
 
 // Boost library
 #include <boost/noncopyable.hpp>
@@ -61,8 +62,7 @@ typedef string packet;
 
 // Global variables
 class cnt_socket;
-typedef std::shared_ptr<cnt_socket> client_ptr;
-extern list<client_ptr> g_clients;
+extern list<cnt_socket *> g_clients;
 
 // Defines constant
 #define SERVER_PORT_NUMBER 13333

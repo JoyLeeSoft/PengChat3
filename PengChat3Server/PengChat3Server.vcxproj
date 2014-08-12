@@ -93,6 +93,7 @@
     <ClInclude Include="db.h" />
     <ClInclude Include="null_db.h" />
     <ClInclude Include="protocol.h" />
+    <ClInclude Include="room.h" />
     <ClInclude Include="sqlite3_db.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>

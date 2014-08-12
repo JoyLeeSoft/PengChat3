@@ -25,6 +25,9 @@
     <Filter Include="socket">
       <UniqueIdentifier>{561abec8-f2d6-4613-8028-47769811f7ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="room">
+      <UniqueIdentifier>{9e9218ab-cd30-4800-9492-5f11de014c84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -61,6 +64,9 @@
     </ClInclude>
     <ClInclude Include="null_db.h">
       <Filter>database\null</Filter>
+    </ClInclude>
+    <ClInclude Include="room.h">
+      <Filter>room</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
