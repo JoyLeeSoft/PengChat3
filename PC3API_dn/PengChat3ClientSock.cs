@@ -101,7 +101,7 @@ namespace PC3API_dn
 
         public void Login(string id, string pw)
         {
-            SendPacket(Protocol.PROTOCOL_CHECK, MagicNumber);
+            SendPacket(Protocol.PROTOCOL_CHECK_REAL, MagicNumber);
             SendPacket(Protocol.PROTOCOL_LOGIN, id + '\n' + pw);
         }
 

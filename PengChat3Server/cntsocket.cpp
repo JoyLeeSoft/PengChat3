@@ -135,6 +135,10 @@ bool cnt_socket::packet_processor(packet &pack)
 		else
 			return false;
 	}
+	else if (header.compare(PROTOCOL_GET_ROOM_INFO) == 0)
+	{
+		
+	}
 
 	return true;
 }

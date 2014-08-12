@@ -43,6 +43,11 @@
 
 #include <boost/asio.hpp> // Async I/O
 
+// For Windows platform
+#if defined(_WIN32) || defined(_WIN64)
+#include <windows.h>
+#endif
+
 // Using namespaces
 using namespace std;
 

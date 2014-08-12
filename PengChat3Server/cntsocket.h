@@ -52,6 +52,7 @@ private:
 
 	bool on_check_real(const packet &pack);
 	bool on_login(const packet &id, const packet &pw);
+	void on_get_room_info();
 
 public:
 	bool is_need_to_delete() const { return m_client_state.need_to_delete; }

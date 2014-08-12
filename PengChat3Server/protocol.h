@@ -31,5 +31,6 @@ const packet_type MAGIC_NUMBER[] = { 0x01, 0x04, 0x03, 0x09, 0x00 };
 
 const packet_type PROTOCOL_CHECK_REAL[] = { 'C', 'H', 'C', 'K', 0x00 };
 const packet_type PROTOCOL_LOGIN[] = { 'L', 'G', 'I', 'N', 0x00 };
+const packet_type PROTOCOL_GET_ROOM_INFO[] = { 'G', 'T', 'R', 'I', 0x00 };
 
 #endif

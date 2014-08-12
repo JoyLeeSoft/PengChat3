@@ -34,9 +34,15 @@ db *g_db;
 
 int main(int argc, char *argv[])
 {
+#if defined(_WIN32) || defined(_WIN64)
+	EnableMenuItem(GetSystemMenu(GetConsoleWindow(), FALSE), SC_CLOSE, MF_GRAYED);
+#endif
+
 	// Basic I/O service object
 	io_service io_srv;
 	tcp::acceptor server(io_srv);
+
+	bool delete_thrd_run = false;
 
 	// Thread for accept the client
 	thread acpt_thrd([&io_srv, &server]()
@@ -93,7 +99,8 @@ int main(int argc, char *argv[])
 			g_clients.push_back(client_ptr(cnt));
 		}
 	});
-	bool delete_thrd_run = true;
+
+	delete_thrd_run = true;
 	thread delete_thrd([&delete_thrd_run]()
 	{
 		while (delete_thrd_run)

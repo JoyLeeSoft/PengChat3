@@ -86,21 +86,31 @@ namespace PC3API_dn
             pack = pack.Remove(0, PACKET_HEADER_SIZE);
 
             if (header == Protocol.PROTOCOL_LOGIN)
-            {
-                if (pack != "")
-                {
-                    IsLogged = true;
-                    Nickname = pack;
+                OnLoginResult(pack);
+            else if (header == Protocol.PROTOCOL_GET_ROOM_INFO)
+                OnGetRoomInfoResult(pack);
+        }
 
-                    if (OnLogin != null)
-                        OnLogin(this, new LoginEventArgs(ConnectedIP, ConnectedPort, Nickname, LoginEventArgs.ErrorCode.Ok));
-                }
-                else
-                {
-                    if (OnLogin != null)
-                        OnLogin(this, new LoginEventArgs(null, 0, null, LoginEventArgs.ErrorCode.UnknownIdPw));
-                }
+        private void OnLoginResult(string pack)
+        {
+            if (pack != "")
+            {
+                IsLogged = true;
+                Nickname = pack;
+
+                if (OnLogin != null)
+                    OnLogin(this, new LoginEventArgs(ConnectedIP, ConnectedPort, Nickname, LoginEventArgs.ErrorCode.Ok));
             }
+            else
+            {
+                if (OnLogin != null)
+                    OnLogin(this, new LoginEventArgs(null, 0, null, LoginEventArgs.ErrorCode.UnknownIdPw));
+            }
+        }
+        
+        private void OnGetRoomInfoResult(string pack)
+        {
+
         }
     }
 }
