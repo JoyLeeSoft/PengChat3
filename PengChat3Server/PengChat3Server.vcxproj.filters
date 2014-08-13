@@ -28,6 +28,9 @@
     <Filter Include="room">
       <UniqueIdentifier>{9e9218ab-cd30-4800-9492-5f11de014c84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="log">
+      <UniqueIdentifier>{b65a97e8-4dab-48ab-86e4-a4bedb230337}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -41,6 +44,9 @@
     </ClCompile>
     <ClCompile Include="null_db.cpp">
       <Filter>database\null</Filter>
+    </ClCompile>
+    <ClCompile Include="logger.cpp">
+      <Filter>log</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="room.h">
       <Filter>room</Filter>
+    </ClInclude>
+    <ClInclude Include="logger.h">
+      <Filter>log</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

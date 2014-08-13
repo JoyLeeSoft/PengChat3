@@ -24,6 +24,7 @@
 
 #include "null_db.h"
 
+// This is a not database.
 null_db::null_db()
 {
 
@@ -34,8 +35,17 @@ null_db::~null_db()
 
 }
 
-// This is a not database. just set nickname to id
 void null_db::find_nick(const packet &id, const packet &pw, packet &nick)
 {
 	nick = id;
+}
+
+void null_db::insert_ip_ban(const string &ip)
+{
+	// Nothing
+}
+
+ip_ban_list null_db::load_ip_ban_list()
+{
+	return ip_ban_list();
 }

@@ -34,6 +34,9 @@ public:
 
 public:
 	virtual void find_nick(const packet &id, const packet &pw, packet &nick) = 0;
+
+	virtual void insert_ip_ban(const string &ip) = 0;
+	virtual ip_ban_list load_ip_ban_list() = 0;
 };
 
 #endif

@@ -22,51 +22,23 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef cntsocket_h_
-#define cntsocket_h_
+#ifndef logger_h_
+#define logger_h_
 
 #include "common.h"
 
-class cnt_socket final : private boost::noncopyable
+class logger final : private boost::noncopyable
 {
 public:
-	cnt_socket(tcp::socket *client, const tcp::endpoint &epnt);
-	~cnt_socket();
+	logger(const string &filename);
+	~logger();
 
 private:
-	typedef std::shared_ptr<tcp::socket> socket_ptr;
-	socket_ptr m_socket;
-	tcp::endpoint m_epnt;
-	system::error_code m_latest_error;
-
-	thread m_recv_thrd;
-
-	struct client_state 
-	{
-	public:
-		bool is_real_client, is_logged;
-	} m_client_state;
-
-	bool m_no_need_join;
-
-private:
-	void recv_func();
-	bool packet_processor(packet &pack);
-
-	bool on_check_real(const packet &pack);
-	bool on_login(const packet &id, const packet &pw);
-	void on_get_room_info();
+	ofstream m_file;
+	mutex m_mtx;
 
 public:
-	void send_packet(const packet_type *header, const packet &pack);
-
-	void run();
-
-public:
-	const string ip() const
-	{
-		return m_epnt.address().to_string();
-	}
+	void logging(const string &msg);
 };
 
 #endif

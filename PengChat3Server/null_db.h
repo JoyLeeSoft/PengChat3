@@ -35,6 +35,9 @@ public:
 
 public:
 	virtual void find_nick(const packet &id, const packet &pw, packet &nick) override;
+
+	virtual void insert_ip_ban(const string &ip) override;
+	virtual ip_ban_list load_ip_ban_list() override;
 };
 
 #endif

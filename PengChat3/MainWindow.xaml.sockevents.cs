@@ -56,7 +56,7 @@ namespace PengChat3
                     string err = ResourceManager.GetStringByKey("Str_DisconnectedServer") + '\n' 
                     + e.DisconnectedIP + ':' + e.DisconnectedPort.ToString();
                     Logging(err);
-                    Utility.Error(err);
+                    //Utility.Error(err);
                     break;
 
                 case DisconnectedEventArgs.ErrorCode.Logout:

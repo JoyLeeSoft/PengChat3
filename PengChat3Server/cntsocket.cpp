@@ -26,24 +26,28 @@
 #include "utility.h"
 #include "protocol.h"
 #include "db.h"
+#include "logger.h"
 
 extern db *g_db;
 
-cnt_socket::cnt_socket(tcp::socket *client) : m_socket(client), m_client_state({ false, false }),
-	m_recv_thrd(bind(&cnt_socket::recv_func, this)), m_no_need_join(false)
+cnt_socket::cnt_socket(tcp::socket *client, const tcp::endpoint &epnt) : m_socket(client), m_epnt(epnt), m_client_state({ false, false }), m_no_need_join(false)
 {
-
+	
 }
 
 cnt_socket::~cnt_socket()
 {
 	m_socket->close();
+	m_socket.reset();
 
 	if (m_no_need_join == false)
 		if (m_recv_thrd.joinable())
 			m_recv_thrd.join();
 
-	printf("cnt_socket destroyed\n");
+	stringstream ss;
+	ss << "Client disconnected. ip = " << m_epnt.address().to_string() << " port = "
+		<< m_epnt.port() << '\n';
+	g_log->logging(ss.str());
 }
 
 void cnt_socket::recv_func()
@@ -189,4 +193,9 @@ void cnt_socket::send_packet(const packet_type *header, const packet &pack)
 	packet temp = header + pack + EOP;
 
 	m_socket->write_some(buffer(temp, temp.size()), m_latest_error);
+}
+
+void cnt_socket::run()
+{
+	m_recv_thrd = thread(mem_fun(&cnt_socket::recv_func), this);
 }

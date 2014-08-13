@@ -30,6 +30,8 @@
 // C++ standard library
 #include <cstdint>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <memory>
 #include <list>
@@ -37,6 +39,7 @@
 #include <exception>
 #include <thread>
 #include <mutex>
+#include <future>
 
 // Boost library
 #include <boost/noncopyable.hpp>
@@ -60,9 +63,14 @@ using namespace boost::asio::ip;
 typedef char packet_type;
 typedef string packet;
 
+// Typedefs
+typedef vector<string> ip_ban_list;
+
 // Global variables
 class cnt_socket;
 extern list<cnt_socket *> g_clients;
+class logger;
+extern logger *g_log;
 
 // Defines constant
 #define SERVER_PORT_NUMBER 13333
