@@ -31,8 +31,10 @@ struct room
 {
 	string name;
 	string master;
-	string password;
 	uint16_t max_num;
+	string password;
 };
+
+typedef list<room> room_list;
 
 #endif

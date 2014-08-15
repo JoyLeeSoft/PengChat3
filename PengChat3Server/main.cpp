@@ -30,12 +30,13 @@
 #include "logger.h"
 #include "room.h"
 
-list<cnt_socket *> g_clients;
+list<cnt_ptr> g_clients;
 
 db *g_db;
 logger *g_log;
+room_list g_room_list;
 
-mutex g_clients_mutex;
+mutex g_clients_mutex, g_room_mutex;
 
 int main(int argc, char *argv[])
 {
@@ -44,6 +45,10 @@ int main(int argc, char *argv[])
 #endif
 
 	g_log = new logger("PengChat3Server.log");
+
+	g_room_list.push_back({ "TestRoom1", "Master1", 0, "" });
+	g_room_list.push_back({ "TestRoom2", "Master2", 110, "asdf" });
+	g_room_list.push_back({ "TestRoom3", "Master3", 99, "zxcv" });
 
 	// Basic I/O service object
 	io_service io_srv;
@@ -87,6 +92,7 @@ int main(int argc, char *argv[])
 
 			server.accept(*client, client_epnt, err);
 
+			/* Error check */
 			if (err)
 			{
 				delete client;
@@ -99,7 +105,9 @@ int main(int argc, char *argv[])
 
 				cerr << "Could not accept client. error code = " << err.value() << "\n" + err.message() + '\n';
 			}
+			/*=====================================================================================================*/
 
+			/* Ip ban check */
 			if (find(ban_list.begin(), ban_list.end(), client_epnt.address().to_string()) != ban_list.end())
 			{
 				delete client;
@@ -109,47 +117,65 @@ int main(int argc, char *argv[])
 				g_log->logging(ss.str());
 				continue;
 			}
+			/*=====================================================================================================*/
 
 			stringstream ss;
 			ss << "Client connected. ip = " << client_epnt.address().to_string() << " port = "
 				<< client_epnt.port() << '\n';
 			g_log->logging(ss.str());
 
+			/* Try to create client */
 			cnt_socket *cnt = nullptr;
 
 			try
 			{
 				cnt = new cnt_socket(client, client_epnt);
 				cnt->run();
+				g_clients.push_back(cnt_ptr(cnt));
 			}
-			catch (std::system_error &)
+			catch (const system_error &e)
 			{
-				string ip = client_epnt.address().to_string();
-
-				ban_list.push_back(ip);
-				g_db->insert_ip_ban(ip);
 				delete cnt;
 
-				async(launch::async, [ip]()
+				/* If could not create thread */
+				if (e.code().value() == EAGAIN)
 				{
-					g_clients.remove_if([ip](const cnt_socket *s)
+					string ip = client_epnt.address().to_string();
+
+					ban_list.push_back(ip);
+					g_db->insert_ip_ban(ip);
+
 					{
-						return s->ip() == ip;
-					});
-				}).get();
+						lock_guard<mutex> lg(g_clients_mutex);
+						
+						for (auto it = g_clients.begin(); it != g_clients.end();)
+						{
+							if ((*it)->ip() == ip)
+							{
+								g_clients.erase(it++);
+								continue;
+							}
 
-				continue;
-			}	
+							++it;
+						}
+					}
 
-			g_clients.push_back(cnt);
+					continue;
+				}
+				/*=====================================================================================================*/
+
+				stringstream ss;
+				ss << "Unhandled exception! error code = " << e.code().value() << " message = " << e.code().message() + '\n';
+				g_log->logging(ss.str());
+				cin.putback('\n');
+
+				break;
+			}
 		}
 	});
 
 	cin.get();
 	
-	// Clients shutdown
-	for (auto client : g_clients)
-		delete client;
 	g_clients.clear();
 
 	// DB shutdown

@@ -110,7 +110,15 @@ namespace PC3API_dn
         
         private void OnGetRoomInfoResult(string pack)
         {
+            Rooms_.Clear();
 
+            foreach (var temp in pack.Split('\n'))
+            {
+                Room one_room = Room.ToRoom(temp);
+                Rooms_.Add(one_room);
+            }
+
+            OnRoomInfo(this, new RoomInfoEventArgs(Rooms_.ToArray()));
         }
     }
 }

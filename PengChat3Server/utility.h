@@ -32,15 +32,15 @@ template <typename T> inline const T unpacking_array(const packet_type *data)
 	return *(reinterpret_cast<const T *>(data));
 }
 
-template <typename T> inline packet packing_array(T data)
+template <typename T> inline vector<unsigned char> packing_array(T data)
 {
-	return packet(reinterpret_cast<packet_type *>(&data), reinterpret_cast<packet_type *>(&data + 1));
+	return vector<uint8_t>(reinterpret_cast<uint8_t *>(&data), reinterpret_cast<uint8_t *>(&data + 1));
 }
 
-/*template <> inline vector<char> to_byte_array(const char *data)
+template <> inline vector<unsigned char> packing_array(const char *data)
 {
-	return vector<char>((const char *)data, (const char *)data + strlen(data));
-}*/
+	return vector<unsigned char>((const unsigned char *)data, (const unsigned char *)data + strlen(data));
+}
 
 /*template<typename T> inline vector<vector<T> > split(const vector<T> &vec, const T &token)
 {

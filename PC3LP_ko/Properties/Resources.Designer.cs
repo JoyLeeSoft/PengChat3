@@ -215,7 +215,7 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
-        ///   접속자 수과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   최대 접속자 수과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_NumOfMember {
             get {
@@ -265,6 +265,15 @@ namespace PC3LP_ko.Properties {
         internal static string Str_SuccessedConnect {
             get {
                 return ResourceManager.GetString("Str_SuccessedConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   무제한과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_Unlimited {
+            get {
+                return ResourceManager.GetString("Str_Unlimited", resourceCulture);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -10,7 +11,7 @@ namespace PC3API_dn
         private static readonly int MAX_BYTES_NUMBER = 1024;
         private static readonly int PACKET_HEADER_SIZE = 4;
         private static readonly Encoding DefaultEncoding = Encoding.UTF8;
-        private static readonly string MagicNumber = Encoding.UTF8.GetString(new byte[] { 0x01, 0x04, 0x03, 0x09 });
+        private static readonly byte[] MagicNumber = new byte[] { 0x01, 0x04, 0x03, 0x09 };
         private static readonly byte EOP = (byte)'\0';
 
         private TcpClient Client = null;
@@ -27,6 +28,10 @@ namespace PC3API_dn
         public int ConnectedPort { get; private set; }
 
         public string Nickname { get; private set; }
+
+        private List<Room> Rooms_ = new List<Room>();
+
+        public Room[] Rooms { get { return Rooms_.ToArray(); } }
 
         public PengChat3ClientSock()
         {
@@ -101,7 +106,7 @@ namespace PC3API_dn
 
         public void Login(string id, string pw)
         {
-            SendPacket(Protocol.PROTOCOL_CHECK_REAL, MagicNumber);
+            SendPacket(Protocol.PROTOCOL_CHECK_REAL, DefaultEncoding.GetString(MagicNumber));
             SendPacket(Protocol.PROTOCOL_LOGIN, id + '\n' + pw);
         }
 
@@ -116,7 +121,12 @@ namespace PC3API_dn
             }
         }
 
-        private void SendPacket(string header, string data)
+        public void GetRoomInfo()
+        {
+            SendPacket(Protocol.PROTOCOL_GET_ROOM_INFO);
+        }
+
+        private void SendPacket(string header, string data = "")
         {
             byte[] buf = new byte[header.Length + data.Length + 1];
 

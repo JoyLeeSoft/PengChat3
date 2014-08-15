@@ -44,7 +44,7 @@
                         </GroupBox.Header>
                         <Grid x:Name="grid_ConnectionInfo" HorizontalAlignment="Left" Height="141" VerticalAlignment="Top" Width="283" Margin="0,0,-2,-3">
                             <ComboBox x:Name="comboBox_ConnectionInfo" HorizontalAlignment="Left" VerticalAlignment="Top" Width="263" Margin="10,10,0,0"/>
-                            <ListView x:Name="listView_RoomInfo" HorizontalAlignment="Left" Height="64" Margin="10,37,0,0" VerticalAlignment="Top" Width="263" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden">
+                            <ListView x:Name="listView_RoomInfo" HorizontalAlignment="Left" Height="64" Margin="10,37,0,0" VerticalAlignment="Top" Width="263" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" SelectionChanged="listView_RoomInfo_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn x:Name="gridViewColumn_RoomName" Width="263">
@@ -77,10 +77,10 @@
                             <Label x:Name="label_RoomName" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="263"/>
                             <Label x:Name="label_Master" Content="" HorizontalAlignment="Left" Margin="10,59,0,0" VerticalAlignment="Top" Width="80" Visibility="Hidden"/>
                             <Label x:Name="label_MasterValue" Content="" HorizontalAlignment="Left" Margin="111,58,0,0" VerticalAlignment="Top" Width="80" Visibility="Hidden"/>
-                            <Label x:Name="label_Num" Content="" HorizontalAlignment="Left" Margin="10,89,0,0" VerticalAlignment="Top" Width="80" Visibility="Hidden"/>
+                            <Label x:Name="label_Num" Content="" HorizontalAlignment="Left" Margin="10,89,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden"/>
                             <Label x:Name="label_NumValue" Content="" HorizontalAlignment="Left" Margin="111,89,0,0" VerticalAlignment="Top" Width="80" Visibility="Hidden"/>
-                            <Label x:Name="label_IsNeedPW" Content="asdf" HorizontalAlignment="Left" Margin="10,120,0,0" VerticalAlignment="Top" Width="120" Visibility="Hidden"/>
-                            <Image x:Name="image_IsNeedPWValue" HorizontalAlignment="Left" Height="16" Margin="135,123,0,0" VerticalAlignment="Top" Width="16" Visibility="Hidden" Stretch="Fill"/>
+                            <Label x:Name="label_IsNeedPW" Content="" HorizontalAlignment="Left" Margin="10,120,0,0" VerticalAlignment="Top" Width="120" Visibility="Hidden"/>
+                            <Image x:Name="image_IsNeedPWValue" HorizontalAlignment="Left" Height="16" Margin="135,125,0,0" VerticalAlignment="Top" Width="16" Visibility="Visible" Stretch="Fill"/>
                             <Button HorizontalAlignment="Left" Margin="183,64,0,0" VerticalAlignment="Top" Width="80" Height="31" Visibility="Hidden" Background="Aqua">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Height="auto" Width="auto" Source="Resources/login.png"/>

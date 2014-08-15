@@ -26,6 +26,7 @@
 #include "utility.h"
 #include "protocol.h"
 #include "db.h"
+#include "room.h"
 #include "logger.h"
 
 extern db *g_db;
@@ -37,6 +38,7 @@ cnt_socket::cnt_socket(tcp::socket *client, const tcp::endpoint &epnt) : m_socke
 
 cnt_socket::~cnt_socket()
 {
+	//m_socket->shutdown(socket_base::shutdown_both);
 	m_socket->close();
 	m_socket.reset();
 
@@ -104,15 +106,18 @@ void cnt_socket::recv_func()
 	}
 
 delete_client:
-	m_recv_thrd.detach();
+	m_recv_thrd.detach(); // Thread detach
+	m_no_need_join = true;
+
+	/* Delete this */
 	{
 		extern mutex g_clients_mutex;
 		lock_guard<mutex> lg(g_clients_mutex);
-		g_clients.remove(this);
+		g_clients.remove_if([this](const cnt_ptr &p)
+		{
+			return p.get() == this;
+		});
 	}
-
-	m_no_need_join = true;
-	delete this;
 }
 
 bool cnt_socket::packet_processor(packet &pack)
@@ -148,7 +153,7 @@ bool cnt_socket::packet_processor(packet &pack)
 	}
 	else if (header.compare(PROTOCOL_GET_ROOM_INFO) == 0)
 	{
-		
+		on_get_room_info();
 	}
 
 	return true;
@@ -188,11 +193,32 @@ bool cnt_socket::on_login(const packet &id, const packet &pw)
 	}
 }
 
+void cnt_socket::on_get_room_info()
+{
+	packet temp;
+
+	{
+		extern mutex g_room_mutex;
+		extern room_list g_room_list;
+		lock_guard<mutex> lg(g_room_mutex);
+
+		for (auto r : g_room_list)
+		{
+			temp += (r.name + '\t' + r.master + '\t' + to_string(r.max_num) + '\t' + 
+				((r.password != "") ? "1" : "0") + '\n');
+		}
+	}
+
+	temp.erase(temp.find_last_of('\n'));
+
+	send_packet(PROTOCOL_GET_ROOM_INFO, temp);
+}
+
 void cnt_socket::send_packet(const packet_type *header, const packet &pack)
 {
-	packet temp = header + pack + EOP;
+	packet buf = header + pack + EOP;
 
-	m_socket->write_some(buffer(temp, temp.size()), m_latest_error);
+	m_socket->write_some(buffer(buf, buf.size()), m_latest_error);
 }
 
 void cnt_socket::run()

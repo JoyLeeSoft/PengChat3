@@ -32,18 +32,21 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cstring>
 #include <string>
 #include <memory>
+#include <vector>
 #include <list>
-#include <array>
 #include <exception>
+#include <cerrno>
 #include <thread>
 #include <mutex>
-#include <future>
+#include <locale>
 
 // Boost library
 #include <boost/noncopyable.hpp>
 #include <boost/tokenizer.hpp>
+#include <boost/locale.hpp>
 
 #include <boost/asio.hpp> // Async I/O
 
@@ -58,6 +61,7 @@ using namespace std;
 using namespace boost;
 using namespace boost::asio;
 using namespace boost::asio::ip;
+using namespace boost::locale;
 
 // Packet typedefs
 typedef char packet_type;
@@ -68,7 +72,8 @@ typedef vector<string> ip_ban_list;
 
 // Global variables
 class cnt_socket;
-extern list<cnt_socket *> g_clients;
+typedef std::shared_ptr<cnt_socket> cnt_ptr;
+extern list<cnt_ptr> g_clients;
 class logger;
 extern logger *g_log;
 

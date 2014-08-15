@@ -66,6 +66,7 @@ namespace PengChat3
                 {
                     sock.OnLogin += sock_OnLogin;
                     sock.OnDisconnected += sock_OnDisconnected;
+                    sock.OnRoomInfo += sock_OnRoomInfo;
                     sock.Connect(textBox_IP.Text, App.Port);
                     sock.Login(textBox_ID.Text, passwordBox_PW.Password);
                 }
@@ -94,10 +95,12 @@ namespace PengChat3
 
             comboBox_ConnectionInfo.Items.Remove(comboBox_ConnectionInfo.SelectedItem);
 
+            ChangeStatusRoomInfoControls(Visibility.Hidden, null);
+
             if (comboBox_ConnectionInfo.Items.IsEmpty == false)
                 comboBox_ConnectionInfo.SelectedIndex = 0;
             else
-                ChangeStatusConnectionInfoControls(System.Windows.Visibility.Hidden);
+                ChangeStatusConnectionInfoControls(Visibility.Hidden);
         }
 
         private void LoginTextboxes_KeyDown(object sender, KeyEventArgs e)
@@ -114,6 +117,11 @@ namespace PengChat3
             }
 
             comboBox_ConnectionInfo.Items.Clear();
+        }
+
+        private void listView_RoomInfo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ChangeStatusRoomInfoControls(Visibility.Visible, ((RoomListItem)listView_RoomInfo.SelectedItem));
         }
     }
 }

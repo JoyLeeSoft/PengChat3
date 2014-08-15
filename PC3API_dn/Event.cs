@@ -51,9 +51,11 @@ namespace PC3API_dn
 
     public class RoomInfoEventArgs : EventArgs
     {
-        public RoomInfoEventArgs()
-        {
+        public Room[] Rooms { get; private set; }
 
+        public RoomInfoEventArgs(Room[] rooms)
+        {
+            Rooms = rooms;
         }
     }
     public delegate void OnRoomInfoDele(object sender, RoomInfoEventArgs e);

@@ -17,18 +17,35 @@ namespace PengChat3
 {
     public partial class MainWindow
     {
-        private void ChangeStatusRoomInfoControls(System.Windows.Visibility visibility)
+        private void ChangeStatusRoomInfoControls(Visibility visibility, RoomListItem r)
         {
-            foreach (UIElement UIElement in grid_GroupBoxRoomInfo.Children)
+            if (r != null)
             {
-                if (UIElement != label_RoomName)
+                foreach (UIElement UIElement in grid_GroupBoxRoomInfo.Children)
                 {
-                    UIElement.Visibility = visibility;
+                    if (UIElement != label_RoomName)
+                    {
+                        UIElement.Visibility = visibility;
+                    }
                 }
+            }
+
+            if (visibility == Visibility.Visible && r != null)
+            {
+                label_RoomName.Content = r.room.Name;
+                label_MasterValue.Content = r.room.Master;
+                label_NumValue.Content = (r.room.MaxConnectorNum != 0) ?
+                    r.room.MaxConnectorNum.ToString() : ResourceManager.GetStringByKey("Str_Unlimited");
+                image_IsNeedPWValue.Source = r.room.IsNeedPassword ? YesImage : NoImage;
+            }
+            else
+            {
+                listView_RoomInfo.Items.Clear();
+                label_RoomName.Content = ResourceManager.GetStringByKey("Str_NoSelectedRoom");
             }
         }
 
-        private void ChangeStatusConnectionInfoControls(System.Windows.Visibility visibility)
+        private void ChangeStatusConnectionInfoControls(Visibility visibility)
         {
             foreach (UIElement UIElement in grid_ConnectionInfo.Children)
             {
@@ -45,12 +62,12 @@ namespace PengChat3
         {
             YesImage = new BitmapImage();
             YesImage.BeginInit();
-            YesImage.UriSource = new Uri(@"Resources\bullet-blue.png", UriKind.Relative);
+            YesImage.UriSource = new Uri(@"Resources\yes.png", UriKind.Relative);
             YesImage.EndInit();
 
             NoImage = new BitmapImage();
             NoImage.BeginInit();
-            NoImage.UriSource = new Uri(@"Resources\bullet-blue.png", UriKind.Relative);
+            NoImage.UriSource = new Uri(@"Resources\no.png", UriKind.Relative);
             NoImage.EndInit();
         }
 

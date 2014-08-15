@@ -160,7 +160,7 @@
     <value>방이 선택되지 않았습니다</value>
   </data>
   <data name="Str_NumOfMember" xml:space="preserve">
-    <value>접속자 수</value>
+    <value>최대 접속자 수</value>
   </data>
   <data name="Str_PW" xml:space="preserve">
     <value>비밀번호</value>
@@ -186,5 +186,8 @@
   </data>
   <data name="Str_LoggedOut" xml:space="preserve">
     <value>PengChat3 서버로부터 로그아웃 했습니다.</value>
+  </data>
+  <data name="Str_Unlimited" xml:space="preserve">
+    <value>무제한</value>
   </data>
 </root>

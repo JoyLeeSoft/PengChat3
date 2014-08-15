@@ -26,17 +26,21 @@ namespace PengChat3
                     Logging(ResourceManager.GetStringByKey("Str_SuccessedConnect") + '\n' +
                         string.Format("{0}:{1}", e.ConnectedIP, e.ConnectedPort));
 
+                    PengChat3ClientSock sock = (PengChat3ClientSock)sender;
+
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
                     {
                         CntComboBoxItem item = new CntComboBoxItem();
                         item.Text = e.ConnectedIP + ":" + e.ConnectedPort.ToString();
-                        item.Sock = (PengChat3ClientSock)sender;
+                        item.Sock = sock;
 
                         comboBox_ConnectionInfo.Items.Add(item);
                         comboBox_ConnectionInfo.SelectedItem = item;
 
-                        ChangeStatusConnectionInfoControls(System.Windows.Visibility.Visible);
+                        ChangeStatusConnectionInfoControls(Visibility.Visible);
                     }));
+
+                    sock.GetRoomInfo();
                     break;
                 case LoginEventArgs.ErrorCode.UnknownIdPw:
                     string err = ResourceManager.GetStringByKey("Str_NotSuccessedConnect");
@@ -79,7 +83,18 @@ namespace PengChat3
 
                 if (comboBox_ConnectionInfo.Items.IsEmpty)
                 {
-                    ChangeStatusConnectionInfoControls(System.Windows.Visibility.Hidden);
+                    ChangeStatusConnectionInfoControls(Visibility.Hidden);
+                }
+            }));
+        }
+
+        void sock_OnRoomInfo(object sender, RoomInfoEventArgs e)
+        {
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+            {
+                foreach (var r in e.Rooms)
+                {
+                    listView_RoomInfo.Items.Add(new RoomListItem(r));
                 }
             }));
         }
