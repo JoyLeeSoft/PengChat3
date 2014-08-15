@@ -19,14 +19,11 @@ namespace PengChat3
     {
         private void ChangeStatusRoomInfoControls(Visibility visibility, RoomListItem r)
         {
-            if (r != null)
+            foreach (UIElement ui in grid_GroupBoxRoomInfo.Children)
             {
-                foreach (UIElement UIElement in grid_GroupBoxRoomInfo.Children)
+                if (ui != label_RoomName)
                 {
-                    if (UIElement != label_RoomName)
-                    {
-                        UIElement.Visibility = visibility;
-                    }
+                    ui.Visibility = visibility;
                 }
             }
 

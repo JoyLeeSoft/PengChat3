@@ -17,7 +17,8 @@ namespace PengChat3
 
         public static string GetStringByKey(string key)
         {
-            return m_ResMgr.GetObject(key).ToString();
+            object o = m_ResMgr.GetObject(key);
+            return (o != null) ? o.ToString() : "";
         }
 
         public static object GetObjectByKey(string key)

@@ -121,7 +121,8 @@ namespace PengChat3
 
         private void listView_RoomInfo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ChangeStatusRoomInfoControls(Visibility.Visible, ((RoomListItem)listView_RoomInfo.SelectedItem));
+            if (listView_RoomInfo.Items.IsEmpty == false)
+                ChangeStatusRoomInfoControls(Visibility.Visible, ((RoomListItem)listView_RoomInfo.SelectedItem));
         }
     }
 }
