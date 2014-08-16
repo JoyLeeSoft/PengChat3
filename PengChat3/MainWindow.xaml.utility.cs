@@ -33,7 +33,7 @@ namespace PengChat3
                 label_MasterValue.Content = r.room.Master;
                 label_NumValue.Content = (r.room.MaxConnectorNum != 0) ?
                     r.room.MaxConnectorNum.ToString() : ResourceManager.GetStringByKey("Str_Unlimited");
-                image_IsNeedPWValue.Source = r.room.IsNeedPassword ? YesImage : NoImage;
+                passwordBox_RoomPW.IsEnabled = r.room.IsNeedPassword;
             }
             else
             {

@@ -43,7 +43,7 @@
                             </StackPanel>
                         </GroupBox.Header>
                         <Grid x:Name="grid_ConnectionInfo" HorizontalAlignment="Left" Height="141" VerticalAlignment="Top" Width="283" Margin="0,0,-2,-3">
-                            <ComboBox x:Name="comboBox_ConnectionInfo" HorizontalAlignment="Left" VerticalAlignment="Top" Width="263" Margin="10,10,0,0"/>
+                            <ComboBox x:Name="comboBox_ConnectionInfo" HorizontalAlignment="Left" VerticalAlignment="Top" Width="263" Margin="10,10,0,0" SelectionChanged="comboBox_ConnectionInfo_SelectionChanged"/>
                             <ListView x:Name="listView_RoomInfo" HorizontalAlignment="Left" Height="64" Margin="10,37,0,0" VerticalAlignment="Top" Width="263" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" SelectionChanged="listView_RoomInfo_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
@@ -52,7 +52,7 @@
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <Button x:Name="button_CreateRoom" HorizontalAlignment="Left" Margin="10,106,0,0" VerticalAlignment="Top" Width="130" Visibility="Hidden" Height="25" Background="Beige">
+                            <Button x:Name="button_CreateRoom" HorizontalAlignment="Left" Margin="10,106,0,0" VerticalAlignment="Top" Width="130" Visibility="Hidden" Height="25" Background="Beige" Click="CreateRoomButton_Click">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Height="auto" Width="auto" Source="Resources/create-room.png"/>
                                     <TextBlock x:Name="textBlock_CreateRoomButton" Text="" Margin="2,0,0,0" VerticalAlignment="Center"/>
@@ -75,19 +75,19 @@
                         </GroupBox.Header>
                         <Grid x:Name="grid_GroupBoxRoomInfo" HorizontalAlignment="Left" Height="156" Margin="0,0,-2,-2" VerticalAlignment="Top" Width="283">
                             <Label x:Name="label_RoomName" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="263"/>
-                            <Label x:Name="label_Master" Content="" HorizontalAlignment="Left" Margin="10,59,0,0" VerticalAlignment="Top" Width="80" Visibility="Hidden"/>
-                            <Label x:Name="label_MasterValue" Content="" HorizontalAlignment="Left" Margin="111,58,0,0" VerticalAlignment="Top" Width="80" Visibility="Hidden"/>
-                            <Label x:Name="label_Num" Content="" HorizontalAlignment="Left" Margin="10,89,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden"/>
-                            <Label x:Name="label_NumValue" Content="" HorizontalAlignment="Left" Margin="111,89,0,0" VerticalAlignment="Top" Width="80" Visibility="Hidden"/>
-                            <Label x:Name="label_IsNeedPW" Content="" HorizontalAlignment="Left" Margin="10,120,0,0" VerticalAlignment="Top" Width="120" Visibility="Hidden"/>
-                            <Image x:Name="image_IsNeedPWValue" HorizontalAlignment="Left" Height="16" Margin="135,125,0,0" VerticalAlignment="Top" Width="16" Visibility="Visible" Stretch="Fill"/>
-                            <Button HorizontalAlignment="Left" Margin="183,64,0,0" VerticalAlignment="Top" Width="80" Height="31" Visibility="Hidden" Background="Aqua">
+                            <Label x:Name="label_Master" Content="" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top" Width="77" Visibility="Hidden"/>
+                            <Label x:Name="label_MasterValue" Content="" HorizontalAlignment="Left" Margin="107,46,0,0" VerticalAlignment="Top" Width="77" Visibility="Hidden"/>
+                            <Label x:Name="label_Num" Content="" HorizontalAlignment="Left" Margin="10,77,0,0" VerticalAlignment="Top" Width="96" Visibility="Hidden"/>
+                            <Label x:Name="label_NumValue" Content="" HorizontalAlignment="Left" Margin="107,77,0,0" VerticalAlignment="Top" Width="77" Visibility="Hidden"/>
+                            <Label x:Name="label_PWRoom" Content="" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden"/>
+                            <PasswordBox x:Name="passwordBox_RoomPW" HorizontalAlignment="Left" Margin="115,112,0,0" VerticalAlignment="Top" Width="69" Height="26" Visibility="Hidden"/>
+                            <Button HorizontalAlignment="Left" Margin="196,64,0,0" VerticalAlignment="Top" Width="67" Height="31" Visibility="Hidden" Background="Aqua">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Height="auto" Width="auto" Source="Resources/login.png"/>
                                     <TextBlock x:Name="textBlock_SigninButton" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
-                            <Button HorizontalAlignment="Left" Margin="183,108,0,0" VerticalAlignment="Top" Width="80" Height="31" Visibility="Hidden" Background="Orange">
+                            <Button HorizontalAlignment="Left" Margin="196,108,0,0" VerticalAlignment="Top" Width="67" Height="31" Visibility="Hidden" Background="Orange">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Height="auto" Width="auto" Source="Resources/login.png"/>
                                     <TextBlock x:Name="textBlock_DeleteRoomButton" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />

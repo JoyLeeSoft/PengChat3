@@ -56,6 +56,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CntComboBoxItem.cs" />
+    <Compile Include="CreateRoomWindow.xaml.cs">
+      <DependentUpon>CreateRoomWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.sockevents.cs" />
     <Compile Include="MainWindow.xaml.utility.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -66,6 +69,10 @@
     <Compile Include="RegistryManager.cs" />
     <Compile Include="ResourceManager.cs" />
     <Compile Include="Utility.cs" />
+    <Page Include="CreateRoomWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -131,12 +138,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\info.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\no.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\yes.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

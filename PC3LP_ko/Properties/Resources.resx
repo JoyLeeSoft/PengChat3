@@ -141,9 +141,6 @@
   <data name="Str_IP" xml:space="preserve">
     <value>서버주소</value>
   </data>
-  <data name="Str_IsNeedPW" xml:space="preserve">
-    <value>비밀번호 사용여부</value>
-  </data>
   <data name="Str_Login" xml:space="preserve">
     <value>로그인</value>
   </data>
@@ -159,7 +156,7 @@
   <data name="Str_NoSelectedRoom" xml:space="preserve">
     <value>방이 선택되지 않았습니다</value>
   </data>
-  <data name="Str_NumOfMember" xml:space="preserve">
+  <data name="Str_MaxConnectorNum" xml:space="preserve">
     <value>최대 접속자 수</value>
   </data>
   <data name="Str_PW" xml:space="preserve">
@@ -189,5 +186,8 @@
   </data>
   <data name="Str_Unlimited" xml:space="preserve">
     <value>무제한</value>
+  </data>
+  <data name="Str_NoNeed" xml:space="preserve">
+    <value>필요없음</value>
   </data>
 </root>

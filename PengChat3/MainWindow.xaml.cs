@@ -39,8 +39,8 @@ namespace PengChat3
             textBlock_GroupBoxRoomInfo.Text = ResourceManager.GetStringByKey("Str_RoomInfo");
             label_RoomName.Content = ResourceManager.GetStringByKey("Str_NoSelectedRoom");
             label_Master.Content = ResourceManager.GetStringByKey("Str_Master") + " : ";
-            label_Num.Content = ResourceManager.GetStringByKey("Str_NumOfMember") + " : ";
-            label_IsNeedPW.Content = ResourceManager.GetStringByKey("Str_IsNeedPW") + " : ";
+            label_Num.Content = ResourceManager.GetStringByKey("Str_MaxConnectorNum") + " : ";
+            label_PWRoom.Content = ResourceManager.GetStringByKey("Str_PW") + " : ";
             textBlock_SigninButton.Text = ResourceManager.GetStringByKey("Str_Signin");
             textBlock_DeleteRoomButton.Text = ResourceManager.GetStringByKey("Str_Delete");
             textBlock_LogoutButton.Text = ResourceManager.GetStringByKey("Str_Logout");
@@ -123,6 +123,32 @@ namespace PengChat3
         {
             if (listView_RoomInfo.Items.IsEmpty == false)
                 ChangeStatusRoomInfoControls(Visibility.Visible, ((RoomListItem)listView_RoomInfo.SelectedItem));
+        }
+
+        private void comboBox_ConnectionInfo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ChangeStatusRoomInfoControls(Visibility.Hidden, null);
+
+            listView_RoomInfo.Items.Clear();
+
+            var item = comboBox_ConnectionInfo.SelectedItem;
+
+            if (comboBox_ConnectionInfo.Items.IsEmpty == false && item != null)
+            {
+                foreach (var r in ((CntComboBoxItem)item).Sock.Rooms)
+                    listView_RoomInfo.Items.Add(new RoomListItem(r));
+            }
+        }
+
+        private void CreateRoomButton_Click(object sender, RoutedEventArgs e)
+        {
+            CreateRoomWindow win = new CreateRoomWindow();
+            win.ShowDialog();
+
+            if (win.DialogResult.Value == true)
+            {
+                
+            }
         }
     }
 }

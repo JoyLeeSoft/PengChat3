@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
 	g_log = new logger("PengChat3Server.log");
 
 	g_room_list.push_back({ "TestRoom1", "Master1", 0, "" });
-	g_room_list.push_back({ "TestRoom2", "Master2", 110, "asdf" });
-	g_room_list.push_back({ "TestRoom3", "Master3", 99, "zxcv" });
+	g_room_list.push_back({ "TestRoom2", "Master2", 100, "asdf" });
+	g_room_list.push_back({ "TestRoom3", "Master3", 1000, "zxcv" });
 
 	// Basic I/O service object
 	io_service io_srv;
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 
 		g_db = 
 #ifdef PENGCHAT3_DB_NULL
-		new null_db();
+			new null_db();
 #endif
 
 		clog << "PengChat3 server is running... Please press enter to exit server.\n";
@@ -103,7 +103,9 @@ int main(int argc, char *argv[])
 				if (server.is_open() == false)
 					return;
 
-				cerr << "Could not accept client. error code = " << err.value() << "\n" + err.message() + '\n';
+				stringstream ss;
+				ss << "Could not accept client. error code = " << err.value() << "\n" + err.message() + '\n';
+				g_log->logging(ss.str());
 			}
 			/*=====================================================================================================*/
 
@@ -193,5 +195,5 @@ int main(int argc, char *argv[])
 	EnableMenuItem(GetSystemMenu(GetConsoleWindow(), FALSE), SC_CLOSE, MF_ENABLED);
 #endif
 
-	return 0;
+	return EXIT_SUCCESS;
 }

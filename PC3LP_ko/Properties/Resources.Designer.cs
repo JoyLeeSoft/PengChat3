@@ -142,15 +142,6 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
-        ///   비밀번호 사용여부과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string Str_IsNeedPW {
-            get {
-                return ResourceManager.GetString("Str_IsNeedPW", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   PengChat3 서버로부터 로그아웃 했습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_LoggedOut {
@@ -196,6 +187,24 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   최대 접속자 수과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_MaxConnectorNum {
+            get {
+                return ResourceManager.GetString("Str_MaxConnectorNum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   필요없음과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_NoNeed {
+            get {
+                return ResourceManager.GetString("Str_NoNeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   방이 선택되지 않았습니다과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_NoSelectedRoom {
@@ -211,15 +220,6 @@ namespace PC3LP_ko.Properties {
         internal static string Str_NotSuccessedConnect {
             get {
                 return ResourceManager.GetString("Str_NotSuccessedConnect", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   최대 접속자 수과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string Str_NumOfMember {
-            get {
-                return ResourceManager.GetString("Str_NumOfMember", resourceCulture);
             }
         }
         

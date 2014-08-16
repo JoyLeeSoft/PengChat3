@@ -29,6 +29,7 @@
 
 // C++ standard library
 #include <cstdint>
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <sstream>
