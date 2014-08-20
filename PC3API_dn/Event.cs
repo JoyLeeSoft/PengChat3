@@ -65,14 +65,18 @@ namespace PC3API_dn
         public enum ErrorCode
         {
             Ok,
-            CapacityIsNegative,
+            UnknownCapacity,
+            RoomNameOverlap,
         }
 
         public ErrorCode ErrCode { get; private set; }
 
-        public CreateRoomEventArgs(ErrorCode errcode)
+        public Room NewRoom { get; private set; }
+
+        public CreateRoomEventArgs(ErrorCode errcode, Room newroom)
         {
             ErrCode = errcode;
+            NewRoom = newroom;
         }
     }
     public delegate void OnCreateRoomDele(object sender, CreateRoomEventArgs e);

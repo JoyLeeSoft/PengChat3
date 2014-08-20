@@ -45,11 +45,11 @@
 #include <locale>
 
 // Boost library
+#include <boost/asio.hpp> // Async I/O
 #include <boost/noncopyable.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/locale.hpp>
-
-#include <boost/asio.hpp> // Async I/O
+#include <boost/lexical_cast.hpp>
 
 // For Windows platform
 #if defined(_WIN32) || defined(_WIN64)

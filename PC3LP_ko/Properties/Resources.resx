@@ -190,4 +190,16 @@
   <data name="Str_NoNeed" xml:space="preserve">
     <value>필요없음</value>
   </data>
+  <data name="Str_FailedToCreateRoom" xml:space="preserve">
+    <value>방 만들기에 실패했습니다.</value>
+  </data>
+  <data name="Str_RoomNameOverlap" xml:space="preserve">
+    <value>이미 같은 이름을 가진 방이 있습니다.</value>
+  </data>
+  <data name="Str_SuccessedToCreateRoom" xml:space="preserve">
+    <value>방을 성공적으로 만들었습니다.</value>
+  </data>
+  <data name="Str_UnknownCapacity" xml:space="preserve">
+    <value>최대 접속자 수가 정확하지 않습니다.</value>
+  </data>
 </root>

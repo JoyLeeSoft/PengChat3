@@ -98,5 +98,35 @@ namespace PengChat3
                 }
             }));
         }
+
+        void sock_OnCreateRoom(object sender, CreateRoomEventArgs e)
+        {
+            if (e.ErrCode == CreateRoomEventArgs.ErrorCode.Ok)
+            {
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+                {
+                    listView_RoomInfo.Items.Add(new RoomListItem(e.NewRoom));
+                }));
+                Logging(ResourceManager.GetStringByKey("Str_SuccessedToCreateRoom"));
+            }
+            else
+            {
+                string s = ResourceManager.GetStringByKey("Str_FailedToCreateRoom") + ' ';
+
+                switch (e.ErrCode)
+                {
+                    case CreateRoomEventArgs.ErrorCode.UnknownCapacity:
+                        s += ResourceManager.GetStringByKey("Str_UnknownCapacity");
+                        Logging(s);
+                        Utility.Error(s);
+                        break;
+                    case CreateRoomEventArgs.ErrorCode.RoomNameOverlap:
+                        s += ResourceManager.GetStringByKey("Str_RoomNameOverlap");
+                        Logging(s);
+                        Utility.Error(s);
+                        break;
+                }
+            }
+        }
     }
 }

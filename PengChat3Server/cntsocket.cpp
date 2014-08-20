@@ -31,6 +31,9 @@
 
 extern db *g_db;
 
+extern mutex g_room_mutex;
+extern room_list g_room_list;
+
 cnt_socket::cnt_socket(tcp::socket *client, const tcp::endpoint &epnt) : m_socket(client), m_epnt(epnt), m_client_state({ false, false }), m_no_need_join(false)
 {
 	
@@ -103,6 +106,7 @@ void cnt_socket::recv_func()
 			}
 		}
 
+		buf = vector<packet_type>(MAX_BYTES_NUMBER);
 	}
 
 delete_client:
@@ -155,6 +159,30 @@ bool cnt_socket::packet_processor(packet &pack)
 	{
 		on_get_room_info();
 	}
+	else if (header.compare(PROTOCOL_CREATE_ROOM) == 0)
+	{
+		auto name_maxnum_pw = split_packet(pack, packet("\n"));
+
+		if (name_maxnum_pw.size() == 3)
+		{
+			using boost::lexical_cast;
+			using boost::bad_lexical_cast;
+
+			room::max_connector_type i;
+
+			try
+			{
+				i = lexical_cast<room::max_connector_type>(name_maxnum_pw[1]);
+			}
+			catch (const bad_lexical_cast &)
+			{
+				send_packet(PROTOCOL_CREATE_ROOM, to_string((uint8_t)create_room_error::unknown_capacity));
+				return true;
+			}
+
+			on_create_room(name_maxnum_pw[0], i, name_maxnum_pw[2]);
+		}
+	}
 
 	return true;
 }
@@ -181,6 +209,7 @@ bool cnt_socket::on_login(const packet &id, const packet &pw)
 	{
 		g_db->find_nick(id, pw, nick);
 		m_client_state.is_logged = true;
+		m_client_state.nick = nick;
 
 		send_packet(PROTOCOL_LOGIN, nick);
 
@@ -195,11 +224,9 @@ bool cnt_socket::on_login(const packet &id, const packet &pw)
 
 void cnt_socket::on_get_room_info()
 {
-	packet temp;
+	packet temp = "";
 
 	{
-		extern mutex g_room_mutex;
-		extern room_list g_room_list;
 		lock_guard<mutex> lg(g_room_mutex);
 
 		for (auto r : g_room_list)
@@ -209,9 +236,31 @@ void cnt_socket::on_get_room_info()
 		}
 	}
 
-	temp.erase(temp.find_last_of('\n'));
+	if (temp != "")
+		temp.erase(temp.find_last_of('\n'));
 
 	send_packet(PROTOCOL_GET_ROOM_INFO, temp);
+}
+
+void cnt_socket::on_create_room(const packet &name, room::max_connector_type max_num, const packet &pw)
+{
+	{
+		lock_guard<mutex> lg(g_room_mutex);
+
+		if (find_if(g_room_list.begin(), g_room_list.end(), [name](const room &r)
+		{
+			return r.name == name;
+		}) != g_room_list.end())
+		{
+			send_packet(PROTOCOL_CREATE_ROOM, to_string((uint8_t)create_room_error::room_name_overlap));
+			return;
+		}
+
+		g_room_list.push_back({ name, m_client_state.nick, max_num, pw });
+	}
+
+	send_packet(PROTOCOL_ADD_ROM, name + '\t' + m_client_state.nick + '\t' + to_string(max_num) + '\t' +
+		((pw != "") ? "1" : "0"));
 }
 
 void cnt_socket::send_packet(const packet_type *header, const packet &pack)

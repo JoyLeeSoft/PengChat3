@@ -89,6 +89,10 @@ namespace PC3API_dn
                 OnLoginResult(pack);
             else if (header == Protocol.PROTOCOL_GET_ROOM_INFO)
                 OnGetRoomInfoResult(pack);
+            else if (header == Protocol.PROTOCOL_CREATE_ROOM)
+                OnAddRomResult((CreateRoomEventArgs.ErrorCode)Convert.ToByte(pack), null);
+            else if (header == Protocol.PROTOCOL_ADD_ROOM)
+                OnAddRomResult(CreateRoomEventArgs.ErrorCode.Ok, pack);
         }
 
         private void OnLoginResult(string pack)
@@ -112,13 +116,37 @@ namespace PC3API_dn
         {
             Rooms_.Clear();
 
-            foreach (var temp in pack.Split('\n'))
+            if (pack != "")
             {
-                Room one_room = Room.ToRoom(temp);
-                Rooms_.Add(one_room);
+                foreach (var temp in pack.Split('\n'))
+                {
+                    Room one_room = Room.ToRoom(temp);
+                    Rooms_.Add(one_room);
+                }
             }
 
             OnRoomInfo(this, new RoomInfoEventArgs(Rooms_.ToArray()));
+        }
+
+        private void OnAddRomResult(CreateRoomEventArgs.ErrorCode e, string pack)
+        {
+            if (e == CreateRoomEventArgs.ErrorCode.Ok)
+            {
+                Room one_room = Room.ToRoom(pack);
+                Rooms_.Add(one_room);
+
+                if (OnCreateRoom != null)
+                {
+                    OnCreateRoom(this, new CreateRoomEventArgs(e, one_room));
+                }
+            }
+            else
+            {
+                if (OnCreateRoom != null)
+                {
+                    OnCreateRoom(this, new CreateRoomEventArgs(e, null));
+                }
+            }
         }
     }
 }

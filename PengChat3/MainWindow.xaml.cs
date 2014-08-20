@@ -67,6 +67,7 @@ namespace PengChat3
                     sock.OnLogin += sock_OnLogin;
                     sock.OnDisconnected += sock_OnDisconnected;
                     sock.OnRoomInfo += sock_OnRoomInfo;
+                    sock.OnCreateRoom += sock_OnCreateRoom;
                     sock.Connect(textBox_IP.Text, App.Port);
                     sock.Login(textBox_ID.Text, passwordBox_PW.Password);
                 }
@@ -147,7 +148,8 @@ namespace PengChat3
 
             if (win.DialogResult.Value == true)
             {
-                
+                ((CntComboBoxItem)comboBox_ConnectionInfo.SelectedItem).Sock.CreateRoom(
+                    win.RoomName, win.MaxConnectorNum, win.Password);
             }
         }
     }

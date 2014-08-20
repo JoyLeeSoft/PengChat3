@@ -18,7 +18,7 @@ namespace PengChat3
     /// </summary>
     public partial class CreateRoomWindow : Window
     {
-        public string Name { get; private set; }
+        public string RoomName { get; private set; }
 
         public short MaxConnectorNum { get; private set; }
 
@@ -62,7 +62,7 @@ namespace PengChat3
             {
                 try
                 {
-                    Name = textBox_Name.Text;
+                    RoomName = textBox_Name.Text;
                     MaxConnectorNum = checkBox_MaxNum.IsChecked.Value ? (short)0 : Convert.ToInt16(textBox_MaxNum.Text);
                     Password = checkBox_Password.IsChecked.Value ? "" : textBox_Password.Text;
 

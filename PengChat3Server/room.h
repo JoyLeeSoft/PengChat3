@@ -29,9 +29,11 @@
 
 struct room
 {
+	typedef uint16_t max_connector_type;
+
 	string name;
 	string master;
-	uint16_t max_num;
+	max_connector_type max_num;
 	string password;
 };
 

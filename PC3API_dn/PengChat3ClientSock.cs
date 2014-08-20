@@ -13,6 +13,8 @@ namespace PC3API_dn
         private static readonly Encoding DefaultEncoding = Encoding.UTF8;
         private static readonly byte[] MagicNumber = new byte[] { 0x01, 0x04, 0x03, 0x09 };
         private static readonly byte EOP = (byte)'\0';
+        public const short Capacity_Unlimited = (short)0;
+        public const string Password_NotUsed = "";
 
         private TcpClient Client = null;
         private NetworkStream Stream = null;
@@ -126,9 +128,14 @@ namespace PC3API_dn
             SendPacket(Protocol.PROTOCOL_GET_ROOM_INFO);
         }
 
+        public void CreateRoom(string name, short capacity = Capacity_Unlimited, string password = Password_NotUsed)
+        {
+            SendPacket(Protocol.PROTOCOL_CREATE_ROOM, name + '\n' + capacity.ToString() + '\n' + password);
+        }
+
         private void SendPacket(string header, string data = "")
         {
-            byte[] buf = new byte[header.Length + data.Length + 1];
+            byte[] buf = new byte[1024];
 
             buf = Utility.CombineArray(DefaultEncoding.GetBytes(header),
                                        DefaultEncoding.GetBytes(data),

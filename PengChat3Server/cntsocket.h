@@ -26,6 +26,7 @@
 #define cntsocket_h_
 
 #include "common.h"
+#include "room.h"
 
 class cnt_socket final : private boost::noncopyable
 {
@@ -45,6 +46,7 @@ private:
 	{
 	public:
 		bool is_real_client, is_logged;
+		string nick;
 	} m_client_state;
 
 	bool m_no_need_join;
@@ -56,6 +58,7 @@ private:
 	bool on_check_real(const packet &pack);
 	bool on_login(const packet &id, const packet &pw);
 	void on_get_room_info();
+	void on_create_room(const packet &name, room::max_connector_type max_num, const packet &pw);
 
 public:
 	void send_packet(const packet_type *header, const packet &pack);
