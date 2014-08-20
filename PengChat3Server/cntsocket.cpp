@@ -244,6 +244,8 @@ void cnt_socket::on_get_room_info()
 
 void cnt_socket::on_create_room(const packet &name, room::max_connector_type max_num, const packet &pw)
 {
+	static const packet password_notused = "\t";
+
 	{
 		lock_guard<mutex> lg(g_room_mutex);
 
@@ -256,11 +258,11 @@ void cnt_socket::on_create_room(const packet &name, room::max_connector_type max
 			return;
 		}
 
-		g_room_list.push_back({ name, m_client_state.nick, max_num, pw });
+		g_room_list.push_back({ name, m_client_state.nick, max_num, (pw != password_notused) ? pw : ""});
 	}
 
 	send_packet(PROTOCOL_ADD_ROM, name + '\t' + m_client_state.nick + '\t' + to_string(max_num) + '\t' +
-		((pw != "") ? "1" : "0"));
+		((pw != password_notused) ? "1" : "0"));
 }
 
 void cnt_socket::send_packet(const packet_type *header, const packet &pack)

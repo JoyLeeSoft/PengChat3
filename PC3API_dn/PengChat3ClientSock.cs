@@ -14,7 +14,7 @@ namespace PC3API_dn
         private static readonly byte[] MagicNumber = new byte[] { 0x01, 0x04, 0x03, 0x09 };
         private static readonly byte EOP = (byte)'\0';
         public const short Capacity_Unlimited = (short)0;
-        public const string Password_NotUsed = "";
+        public const string Password_NotUsed = "\t";
 
         private TcpClient Client = null;
         private NetworkStream Stream = null;
