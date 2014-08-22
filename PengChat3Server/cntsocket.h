@@ -60,6 +60,7 @@ private:
 	void on_get_room_info();
 	void on_create_room(const packet &name, room::max_connector_type max_num, const packet &pw);
 	void on_delete_room(room::id_type id);
+	void on_entry_to_room(room::id_type id, const packet &pw);
 
 public:
 	void send_packet(const packet_type *header, const packet &pack);
@@ -70,6 +71,11 @@ public:
 	const string ip() const
 	{
 		return m_epnt.address().to_string();
+	}
+
+	const string nick() const
+	{
+		return m_client_state.nick;
 	}
 };
 

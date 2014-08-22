@@ -16,6 +16,10 @@ namespace PC3API_dn
 
         public bool IsNeedPassword { get; private set; }
 
+        internal List<string> Members_ = new List<string>();
+
+        public string[] Members { get { return Members_.ToArray(); } }
+
         internal static Room ToRoom(string pack)
         {
             var s = pack.Split('\t');

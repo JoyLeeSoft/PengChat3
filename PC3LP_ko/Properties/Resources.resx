@@ -172,8 +172,7 @@
     <value>입장</value>
   </data>
   <data name="Str_NotSuccessedConnect" xml:space="preserve">
-    <value>PengChat3 서버에 접속하지 못했습니다.
-아이디와 비밀번호를 확인하여 주세요.</value>
+    <value>PengChat3 서버에 접속하지 못했습니다.</value>
   </data>
   <data name="Str_SuccessedConnect" xml:space="preserve">
     <value>PengChat3 서버에 접속하였습니다.</value>
@@ -216,5 +215,17 @@
   </data>
   <data name="Str_UnknownRoomID" xml:space="preserve">
     <value>방 ID가 잘못되었습니다</value>
+  </data>
+  <data name="Str_CannotEntryToRoom" xml:space="preserve">
+    <value>방에 입장하실수 없습니다.</value>
+  </data>
+  <data name="Str_PasswordIsWrong" xml:space="preserve">
+    <value>잘못된 비밀번호 입니다.</value>
+  </data>
+  <data name="Str_RoomIsFull" xml:space="preserve">
+    <value>방이 만원입니다.</value>
+  </data>
+  <data name="Str_AlreadyLogged" xml:space="preserve">
+    <value>이미 같은 닉네임으로 접속해있습니다.</value>
   </data>
 </root>

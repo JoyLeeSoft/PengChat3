@@ -39,12 +39,24 @@ struct room
 	string master;
 	max_connector_type max_num;
 	string password;
+	
+	vector<cnt_socket *> members;
 
 	static packet to_packet(const room &r)
 	{
 		return (to_string(r.id) + '\t' + r.name + '\t' + r.master + '\t' + to_string(r.max_num) + '\t' +
 			((r.password != "") ? "1" : "0"));
 	}
+
+	/*static room_list::iterator get_room_from_id(id_type id)
+	{
+		lock_guard<mutex> lg(g_room_mutex);
+
+		return find_if(g_room_list.begin(), g_room_list.end(), [id](const room &r)
+		{
+			return r.id == id;
+		});
+	}*/
 };
 
 typedef list<room> room_list;

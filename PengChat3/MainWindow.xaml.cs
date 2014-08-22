@@ -68,6 +68,7 @@ namespace PengChat3
                     sock.OnRoomInfo += sock_OnRoomInfo;
                     sock.OnCreateRoom += sock_OnCreateRoom;
                     sock.OnDeleteRoom += sock_OnDeleteRoom;
+                    sock.OnAddClient += sock_OnAddClient;
                     sock.Connect(textBox_IP.Text, App.Port);
                     sock.Login(textBox_ID.Text, passwordBox_PW.Password);
                 }
@@ -154,6 +155,14 @@ namespace PengChat3
             {
                 GetSelectedSock().CreateRoom(win.RoomName, win.MaxConnectorNum, win.Password);
             }
+        }
+
+        private void SigninButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (passwordBox_RoomPW.Password != "")
+                GetSelectedSock().EntryToRoom(GetSelectedRoomItem().room.ID, passwordBox_RoomPW.Password);
+            else
+                GetSelectedSock().EntryToRoom(GetSelectedRoomItem().room.ID);
         }
 
         private void DeleteRoomButton_Click(object sender, RoutedEventArgs e)

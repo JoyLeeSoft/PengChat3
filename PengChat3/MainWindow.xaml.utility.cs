@@ -40,6 +40,7 @@ namespace PengChat3
             else
             {
                 //listView_RoomInfo.Items.Clear();
+                passwordBox_RoomPW.Password = "";
                 label_RoomName.Content = ResourceManager.GetStringByKey("Str_NoSelectedRoom");
             }
         }

@@ -86,7 +86,7 @@ namespace PC3API_dn
             pack = pack.Remove(0, PACKET_HEADER_SIZE);
 
             if (header == Protocol.PROTOCOL_LOGIN)
-                OnLoginResult(pack);
+                OnLoginResult(pack[0] == '1', pack.Remove(0, 1));
             else if (header == Protocol.PROTOCOL_GET_ROOM_INFO)
                 OnGetRoomInfoResult(pack);
             else if (header == Protocol.PROTOCOL_CREATE_ROOM)
@@ -97,11 +97,15 @@ namespace PC3API_dn
                 OnDeleteRoomResult((DeleteRoomEventArgs.ErrorCode)Convert.ToByte(pack), null);
             else if (header == Protocol.PROTOCOL_SUB_ROOM)
                 OnDeleteRoomResult(DeleteRoomEventArgs.ErrorCode.Ok, pack);
+            else if (header == Protocol.PROTOCOL_ENTRY_ROOM)
+                OnAddClientResult((AddClientEventArgs.ErrorCode)Convert.ToByte(pack), null);
+            else if (header == Protocol.PROTOCOL_ADD_CLIENT)
+                OnAddClientResult(AddClientEventArgs.ErrorCode.Ok, pack);
         }
 
-        private void OnLoginResult(string pack)
+        private void OnLoginResult(bool successed, string pack)
         {
-            if (pack != "")
+            if (successed)
             {
                 IsLogged = true;
                 Nickname = pack;
@@ -112,7 +116,7 @@ namespace PC3API_dn
             else
             {
                 if (OnLogin != null)
-                    OnLogin(this, new LoginEventArgs(null, 0, null, LoginEventArgs.ErrorCode.UnknownIdPw));
+                    OnLogin(this, new LoginEventArgs(null, 0, null, (LoginEventArgs.ErrorCode)Convert.ToByte(pack)));
             }
         }
         
@@ -172,6 +176,27 @@ namespace PC3API_dn
                 {
                     OnDeleteRoom(this, new DeleteRoomEventArgs(e, null));
                 }
+            }
+        }
+
+        private void OnAddClientResult(AddClientEventArgs.ErrorCode e, string pack)
+        {
+            if (e == AddClientEventArgs.ErrorCode.Ok)
+            {
+                string[] id_nick = pack.Split('\n');
+                uint room_id = Convert.ToUInt32(id_nick[0]);
+
+                Room rm = Rooms_.Find(r => { return r.ID == room_id; } );
+
+                rm.Members_.Add(id_nick[1]);
+
+                if (OnAddClient != null)
+                    OnAddClient(this, new AddClientEventArgs(e, room_id, id_nick[1]));
+            }
+            else
+            {
+                if (OnAddClient != null)
+                    OnAddClient(this, new AddClientEventArgs(e, null, null));
             }
         }
     }

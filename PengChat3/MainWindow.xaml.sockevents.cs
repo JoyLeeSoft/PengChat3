@@ -20,33 +20,43 @@ namespace PengChat3
     {
         void sock_OnLogin(object sender, LoginEventArgs e)
         {
-            switch (e.ErrCode)
+            if (e.ErrCode == LoginEventArgs.ErrorCode.Ok)
             {
-                case LoginEventArgs.ErrorCode.Ok:
-                    Logging(ResourceManager.GetStringByKey("Str_SuccessedConnect") + '\n' +
+                Logging(ResourceManager.GetStringByKey("Str_SuccessedConnect") + '\n' +
                         string.Format("{0}:{1}", e.ConnectedIP, e.ConnectedPort));
 
-                    PengChat3ClientSock sock = (PengChat3ClientSock)sender;
+                PengChat3ClientSock sock = (PengChat3ClientSock)sender;
 
-                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
-                    {
-                        CntComboBoxItem item = new CntComboBoxItem();
-                        item.Text = e.ConnectedIP + ":" + e.ConnectedPort.ToString();
-                        item.Sock = sock;
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+                {
+                    CntComboBoxItem item = new CntComboBoxItem();
+                    item.Text = e.ConnectedIP + ":" + e.ConnectedPort.ToString();
+                    item.Sock = sock;
 
-                        comboBox_ConnectionInfo.Items.Add(item);
-                        comboBox_ConnectionInfo.SelectedItem = item;
+                    comboBox_ConnectionInfo.Items.Add(item);
+                    comboBox_ConnectionInfo.SelectedItem = item;
 
-                        ChangeStatusConnectionInfoControls(Visibility.Visible);
-                    }));
+                    ChangeStatusConnectionInfoControls(Visibility.Visible);
+                }));
 
-                    sock.GetRoomInfo();
-                    break;
-                case LoginEventArgs.ErrorCode.UnknownIdPw:
-                    string err = ResourceManager.GetStringByKey("Str_NotSuccessedConnect");
-                    Logging(err);
-                    Utility.Error(err);
-                    break;
+                sock.GetRoomInfo();
+            }
+            else
+            {
+                string err = ResourceManager.GetStringByKey("Str_NotSuccessedConnect") + ' ';
+
+                switch (e.ErrCode)
+                {
+                    case LoginEventArgs.ErrorCode.UnknownIdPw:
+                        err += ResourceManager.GetStringByKey("Str_PasswordIsWrong");
+                        break;
+                    case LoginEventArgs.ErrorCode.AlreadyLogged:
+                        err += ResourceManager.GetStringByKey("Str_AlreadyLogged");
+                        break;
+                }
+
+                Logging(err);
+                Utility.Error(err);
             }
         }
 
@@ -111,12 +121,17 @@ namespace PengChat3
                 if (IsSelectedSocket((PengChat3ClientSock)sender))
                 {
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+                    {
+                        RoomListItem item = new RoomListItem(e.NewRoom);
+                        listView_RoomInfo.Items.Add(item);
+                        listView_RoomInfo.SelectedItem = item;
+
+                        if (e.NewRoom.Master == GetSelectedSock().Nickname)
                         {
-                            RoomListItem item = new RoomListItem(e.NewRoom);
-                            listView_RoomInfo.Items.Add(item);
-                            listView_RoomInfo.SelectedItem = item;
-                        }));
-                    Logging(ResourceManager.GetStringByKey("Str_SuccessedToCreateRoom"));
+                            Logging(ResourceManager.GetStringByKey("Str_SuccessedToCreateRoom"));
+                            //Tab control add
+                        }
+                    }));
                 }
             }
             else
@@ -170,7 +185,7 @@ namespace PengChat3
             {
                 string s = ResourceManager.GetStringByKey("Str_FailedToDeleteRoom") + ' ';
 
-                switch (e.ErrCode)
+                /*switch (e.ErrCode)
                 {
                     case DeleteRoomEventArgs.ErrorCode.UnknownID:
                         s += ResourceManager.GetStringByKey("Str_UnknownRoomID");
@@ -181,10 +196,35 @@ namespace PengChat3
                     case DeleteRoomEventArgs.ErrorCode.AccessDenied:
                         s += ResourceManager.GetStringByKey("Str_AccessDenied");
                         break;
-                }
+                }*/
 
                 Logging(s);
                 Utility.Error(s);
+            }
+        }
+
+        private void sock_OnAddClient(object sender, AddClientEventArgs e)
+        {            
+            if (e.ErrCode == AddClientEventArgs.ErrorCode.Ok)
+            {
+                Room rm = Array.Find(((PengChat3ClientSock)sender).Rooms, r => { return r.ID == e.RoomID.Value; });
+            }
+            else
+            {
+                string msg = ResourceManager.GetStringByKey("Str_CannotEntryToRoom") + ' ';
+
+                switch (e.ErrCode)
+                {
+                    case AddClientEventArgs.ErrorCode.RoomIsFull:
+                        msg += ResourceManager.GetStringByKey("Str_RoomIsFull");
+                        break;
+                    case AddClientEventArgs.ErrorCode.PasswordIsWrong:
+                        msg += ResourceManager.GetStringByKey("Str_PasswordIsWrong");
+                        break;
+                }
+
+                Logging(msg);
+                Utility.Error(msg);
             }
         }
     }

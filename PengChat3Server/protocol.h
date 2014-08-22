@@ -33,9 +33,17 @@ const packet_type PROTOCOL_CHECK_REAL[] = { 'C', 'H', 'C', 'K', 0x00 };
 const packet_type PROTOCOL_LOGIN[] = { 'L', 'G', 'I', 'N', 0x00 };
 const packet_type PROTOCOL_GET_ROOM_INFO[] = { 'G', 'T', 'R', 'I', 0x00 };
 const packet_type PROTOCOL_CREATE_ROOM[] = { 'C', 'T', 'R', 'M', 0x00 };
-const packet_type PROTOCOL_ADD_ROOM[] = { 'A', 'D', 'R', 'M', 0x00 };
 const packet_type PROTOCOL_DELETE_ROOM[] = { 'D', 'T', 'R', 'M', 0x00 };
+const packet_type PROTOCOL_ADD_ROOM[] = { 'A', 'D', 'R', 'M', 0x00 };
 const packet_type PROTOCOL_SUB_ROOM[] = { 'S', 'B', 'R', 'M', 0x00 };
+const packet_type PROTOCOL_ADD_CLIENT[] = { 'A', 'D', 'C', 'T', 0x00 };
+const packet_type PROTOCOL_ENTRY_ROOM[] = { 'E', 'T', 'R', 'M', 0x00 };
+
+enum class login_error : uint8_t
+{
+	wrong_id_pw = 1,
+	already_logged,
+};
 
 enum class create_room_error : uint8_t
 {
@@ -48,6 +56,14 @@ enum class delete_room_error : uint8_t
 	unknown_room_id = 1,
 	room_not_exist,
 	access_denied,
+};
+
+enum class entry_to_room_error : uint8_t
+{
+	unknown_room_id = 1,
+	room_not_exist,
+	room_is_full,
+	password_is_wrong,
 };
 
 #endif

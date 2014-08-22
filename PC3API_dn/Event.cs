@@ -13,6 +13,7 @@ namespace PC3API_dn
         {
             Ok,
             UnknownIdPw,
+            AlreadyLogged,
         }
 
         public ErrorCode ErrCode { get; private set; }
@@ -103,29 +104,31 @@ namespace PC3API_dn
     }
     public delegate void OnDeleteRoomDele(object sender, DeleteRoomEventArgs e);
 
-    public class EnterToRoomEventArgs : EventArgs
+    public class AddClientEventArgs : EventArgs
     {
-        public enum ErrorCode
+        public enum ErrorCode : byte
         {
             Ok,
-            ClientIsFull,
+            UnknownID,
+            RoomNotExist,
+            RoomIsFull,
             PasswordIsWrong,
-            UnknownRoomID,
         }
+
         public ErrorCode ErrCode { get; private set; }
 
-        public short RoomID { get; private set; }
+        public uint? RoomID { get; private set; }
 
-        public string RoomName { get; private set; }
+        public string Nickname { get; private set; }
 
-        public EnterToRoomEventArgs(ErrorCode errcode, short room_id, string roomname)
+        public AddClientEventArgs(ErrorCode errcode, uint? room_id, string nick)
         {
             ErrCode = errcode;
             RoomID = room_id;
-            RoomName = roomname;
+            Nickname = nick;
         }
     }
-    public delegate void OnEnterToRoomDele(object sender, EnterToRoomEventArgs e);
+    public delegate void AddClientDele(object sender, AddClientEventArgs e);
 
     public class ReceiveChatEventArgs : EventArgs
     {
@@ -154,7 +157,7 @@ namespace PC3API_dn
         public event OnRoomInfoDele OnRoomInfo;
         public event OnCreateRoomDele OnCreateRoom;
         public event OnDeleteRoomDele OnDeleteRoom;
-        public event OnEnterToRoomDele OnEnterToRoom;
+        public event AddClientDele OnAddClient;
         public event OnReceiveChatDele OnReceiveChat;
     }
 }

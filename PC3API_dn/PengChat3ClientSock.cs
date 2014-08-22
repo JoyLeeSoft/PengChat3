@@ -138,6 +138,11 @@ namespace PC3API_dn
             SendPacket(Protocol.PROTOCOL_DELETE_ROOM, id.ToString());
         }
 
+        public void EntryToRoom(uint id, string password = Password_NotUsed)
+        {
+            SendPacket(Protocol.PROTOCOL_ENTRY_ROOM, id.ToString() + '\n' + password);
+        }
+
         private void SendPacket(string header, string data = "")
         {
             byte[] buf = new byte[1024];
