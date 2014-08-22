@@ -86,15 +86,19 @@ namespace PC3API_dn
         public enum ErrorCode
         {
             Ok,
-			PermissionError,
-			UnknownRoomID,
+			UnknownID,
+			RoomNotExist,
+            AccessDenied,
         }
 
         public ErrorCode ErrCode { get; private set; }
 
-        public DeleteRoomEventArgs(ErrorCode errcode)
+        public uint? ID { get; private set; }
+
+        public DeleteRoomEventArgs(ErrorCode errcode, uint? id)
         {
             ErrCode = errcode;
+            ID = id;
         }
     }
     public delegate void OnDeleteRoomDele(object sender, DeleteRoomEventArgs e);

@@ -90,9 +90,13 @@ namespace PC3API_dn
             else if (header == Protocol.PROTOCOL_GET_ROOM_INFO)
                 OnGetRoomInfoResult(pack);
             else if (header == Protocol.PROTOCOL_CREATE_ROOM)
-                OnAddRomResult((CreateRoomEventArgs.ErrorCode)Convert.ToByte(pack), null);
+                OnAddRoomResult((CreateRoomEventArgs.ErrorCode)Convert.ToByte(pack), null);
             else if (header == Protocol.PROTOCOL_ADD_ROOM)
-                OnAddRomResult(CreateRoomEventArgs.ErrorCode.Ok, pack);
+                OnAddRoomResult(CreateRoomEventArgs.ErrorCode.Ok, pack);
+            else if (header == Protocol.PROTOCOL_DELETE_ROOM)
+                OnDeleteRoomResult((DeleteRoomEventArgs.ErrorCode)Convert.ToByte(pack), null);
+            else if (header == Protocol.PROTOCOL_SUB_ROOM)
+                OnDeleteRoomResult(DeleteRoomEventArgs.ErrorCode.Ok, pack);
         }
 
         private void OnLoginResult(string pack)
@@ -128,7 +132,7 @@ namespace PC3API_dn
             OnRoomInfo(this, new RoomInfoEventArgs(Rooms_.ToArray()));
         }
 
-        private void OnAddRomResult(CreateRoomEventArgs.ErrorCode e, string pack)
+        private void OnAddRoomResult(CreateRoomEventArgs.ErrorCode e, string pack)
         {
             if (e == CreateRoomEventArgs.ErrorCode.Ok)
             {
@@ -145,6 +149,28 @@ namespace PC3API_dn
                 if (OnCreateRoom != null)
                 {
                     OnCreateRoom(this, new CreateRoomEventArgs(e, null));
+                }
+            }
+        }
+
+        private void OnDeleteRoomResult(DeleteRoomEventArgs.ErrorCode e, string pack)
+        {
+            if (e == DeleteRoomEventArgs.ErrorCode.Ok)
+            {
+                uint id = Convert.ToUInt32(pack);
+
+                Rooms_.RemoveAll(r => { return r.ID == id; });
+
+                if (OnDeleteRoom != null)
+                {
+                    OnDeleteRoom(this, new DeleteRoomEventArgs(e, id));
+                }
+            }
+            else
+            {
+                if (OnDeleteRoom != null)
+                {
+                    OnDeleteRoom(this, new DeleteRoomEventArgs(e, null));
                 }
             }
         }

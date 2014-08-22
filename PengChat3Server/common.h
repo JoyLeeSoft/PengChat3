@@ -30,25 +30,27 @@
 // C++ standard library
 #include <cstdint>
 #include <cstdlib>
+#include <cerrno>
+#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <cstring>
+#include <limits>
 #include <string>
 #include <memory>
 #include <vector>
 #include <list>
+#include <algorithm>
+#include <functional>
 #include <exception>
-#include <cerrno>
 #include <thread>
 #include <mutex>
-#include <locale>
+#include <random>
 
 // Boost library
 #include <boost/asio.hpp> // Async I/O
 #include <boost/noncopyable.hpp>
 #include <boost/tokenizer.hpp>
-#include <boost/locale.hpp>
 #include <boost/lexical_cast.hpp>
 
 // For Windows platform
@@ -62,7 +64,6 @@ using namespace std;
 using namespace boost;
 using namespace boost::asio;
 using namespace boost::asio::ip;
-using namespace boost::locale;
 
 // Packet typedefs
 typedef char packet_type;

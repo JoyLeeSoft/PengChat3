@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 	g_log = new logger("PengChat3Server.log");
 
 	/*g_room_list.push_back({ "TestRoom1", "Master1", 0, "" });
-	g_room_list.push_back({ "TestRoom2", "Master2", 100, "asdf" });
+	g_room_list.push_back({ "TestRoom2", "Master2", 100, "" });
 	g_room_list.push_back({ "TestRoom3", "Master3", 1000, "zxcv" });*/
 
 	// Basic I/O service object

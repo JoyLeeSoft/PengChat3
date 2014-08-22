@@ -6,6 +6,8 @@ namespace PC3API_dn
 {
     public class Room
     {
+        public uint ID { get; private set; }
+
         public string Name { get; private set; }
 
         public string Master { get; private set; }
@@ -18,13 +20,21 @@ namespace PC3API_dn
         {
             var s = pack.Split('\t');
 
-            Room r = new Room();
-            r.Name = s[0];
-            r.Master = s[1];
-            r.MaxConnectorNum = Convert.ToInt16(s[2]);
-            r.IsNeedPassword = s[3] == "1";
+            if (s.Length == 5)
+            {
+                Room r = new Room();
+                r.ID = Convert.ToUInt32(s[0]);
+                r.Name = s[1];
+                r.Master = s[2];
+                r.MaxConnectorNum = Convert.ToInt16(s[3]);
+                r.IsNeedPassword = s[4] == "1";
 
-            return r;
+                return r;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

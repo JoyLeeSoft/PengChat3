@@ -12,12 +12,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using PC3API_dn;
 
 namespace PengChat3
 {
     public partial class MainWindow
     {
-        private void ChangeStatusRoomInfoControls(Visibility visibility, RoomListItem r)
+        private void ChangeStatusRoomInfoControls(Visibility visibility, RoomListItem r, string master)
         {
             foreach (UIElement ui in grid_GroupBoxRoomInfo.Children)
             {
@@ -34,10 +35,11 @@ namespace PengChat3
                 label_NumValue.Content = (r.room.MaxConnectorNum != 0) ?
                     r.room.MaxConnectorNum.ToString() : ResourceManager.GetStringByKey("Str_Unlimited");
                 passwordBox_RoomPW.IsEnabled = r.room.IsNeedPassword;
+                button_DeleteRoom.IsEnabled = (r.room.Master == master);
             }
             else
             {
-                listView_RoomInfo.Items.Clear();
+                //listView_RoomInfo.Items.Clear();
                 label_RoomName.Content = ResourceManager.GetStringByKey("Str_NoSelectedRoom");
             }
         }
@@ -53,21 +55,6 @@ namespace PengChat3
             }
         }
 
-        private BitmapImage YesImage, NoImage;
-
-        private void InitImages()
-        {
-            YesImage = new BitmapImage();
-            YesImage.BeginInit();
-            YesImage.UriSource = new Uri(@"Resources\yes.png", UriKind.Relative);
-            YesImage.EndInit();
-
-            NoImage = new BitmapImage();
-            NoImage.BeginInit();
-            NoImage.UriSource = new Uri(@"Resources\no.png", UriKind.Relative);
-            NoImage.EndInit();
-        }
-
         private void Logging(string msg)
         {
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
@@ -75,6 +62,27 @@ namespace PengChat3
                 textBox_Info.AppendText(msg + "\r\n");
                 textBox_Info.ScrollToEnd();
             }));
+        }
+
+        private PengChat3ClientSock GetSelectedSock()
+        {
+            return ((CntComboBoxItem)comboBox_ConnectionInfo.SelectedItem).Sock;
+        }
+
+        private RoomListItem GetSelectedRoomItem()
+        {
+            return (RoomListItem)listView_RoomInfo.SelectedItem;
+        }
+
+        private bool IsSelectedSocket(PengChat3ClientSock sock)
+        {
+            bool b = false;
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+            {
+                b = (GetSelectedSock() == sock);
+            }));
+
+            return b;
         }
     }
 }

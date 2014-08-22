@@ -27,14 +27,24 @@
 
 #include "common.h"
 
+#define PASSWORD_NOTUSED "\a"
+
 struct room
 {
 	typedef uint16_t max_connector_type;
-
+	typedef uint32_t id_type;
+	
+	id_type id;
 	string name;
 	string master;
 	max_connector_type max_num;
 	string password;
+
+	static packet to_packet(const room &r)
+	{
+		return (to_string(r.id) + '\t' + r.name + '\t' + r.master + '\t' + to_string(r.max_num) + '\t' +
+			((r.password != "") ? "1" : "0"));
+	}
 };
 
 typedef list<room> room_list;

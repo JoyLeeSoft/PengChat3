@@ -25,7 +25,6 @@ namespace PengChat3
         public MainWindow()
         {
             InitializeComponent();
-            InitImages();
 
 #region Control name settings
             textBlock_tabItemMain.Text = ResourceManager.GetStringByKey("Str_MainPage");
@@ -68,6 +67,7 @@ namespace PengChat3
                     sock.OnDisconnected += sock_OnDisconnected;
                     sock.OnRoomInfo += sock_OnRoomInfo;
                     sock.OnCreateRoom += sock_OnCreateRoom;
+                    sock.OnDeleteRoom += sock_OnDeleteRoom;
                     sock.Connect(textBox_IP.Text, App.Port);
                     sock.Login(textBox_ID.Text, passwordBox_PW.Password);
                 }
@@ -92,16 +92,16 @@ namespace PengChat3
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            ((CntComboBoxItem)comboBox_ConnectionInfo.SelectedItem).Sock.Logout();
+            GetSelectedSock().Logout();
 
-            comboBox_ConnectionInfo.Items.Remove(comboBox_ConnectionInfo.SelectedItem);
+            /*comboBox_ConnectionInfo.Items.Remove(comboBox_ConnectionInfo.SelectedItem);
 
-            ChangeStatusRoomInfoControls(Visibility.Hidden, null);
+            ChangeStatusRoomInfoControls(Visibility.Hidden, null, null);
 
             if (comboBox_ConnectionInfo.Items.IsEmpty == false)
                 comboBox_ConnectionInfo.SelectedIndex = 0;
             else
-                ChangeStatusConnectionInfoControls(Visibility.Hidden);
+                ChangeStatusConnectionInfoControls(Visibility.Hidden);*/
         }
 
         private void LoginTextboxes_KeyDown(object sender, KeyEventArgs e)
@@ -123,20 +123,24 @@ namespace PengChat3
         private void listView_RoomInfo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (listView_RoomInfo.Items.IsEmpty == false)
-                ChangeStatusRoomInfoControls(Visibility.Visible, ((RoomListItem)listView_RoomInfo.SelectedItem));
+            {
+                var r = GetSelectedRoomItem();
+
+                if (r != null)
+                    ChangeStatusRoomInfoControls(Visibility.Visible, r,
+                        GetSelectedSock().Nickname);
+            }
         }
 
         private void comboBox_ConnectionInfo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ChangeStatusRoomInfoControls(Visibility.Hidden, null);
+            ChangeStatusRoomInfoControls(Visibility.Hidden, null, null);
 
             listView_RoomInfo.Items.Clear();
 
-            var item = comboBox_ConnectionInfo.SelectedItem;
-
-            if (comboBox_ConnectionInfo.Items.IsEmpty == false && item != null)
+            if (comboBox_ConnectionInfo.Items.IsEmpty == false && comboBox_ConnectionInfo.SelectedItem != null)
             {
-                foreach (var r in ((CntComboBoxItem)item).Sock.Rooms)
+                foreach (var r in GetSelectedSock().Rooms)
                     listView_RoomInfo.Items.Add(new RoomListItem(r));
             }
         }
@@ -148,9 +152,13 @@ namespace PengChat3
 
             if (win.DialogResult.Value == true)
             {
-                ((CntComboBoxItem)comboBox_ConnectionInfo.SelectedItem).Sock.CreateRoom(
-                    win.RoomName, win.MaxConnectorNum, win.Password);
+                GetSelectedSock().CreateRoom(win.RoomName, win.MaxConnectorNum, win.Password);
             }
+        }
+
+        private void DeleteRoomButton_Click(object sender, RoutedEventArgs e)
+        {
+            GetSelectedSock().DeleteRoom(GetSelectedRoomItem().room.ID);
         }
     }
 }

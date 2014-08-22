@@ -61,6 +61,15 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 권한이 없습니다..
+        /// </summary>
+        internal static string Str_AccessDenied {
+            get {
+                return ResourceManager.GetString("Str_AccessDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PengChat3 서버에 연결할수 없습니다.
         /// </summary>
         internal static string Str_CannotConnectToServer {
@@ -120,6 +129,15 @@ namespace PC3LP_ko.Properties {
         internal static string Str_FailedToCreateRoom {
             get {
                 return ResourceManager.GetString("Str_FailedToCreateRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 방 삭제에 실패했습니다..
+        /// </summary>
+        internal static string Str_FailedToDeleteRoom {
+            get {
+                return ResourceManager.GetString("Str_FailedToDeleteRoom", resourceCulture);
             }
         }
         
@@ -269,6 +287,15 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 그런 방 ID는 존재하지 않습니다..
+        /// </summary>
+        internal static string Str_RoomNotExist {
+            get {
+                return ResourceManager.GetString("Str_RoomNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 입장.
         /// </summary>
         internal static string Str_Signin {
@@ -296,11 +323,29 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 방을 성공적으로 삭제했습니다..
+        /// </summary>
+        internal static string Str_SuccessedToDeleteRoom {
+            get {
+                return ResourceManager.GetString("Str_SuccessedToDeleteRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 최대 접속자 수가 정확하지 않습니다..
         /// </summary>
         internal static string Str_UnknownCapacity {
             get {
                 return ResourceManager.GetString("Str_UnknownCapacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 방 ID가 잘못되었습니다.
+        /// </summary>
+        internal static string Str_UnknownRoomID {
+            get {
+                return ResourceManager.GetString("Str_UnknownRoomID", resourceCulture);
             }
         }
         

@@ -32,7 +32,49 @@
 extern db *g_db;
 
 extern mutex g_room_mutex;
+extern mutex g_clients_mutex;
 extern room_list g_room_list;
+
+namespace
+{
+	room::id_type create_room_id()
+	{
+		random_device rd;
+		mt19937 mt(rd());
+		uniform_int_distribution<unsigned int> dist(0, numeric_limits<room::id_type>::max());
+		room::id_type id = dist(mt);
+
+		{
+			//lock_guard<mutex> lg(g_room_mutex);
+
+			while (true)
+			{
+				if (find_if(g_room_list.begin(), g_room_list.end(), [id](const room &r)
+				{
+					return r.id == id;
+				}) != g_room_list.end())
+				{
+					id = dist(mt);
+					continue;
+				}
+				else
+				{
+					return id;
+				}
+			}
+		}
+	}
+
+	void broad_cast(const packet_type *header, const packet &pack)
+	{
+		lock_guard<mutex> lg(g_clients_mutex);
+
+		for (auto client : g_clients)
+		{
+			client->send_packet(header, pack);
+		}
+	}
+}
 
 cnt_socket::cnt_socket(tcp::socket *client, const tcp::endpoint &epnt) : m_socket(client), m_epnt(epnt), m_client_state({ false, false }), m_no_need_join(false)
 {
@@ -165,9 +207,6 @@ bool cnt_socket::packet_processor(packet &pack)
 
 		if (name_maxnum_pw.size() == 3)
 		{
-			using boost::lexical_cast;
-			using boost::bad_lexical_cast;
-
 			room::max_connector_type i;
 
 			try
@@ -182,6 +221,22 @@ bool cnt_socket::packet_processor(packet &pack)
 
 			on_create_room(name_maxnum_pw[0], i, name_maxnum_pw[2]);
 		}
+	}
+	else if (header.compare(PROTOCOL_DELETE_ROOM) == 0)
+	{
+		room::id_type id = 0;
+		
+		try
+		{
+			id = lexical_cast<room::id_type>(pack);
+		}
+		catch (const bad_lexical_cast &)
+		{
+			send_packet(PROTOCOL_DELETE_ROOM, to_string((uint8_t)delete_room_error::unknown_room_id));
+			return true;
+		}
+
+		on_delete_room(id);
 	}
 
 	return true;
@@ -231,8 +286,7 @@ void cnt_socket::on_get_room_info()
 
 		for (auto r : g_room_list)
 		{
-			temp += (r.name + '\t' + r.master + '\t' + to_string(r.max_num) + '\t' + 
-				((r.password != "") ? "1" : "0") + '\n');
+			temp += (room::to_packet(r) + '\n');
 		}
 	}
 
@@ -244,7 +298,8 @@ void cnt_socket::on_get_room_info()
 
 void cnt_socket::on_create_room(const packet &name, room::max_connector_type max_num, const packet &pw)
 {
-	static const packet password_notused = "\t";
+	room::id_type id = 0;
+	room new_room;
 
 	{
 		lock_guard<mutex> lg(g_room_mutex);
@@ -258,11 +313,41 @@ void cnt_socket::on_create_room(const packet &name, room::max_connector_type max
 			return;
 		}
 
-		g_room_list.push_back({ name, m_client_state.nick, max_num, (pw != password_notused) ? pw : ""});
+		id = create_room_id();
+		new_room = { id, name, m_client_state.nick, max_num, (pw.compare(PASSWORD_NOTUSED) == 0) ? "" : pw };
+		g_room_list.push_back(new_room);
 	}
 
-	send_packet(PROTOCOL_ADD_ROM, name + '\t' + m_client_state.nick + '\t' + to_string(max_num) + '\t' +
-		((pw != password_notused) ? "1" : "0"));
+	broad_cast(PROTOCOL_ADD_ROOM, room::to_packet(new_room));
+}
+
+void cnt_socket::on_delete_room(room::id_type id)
+{
+	{
+		lock_guard<mutex> lg(g_room_mutex);
+
+		auto it = find_if(g_room_list.begin(), g_room_list.end(), [id](const room &r)
+		{
+			return r.id == id;
+		});
+
+
+		if (it == g_room_list.end())
+		{
+			send_packet(PROTOCOL_DELETE_ROOM, to_string((uint8_t)delete_room_error::room_not_exist));
+			return;
+		}
+
+		if (it->master != m_client_state.nick)
+		{
+			send_packet(PROTOCOL_DELETE_ROOM, to_string((uint8_t)delete_room_error::access_denied));
+			return;
+		}
+
+		g_room_list.erase(it);
+	}
+
+	broad_cast(PROTOCOL_SUB_ROOM, to_string(id));
 }
 
 void cnt_socket::send_packet(const packet_type *header, const packet &pack)

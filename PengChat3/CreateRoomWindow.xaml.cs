@@ -64,7 +64,7 @@ namespace PengChat3
                 {
                     RoomName = textBox_Name.Text;
                     MaxConnectorNum = checkBox_MaxNum.IsChecked.Value ? (short)0 : Convert.ToInt16(textBox_MaxNum.Text);
-                    Password = checkBox_Password.IsChecked.Value ? "\t" : textBox_Password.Text;
+                    Password = checkBox_Password.IsChecked.Value ? "\a" : textBox_Password.Text;
 
                     DialogResult = true;
                     Close();

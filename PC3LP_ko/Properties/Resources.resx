@@ -202,4 +202,19 @@
   <data name="Str_UnknownCapacity" xml:space="preserve">
     <value>최대 접속자 수가 정확하지 않습니다.</value>
   </data>
+  <data name="Str_AccessDenied" xml:space="preserve">
+    <value>권한이 없습니다.</value>
+  </data>
+  <data name="Str_FailedToDeleteRoom" xml:space="preserve">
+    <value>방 삭제에 실패했습니다.</value>
+  </data>
+  <data name="Str_RoomNotExist" xml:space="preserve">
+    <value>그런 방 ID는 존재하지 않습니다.</value>
+  </data>
+  <data name="Str_SuccessedToDeleteRoom" xml:space="preserve">
+    <value>방을 성공적으로 삭제했습니다.</value>
+  </data>
+  <data name="Str_UnknownRoomID" xml:space="preserve">
+    <value>방 ID가 잘못되었습니다</value>
+  </data>
 </root>

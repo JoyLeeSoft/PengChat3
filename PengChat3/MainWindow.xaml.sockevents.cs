@@ -53,20 +53,20 @@ namespace PengChat3
         void sock_OnDisconnected(object sender, DisconnectedEventArgs e)
         {
             PengChat3ClientSock sock = (PengChat3ClientSock)sender;
+            string err;
 
             switch (e.ErrCode)
             {
                 case DisconnectedEventArgs.ErrorCode.ServerError:
-                    string err = ResourceManager.GetStringByKey("Str_DisconnectedServer") + '\n' 
+                    err = ResourceManager.GetStringByKey("Str_DisconnectedServer") + '\n' 
                     + e.DisconnectedIP + ':' + e.DisconnectedPort.ToString();
                     Logging(err);
-                    //Utility.Error(err);
                     break;
 
                 case DisconnectedEventArgs.ErrorCode.Logout:
-                    string msg = ResourceManager.GetStringByKey("Str_LoggedOut") + '\n' 
+                    err = ResourceManager.GetStringByKey("Str_LoggedOut") + '\n' 
                     + e.DisconnectedIP + ':' + e.DisconnectedPort.ToString();
-                    Logging(msg);
+                    Logging(err);
                     break;
             }
 
@@ -81,9 +81,14 @@ namespace PengChat3
                     }
                 }
 
+
                 if (comboBox_ConnectionInfo.Items.IsEmpty)
                 {
                     ChangeStatusConnectionInfoControls(Visibility.Hidden);
+                }
+                else
+                {
+                    comboBox_ConnectionInfo.SelectedIndex = comboBox_ConnectionInfo.Items.Count - 1;
                 }
             }));
         }
@@ -103,11 +108,16 @@ namespace PengChat3
         {
             if (e.ErrCode == CreateRoomEventArgs.ErrorCode.Ok)
             {
-                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+                if (IsSelectedSocket((PengChat3ClientSock)sender))
                 {
-                    listView_RoomInfo.Items.Add(new RoomListItem(e.NewRoom));
-                }));
-                Logging(ResourceManager.GetStringByKey("Str_SuccessedToCreateRoom"));
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+                        {
+                            RoomListItem item = new RoomListItem(e.NewRoom);
+                            listView_RoomInfo.Items.Add(item);
+                            listView_RoomInfo.SelectedItem = item;
+                        }));
+                    Logging(ResourceManager.GetStringByKey("Str_SuccessedToCreateRoom"));
+                }
             }
             else
             {
@@ -117,15 +127,64 @@ namespace PengChat3
                 {
                     case CreateRoomEventArgs.ErrorCode.UnknownCapacity:
                         s += ResourceManager.GetStringByKey("Str_UnknownCapacity");
-                        Logging(s);
-                        Utility.Error(s);
                         break;
                     case CreateRoomEventArgs.ErrorCode.RoomNameOverlap:
                         s += ResourceManager.GetStringByKey("Str_RoomNameOverlap");
-                        Logging(s);
-                        Utility.Error(s);
                         break;
                 }
+
+                Logging(s);
+                Utility.Error(s);
+            }
+        }
+
+        void sock_OnDeleteRoom(object sender, DeleteRoomEventArgs e)
+        {
+            if (e.ErrCode == DeleteRoomEventArgs.ErrorCode.Ok)
+            {
+                if (IsSelectedSocket((PengChat3ClientSock)sender))
+                {
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+                    {
+                        var r = GetSelectedRoomItem();
+
+                        if (r != null)
+                        {
+                            listView_RoomInfo.Items.Remove(r);
+                        }
+
+                        if (listView_RoomInfo.Items.IsEmpty)
+                        {
+                            ChangeStatusRoomInfoControls(Visibility.Hidden, null, null);
+                        }
+                        else
+                        {
+                            listView_RoomInfo.SelectedIndex = listView_RoomInfo.Items.Count - 1;
+                        }
+                    }));
+
+                    Logging(ResourceManager.GetStringByKey("Str_SuccessedToDeleteRoom"));
+                }
+            }
+            else
+            {
+                string s = ResourceManager.GetStringByKey("Str_FailedToDeleteRoom") + ' ';
+
+                switch (e.ErrCode)
+                {
+                    case DeleteRoomEventArgs.ErrorCode.UnknownID:
+                        s += ResourceManager.GetStringByKey("Str_UnknownRoomID");
+                        break;
+                    case DeleteRoomEventArgs.ErrorCode.RoomNotExist:
+                        s += ResourceManager.GetStringByKey("Str_RoomNotExist");
+                        break;
+                    case DeleteRoomEventArgs.ErrorCode.AccessDenied:
+                        s += ResourceManager.GetStringByKey("Str_AccessDenied");
+                        break;
+                }
+
+                Logging(s);
+                Utility.Error(s);
             }
         }
     }

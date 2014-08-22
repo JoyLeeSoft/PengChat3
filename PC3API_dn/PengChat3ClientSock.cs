@@ -14,7 +14,7 @@ namespace PC3API_dn
         private static readonly byte[] MagicNumber = new byte[] { 0x01, 0x04, 0x03, 0x09 };
         private static readonly byte EOP = (byte)'\0';
         public const short Capacity_Unlimited = (short)0;
-        public const string Password_NotUsed = "\t";
+        public const string Password_NotUsed = "\a";
 
         private TcpClient Client = null;
         private NetworkStream Stream = null;
@@ -131,6 +131,11 @@ namespace PC3API_dn
         public void CreateRoom(string name, short capacity = Capacity_Unlimited, string password = Password_NotUsed)
         {
             SendPacket(Protocol.PROTOCOL_CREATE_ROOM, name + '\n' + capacity.ToString() + '\n' + password);
+        }
+
+        public void DeleteRoom(uint id)
+        {
+            SendPacket(Protocol.PROTOCOL_DELETE_ROOM, id.ToString());
         }
 
         private void SendPacket(string header, string data = "")
