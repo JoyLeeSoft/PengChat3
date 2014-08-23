@@ -91,7 +91,6 @@ namespace PengChat3
                     }
                 }
 
-
                 if (comboBox_ConnectionInfo.Items.IsEmpty)
                 {
                     ChangeStatusConnectionInfoControls(Visibility.Hidden);
@@ -129,7 +128,10 @@ namespace PengChat3
                         if (e.NewRoom.Master == GetSelectedSock().Nickname)
                         {
                             Logging(ResourceManager.GetStringByKey("Str_SuccessedToCreateRoom"));
-                            //Tab control add
+                            
+                            TabItem t = new TabItem();
+                            t.Header = "Hello HOW ARE U?";
+                            tabControl_Page.Items.Add(t);
                         }
                     }));
                 }
@@ -220,6 +222,9 @@ namespace PengChat3
                         break;
                     case AddClientEventArgs.ErrorCode.PasswordIsWrong:
                         msg += ResourceManager.GetStringByKey("Str_PasswordIsWrong");
+                        break;
+                    case AddClientEventArgs.ErrorCode.AlreadyEntered:
+                        msg += ResourceManager.GetStringByKey("Str_AlreadyLogged");
                         break;
                 }
 

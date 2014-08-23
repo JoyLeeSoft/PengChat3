@@ -113,6 +113,7 @@ namespace PC3API_dn
             RoomNotExist,
             RoomIsFull,
             PasswordIsWrong,
+            AlreadyEntered,
         }
 
         public ErrorCode ErrCode { get; private set; }

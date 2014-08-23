@@ -88,6 +88,7 @@
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="null_db.cpp" />
+    <ClCompile Include="room.cpp" />
     <ClCompile Include="sqlite3_db.cpp" />
   </ItemGroup>
   <ItemGroup>

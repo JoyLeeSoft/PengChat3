@@ -48,6 +48,9 @@
     <ClCompile Include="logger.cpp">
       <Filter>log</Filter>
     </ClCompile>
+    <ClCompile Include="room.cpp">
+      <Filter>room</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cntsocket.h">

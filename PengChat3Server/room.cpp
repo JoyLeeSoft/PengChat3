@@ -22,49 +22,13 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef protocol_h_
-#define protocol_h_
+#include "room.h"
+#include "cntsocket.h"
 
-#include "common.h"
-
-const packet_type MAGIC_NUMBER[] = { 0x01, 0x04, 0x03, 0x09, 0x00 };
-
-const packet_type PROTOCOL_CHECK_REAL[] = { 'C', 'H', 'C', 'K', 0x00 };
-const packet_type PROTOCOL_LOGIN[] = { 'L', 'G', 'I', 'N', 0x00 };
-const packet_type PROTOCOL_GET_ROOM_INFO[] = { 'G', 'T', 'R', 'I', 0x00 };
-const packet_type PROTOCOL_CREATE_ROOM[] = { 'C', 'T', 'R', 'M', 0x00 };
-const packet_type PROTOCOL_DELETE_ROOM[] = { 'D', 'T', 'R', 'M', 0x00 };
-const packet_type PROTOCOL_ADD_ROOM[] = { 'A', 'D', 'R', 'M', 0x00 };
-const packet_type PROTOCOL_SUB_ROOM[] = { 'S', 'B', 'R', 'M', 0x00 };
-const packet_type PROTOCOL_ADD_CLIENT[] = { 'A', 'D', 'C', 'T', 0x00 };
-const packet_type PROTOCOL_ENTRY_ROOM[] = { 'E', 'T', 'R', 'M', 0x00 };
-
-enum class login_error : uint8_t
+void room::broad_cast(const packet_type *header, const packet &pack)
 {
-	wrong_id_pw = 1,
-	already_logged,
-};
-
-enum class create_room_error : uint8_t
-{
-	unknown_capacity = 1,
-	room_name_overlap,
-};
-
-enum class delete_room_error : uint8_t
-{
-	unknown_room_id = 1,
-	room_not_exist,
-	access_denied,
-};
-
-enum class entry_to_room_error : uint8_t
-{
-	unknown_room_id = 1,
-	room_not_exist,
-	room_is_full,
-	password_is_wrong,
-	already_entered,
-};
-
-#endif
+	for (auto member : members)
+	{
+		member->send_packet(header, pack);
+	}
+}

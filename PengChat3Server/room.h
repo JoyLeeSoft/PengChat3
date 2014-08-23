@@ -42,6 +42,8 @@ struct room
 	
 	vector<cnt_socket *> members;
 
+	void broad_cast(const packet_type *header, const packet &pack);
+
 	static packet to_packet(const room &r)
 	{
 		return (to_string(r.id) + '\t' + r.name + '\t' + r.master + '\t' + to_string(r.max_num) + '\t' +

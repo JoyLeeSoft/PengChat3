@@ -356,7 +356,7 @@ void cnt_socket::on_create_room(const packet &name, room::max_connector_type max
 	broad_cast(PROTOCOL_ADD_ROOM, room::to_packet(new_room));
 
 	// Send add client
-	broad_cast(PROTOCOL_ADD_CLIENT, to_string(new_room.id) + '\n' + m_client_state.nick);
+	new_room.broad_cast(PROTOCOL_ADD_CLIENT, to_string(new_room.id) + '\n' + m_client_state.nick);
 }
 
 void cnt_socket::on_delete_room(room::id_type id)
@@ -422,8 +422,17 @@ void cnt_socket::on_entry_to_room(room::id_type id, const packet &pw)
 			return;
 		}
 	}
+
+	if (find_if(it->members.begin(), it->members.end(), [this](const cnt_socket *p)
+	{
+		return p->nick() == m_client_state.nick;
+	}) != it->members.end())
+	{
+		send_packet(PROTOCOL_ENTRY_ROOM, to_string((uint8_t)entry_to_room_error::already_entered));
+		return;
+	}
 		
-	broad_cast(PROTOCOL_ADD_CLIENT, to_string(it->id) + '\n' + m_client_state.nick);
+	it->broad_cast(PROTOCOL_ADD_CLIENT, to_string(it->id) + '\n' + m_client_state.nick);
 
 	it->members.push_back(this);
 }
