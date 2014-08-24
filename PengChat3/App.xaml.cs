@@ -41,6 +41,8 @@ namespace PengChat3
             {
                 Utility.Error("Could not load language pack \"" + LanguagePackName + "\"\n" + ex.Message, true);
             }
+
+            ChatTabItem.InitImages();
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)

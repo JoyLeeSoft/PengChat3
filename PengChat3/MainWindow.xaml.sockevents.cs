@@ -124,15 +124,6 @@ namespace PengChat3
                         RoomListItem item = new RoomListItem(e.NewRoom);
                         listView_RoomInfo.Items.Add(item);
                         listView_RoomInfo.SelectedItem = item;
-
-                        if (e.NewRoom.Master == GetSelectedSock().Nickname)
-                        {
-                            Logging(ResourceManager.GetStringByKey("Str_SuccessedToCreateRoom"));
-                            
-                            TabItem t = new TabItem();
-                            t.Header = "Hello HOW ARE U?";
-                            tabControl_Page.Items.Add(t);
-                        }
                     }));
                 }
             }
@@ -209,7 +200,34 @@ namespace PengChat3
         {            
             if (e.ErrCode == AddClientEventArgs.ErrorCode.Ok)
             {
-                Room rm = Array.Find(((PengChat3ClientSock)sender).Rooms, r => { return r.ID == e.RoomID.Value; });
+                PengChat3ClientSock sock = (PengChat3ClientSock)sender;
+                if (e.AddedMember.Nickname == sock.Nickname)
+                {
+                    Logging(ResourceManager.GetStringByKey("Str_SuccessedToCreateRoom"));
+
+                    var tmp = Array.Find(sock.Rooms, r => { return r.ID == e.RoomID; });
+
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        ChatTabItem chatpage = new ChatTabItem(tmp.Name, sock, e.RoomID.Value);
+                        tabControl_Page.Items.Add(chatpage);
+                        tabControl_Page.SelectedItem = chatpage;
+                    }));
+
+                    sock.GetMembers(e.RoomID.Value);
+                }
+                else
+                {
+                    var room = FindChatItemByIDSock(e.RoomID.Value, sock);
+
+                    if (room != null)
+                    {
+                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                        {
+                            room.AddClient(e.AddedMember);
+                        }));
+                    }
+                }
             }
             else
             {
@@ -230,6 +248,54 @@ namespace PengChat3
 
                 Logging(msg);
                 Utility.Error(msg);
+            }
+        }
+
+        void sock_OnRemoveClient(object sender, RemoveClientEventArgs e)
+        {
+            if (e.ErrCode == RemoveClientEventArgs.ErrorCode.Ok)
+            {
+                PengChat3ClientSock sock = (PengChat3ClientSock)sender;
+
+                var room = FindChatItemByIDSock(e.RoomID.Value, sock);
+
+                if (room != null)
+                {
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        room.RemoveClient(e.RemovedMemberNickname);
+                    }));
+                }
+
+                if (e.RemovedMemberNickname == sock.Nickname)
+                {
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        tabControl_Page.Items.Remove(room);
+                        tabControl_Page.SelectedIndex = 0;
+                    }));
+                }
+            }
+        }
+
+        void sock_OnGetMembers(object sender, GetMembersEventArgs e)
+        {
+            if (e.ErrCode == GetMembersEventArgs.ErrorCode.Ok)
+            {
+                PengChat3ClientSock sock = (PengChat3ClientSock)sender;
+
+                var room = FindChatItemByIDSock(e.RoomID.Value, sock);
+
+                if (room != null)
+                {
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        foreach (var m in e.Members)
+                        {
+                            room.AddClient(m);
+                        }
+                    }));
+                }
             }
         }
     }

@@ -29,6 +29,6 @@ void room::broad_cast(const packet_type *header, const packet &pack)
 {
 	for (auto member : members)
 	{
-		member->send_packet(header, pack);
+		member.sock->send_packet(header, pack);
 	}
 }

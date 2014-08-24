@@ -70,6 +70,15 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   님께서 들어오셨습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_AddClient {
+            get {
+                return ResourceManager.GetString("Str_AddClient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   이미 같은 닉네임으로 접속해있습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_AlreadyLogged {
@@ -282,6 +291,15 @@ namespace PC3LP_ko.Properties {
         internal static string Str_PW {
             get {
                 return ResourceManager.GetString("Str_PW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   님께서 퇴장하셨습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_RemoveClient {
+            get {
+                return ResourceManager.GetString("Str_RemoveClient", resourceCulture);
             }
         }
         

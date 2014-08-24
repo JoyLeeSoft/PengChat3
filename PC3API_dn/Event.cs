@@ -120,16 +120,64 @@ namespace PC3API_dn
 
         public uint? RoomID { get; private set; }
 
-        public string Nickname { get; private set; }
+        public Member AddedMember { get; private set; }
 
-        public AddClientEventArgs(ErrorCode errcode, uint? room_id, string nick)
+        public AddClientEventArgs(ErrorCode errcode, uint? room_id, Member member)
         {
             ErrCode = errcode;
             RoomID = room_id;
-            Nickname = nick;
+            AddedMember = member;
         }
     }
-    public delegate void AddClientDele(object sender, AddClientEventArgs e);
+    public delegate void OnAddClientDele(object sender, AddClientEventArgs e);
+
+    public class RemoveClientEventArgs : EventArgs
+    {
+        public enum ErrorCode : byte
+        {
+            Ok,
+            UnknownID,
+            RoomNotExist,
+        }
+
+        public ErrorCode ErrCode { get; private set; }
+
+        public uint? RoomID { get; private set; }
+
+        public string RemovedMemberNickname { get; private set; }
+
+        public RemoveClientEventArgs(ErrorCode errcode, uint? room_id, string member)
+        {
+            ErrCode = errcode;
+            RoomID = room_id;
+            RemovedMemberNickname = member;
+        }
+    }
+    public delegate void OnRemoveClientDele(object sender, RemoveClientEventArgs e);
+
+    public class GetMembersEventArgs : EventArgs
+    {
+        public enum ErrorCode : byte
+        {
+            Ok,
+            UnknownID,
+            RoomNotExist,
+        }
+
+        public ErrorCode ErrCode { get; private set; }
+
+        public uint? RoomID { get; private set; }
+
+        public Member[] Members { get; private set; }
+
+        public GetMembersEventArgs(ErrorCode errcode, uint? room_id, Member[] mem)
+        {
+            ErrCode = errcode;
+            RoomID = room_id;
+            Members = mem;
+        }
+    }
+    public delegate void OnGetMembersDele(object sender, GetMembersEventArgs e);
 
     public class ReceiveChatEventArgs : EventArgs
     {
@@ -158,7 +206,9 @@ namespace PC3API_dn
         public event OnRoomInfoDele OnRoomInfo;
         public event OnCreateRoomDele OnCreateRoom;
         public event OnDeleteRoomDele OnDeleteRoom;
-        public event AddClientDele OnAddClient;
+        public event OnAddClientDele OnAddClient;
+        public event OnRemoveClientDele OnRemoveClient;
+        public event OnGetMembersDele OnGetMembers;
         public event OnReceiveChatDele OnReceiveChat;
     }
 }

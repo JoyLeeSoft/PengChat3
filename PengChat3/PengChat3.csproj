@@ -59,6 +59,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChatTabItem.xaml.cs">
+      <DependentUpon>ChatTabItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CreateRoomWindow.xaml.cs">
       <DependentUpon>CreateRoomWindow.xaml</DependentUpon>
     </Compile>
@@ -72,6 +75,10 @@
     <Compile Include="RegistryManager.cs" />
     <Compile Include="ResourceManager.cs" />
     <Compile Include="Utility.cs" />
+    <Page Include="ChatTabItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CreateRoomWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

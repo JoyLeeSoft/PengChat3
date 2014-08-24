@@ -53,6 +53,9 @@ namespace PengChat3
             textBox_IP.Text = "127.0.0.1";
 #endif
             textBox_ID.Focus();
+
+            /*tabControl_Page.Items.Add(new ChatTabItem("ㅎㅇ"));
+            tabControl_Page.SelectedIndex = 1;*/
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -69,6 +72,9 @@ namespace PengChat3
                     sock.OnCreateRoom += sock_OnCreateRoom;
                     sock.OnDeleteRoom += sock_OnDeleteRoom;
                     sock.OnAddClient += sock_OnAddClient;
+                    sock.OnRemoveClient += sock_OnRemoveClient;
+                    sock.OnGetMembers += sock_OnGetMembers;
+
                     sock.Connect(textBox_IP.Text, App.Port);
                     sock.Login(textBox_ID.Text, passwordBox_PW.Password);
                 }
@@ -94,15 +100,6 @@ namespace PengChat3
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             GetSelectedSock().Logout();
-
-            /*comboBox_ConnectionInfo.Items.Remove(comboBox_ConnectionInfo.SelectedItem);
-
-            ChangeStatusRoomInfoControls(Visibility.Hidden, null, null);
-
-            if (comboBox_ConnectionInfo.Items.IsEmpty == false)
-                comboBox_ConnectionInfo.SelectedIndex = 0;
-            else
-                ChangeStatusConnectionInfoControls(Visibility.Hidden);*/
         }
 
         private void LoginTextboxes_KeyDown(object sender, KeyEventArgs e)

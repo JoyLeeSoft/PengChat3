@@ -35,6 +35,8 @@ namespace PengChat3
             label_Password.Content = ResourceManager.GetStringByKey("Str_PW") + " : ";
             checkBox_Password.Content = ResourceManager.GetStringByKey("Str_NoNeed");
             textBlock_CreateRoomButton.Text = ResourceManager.GetStringByKey("Str_CreateRoom");
+
+            textBox_Name.Focus();
         }
 
         private void checkBox_MaxNum_CheckedChanged(object sender, RoutedEventArgs e)

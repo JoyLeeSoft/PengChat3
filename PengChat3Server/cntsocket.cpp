@@ -74,6 +74,22 @@ namespace
 			client->send_packet(header, pack);
 		}
 	}
+
+	room_list::iterator find_room(room::id_type id)
+	{
+		auto it = find_if(g_room_list.begin(), g_room_list.end(), [id](const room &r)
+		{
+			return r.id == id;
+		});
+
+		return it;
+	}
+
+	room::id_type to_room_id(packet pack)
+	{
+		room::id_type id = lexical_cast<room::id_type>(pack);
+		return id;
+	}
 }
 
 cnt_socket::cnt_socket(tcp::socket *client, const tcp::endpoint &epnt) : m_socket(client), m_epnt(epnt), m_client_state({ false, false }), m_no_need_join(false)
@@ -90,6 +106,24 @@ cnt_socket::~cnt_socket()
 	if (m_no_need_join == false)
 		if (m_recv_thrd.joinable())
 			m_recv_thrd.join();
+
+	{
+		lock_guard<mutex> lg(g_room_mutex);
+
+		for (auto rm : g_room_list)
+		{
+			auto it = find_if(rm.members.begin(), rm.members.end(), [this](const member &m)
+			{
+				return m.sock == this;
+			});
+
+			if (it != rm.members.end())
+			{
+				rm.members.erase(it);
+				rm.broad_cast(PROTOCOL_REMOVE_CLIENT, to_string(rm.id) + '\n' + m_client_state.nick);
+			}
+		}
+	}
 
 	stringstream ss;
 	ss << "Client disconnected. ip = " << m_epnt.address().to_string() << " port = "
@@ -228,7 +262,7 @@ bool cnt_socket::packet_processor(packet &pack)
 		
 		try
 		{
-			id = lexical_cast<room::id_type>(pack);
+			id = to_room_id(pack);
 		}
 		catch (const bad_lexical_cast &)
 		{
@@ -246,7 +280,7 @@ bool cnt_socket::packet_processor(packet &pack)
 
 		try
 		{
-			id = lexical_cast<room::id_type>(roomid_pw[0]);
+			id = to_room_id(roomid_pw[0]);
 		}
 		catch (const bad_lexical_cast &)
 		{
@@ -255,6 +289,38 @@ bool cnt_socket::packet_processor(packet &pack)
 		}
 
 		on_entry_to_room(id, roomid_pw[1]);
+	}
+	else if (header.compare(PROTOCOL_EXIT_ROOM) == 0)
+	{
+		room::id_type id = 0;
+
+		try
+		{
+			id = to_room_id(pack);
+		}
+		catch (const bad_lexical_cast &)
+		{
+			send_packet(PROTOCOL_EXIT_ROOM, to_string((uint8_t)exit_from_room_error::unknown_room_id));
+			return true;
+		}
+
+		on_exit_from_room(id);
+	}
+	else if (header.compare(PROTOCOL_GET_MEMBERS) == 0)
+	{
+		room::id_type id = 0;
+
+		try
+		{
+			id = to_room_id(pack);
+		}
+		catch (const bad_lexical_cast &)
+		{
+			send_packet(PROTOCOL_GET_MEMBERS, to_string(0) + to_string((uint8_t)get_members_error::unknown_room_id));
+			return true;
+		}
+
+		on_get_members(id);
 	}
 
 	return true;
@@ -332,6 +398,7 @@ void cnt_socket::on_create_room(const packet &name, room::max_connector_type max
 {
 	room::id_type id = 0;
 	room new_room;
+	member master;
 
 	{
 		lock_guard<mutex> lg(g_room_mutex);
@@ -347,7 +414,8 @@ void cnt_socket::on_create_room(const packet &name, room::max_connector_type max
 
 		id = create_room_id();
 		new_room = { id, name, m_client_state.nick, max_num, (pw.compare(PASSWORD_NOTUSED) == 0) ? "" : pw };
-		new_room.members.push_back(this);
+		master = { m_client_state.nick, member::member_state::online, this };
+		new_room.members.push_back(master);
 
 		g_room_list.push_back(new_room);
 	}
@@ -356,7 +424,7 @@ void cnt_socket::on_create_room(const packet &name, room::max_connector_type max
 	broad_cast(PROTOCOL_ADD_ROOM, room::to_packet(new_room));
 
 	// Send add client
-	new_room.broad_cast(PROTOCOL_ADD_CLIENT, to_string(new_room.id) + '\n' + m_client_state.nick);
+	new_room.broad_cast(PROTOCOL_ADD_CLIENT, to_string(new_room.id) + '\n' + member::to_packet(master));
 }
 
 void cnt_socket::on_delete_room(room::id_type id)
@@ -364,10 +432,7 @@ void cnt_socket::on_delete_room(room::id_type id)
 	{
 		lock_guard<mutex> lg(g_room_mutex);
 
-		auto it = find_if(g_room_list.begin(), g_room_list.end(), [id](const room &r)
-		{
-			return r.id == id;
-		});
+		auto it = find_room(id);
 
 		if (it == g_room_list.end())
 		{
@@ -391,12 +456,9 @@ void cnt_socket::on_entry_to_room(room::id_type id, const packet &pw)
 {
 	lock_guard<mutex> lg(g_room_mutex);
 
-	auto it = find_if(g_room_list.begin(), g_room_list.end(), [id](const room &r)
-	{
-		return r.id == id;
-	});
+	auto it = find_room(id);
 
-	// If room doset not exist
+	// If room doesn't  not exist
 	if (it == g_room_list.end())
 	{
 		send_packet(PROTOCOL_ENTRY_ROOM, to_string((uint8_t)entry_to_room_error::room_not_exist));
@@ -423,18 +485,66 @@ void cnt_socket::on_entry_to_room(room::id_type id, const packet &pw)
 		}
 	}
 
-	if (find_if(it->members.begin(), it->members.end(), [this](const cnt_socket *p)
+	if (find_if(it->members.begin(), it->members.end(), [this](const member &m)
 	{
-		return p->nick() == m_client_state.nick;
+		return m.nick == m_client_state.nick;
 	}) != it->members.end())
 	{
 		send_packet(PROTOCOL_ENTRY_ROOM, to_string((uint8_t)entry_to_room_error::already_entered));
 		return;
 	}
 		
-	it->broad_cast(PROTOCOL_ADD_CLIENT, to_string(it->id) + '\n' + m_client_state.nick);
+	member new_member = { m_client_state.nick, member::member_state::online, this };
 
-	it->members.push_back(this);
+	it->members.push_back(new_member);
+	it->broad_cast(PROTOCOL_ADD_CLIENT, to_string(it->id) + '\n' + member::to_packet(new_member));
+}
+
+void cnt_socket::on_exit_from_room(room::id_type id)
+{
+	lock_guard<mutex> lg(g_room_mutex);
+
+	auto it = find_room(id);
+
+	// If room doesn't  not exist
+	if (it == g_room_list.end())
+	{
+		send_packet(PROTOCOL_EXIT_ROOM, to_string((uint8_t)exit_from_room_error::room_not_exist));
+		return;
+	}
+
+	it->broad_cast(PROTOCOL_REMOVE_CLIENT, to_string(it->id) + '\n' + m_client_state.nick);
+
+	it->members.remove_if([this](const member &m)
+	{
+		return m.nick == m_client_state.nick;
+	});	
+}
+
+void cnt_socket::on_get_members(room::id_type id)
+{
+	lock_guard<mutex> lg(g_room_mutex);
+
+	auto it = find_room(id);
+
+	// If room doesn't not exist
+	if (it == g_room_list.end())
+	{
+		send_packet(PROTOCOL_GET_MEMBERS, to_string(0) + to_string((uint8_t)get_members_error::room_not_exist));
+		return;
+	}
+
+	packet temp = "";
+
+	for (auto mem : it->members)
+	{
+		temp += member::to_packet(mem) + '\a';
+	}
+
+	if (temp != "")
+		temp.erase(temp.find_last_of('\a'));
+
+	send_packet(PROTOCOL_GET_MEMBERS, to_string(1) + to_string(it->id) + '\n' + temp);
 }
 
 void cnt_socket::send_packet(const packet_type *header, const packet &pack)

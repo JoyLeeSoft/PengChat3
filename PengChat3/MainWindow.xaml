@@ -12,7 +12,7 @@
                         <TextBlock x:Name="textBlock_tabItemMain" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
                     </StackPanel>
                 </TabItem.Header>
-                <Grid Background="White" Margin="0,0,0,2">
+                <Grid Background="White" Margin="0,0,0,0">
                     <GroupBox HorizontalAlignment="Left" Margin="7,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.458,0.435" Height="160" Width="271">
                         <GroupBox.Header>
                             <StackPanel Orientation="Horizontal">

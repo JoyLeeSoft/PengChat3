@@ -85,5 +85,22 @@ namespace PengChat3
 
             return b;
         }
+
+        private ChatTabItem FindChatItemByIDSock(uint roomid, PengChat3ClientSock sock)
+        {
+            foreach (object o in tabControl_Page.Items)
+            {
+                ChatTabItem item = o as ChatTabItem;
+                if (item != null)
+                {
+                    if ((item.RoomID == roomid) && item.Sock == sock)
+                    {
+                        return item;
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -61,6 +61,8 @@ private:
 	void on_create_room(const packet &name, room::max_connector_type max_num, const packet &pw);
 	void on_delete_room(room::id_type id);
 	void on_entry_to_room(room::id_type id, const packet &pw);
+	void on_exit_from_room(room::id_type id);
+	void on_get_members(room::id_type id);
 
 public:
 	void send_packet(const packet_type *header, const packet &pack);

@@ -143,6 +143,16 @@ namespace PC3API_dn
             SendPacket(Protocol.PROTOCOL_ENTRY_ROOM, id.ToString() + '\n' + password);
         }
 
+        public void ExitFromRoom(uint id)
+        {
+            SendPacket(Protocol.PROTOCOL_EXIT_ROOM, id.ToString());
+        }
+
+        public void GetMembers(uint id)
+        {
+            SendPacket(Protocol.PROTOCOL_GET_MEMBERS, id.ToString());
+        }
+
         private void SendPacket(string header, string data = "")
         {
             byte[] buf = new byte[1024];

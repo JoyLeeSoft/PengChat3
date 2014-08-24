@@ -99,8 +99,14 @@ namespace PC3API_dn
                 OnDeleteRoomResult(DeleteRoomEventArgs.ErrorCode.Ok, pack);
             else if (header == Protocol.PROTOCOL_ENTRY_ROOM)
                 OnAddClientResult((AddClientEventArgs.ErrorCode)Convert.ToByte(pack), null);
+            else if (header == Protocol.PROTOCOL_EXIT_ROOM)
+                OnRemoveClientResult((RemoveClientEventArgs.ErrorCode)Convert.ToByte(pack), null);
             else if (header == Protocol.PROTOCOL_ADD_CLIENT)
                 OnAddClientResult(AddClientEventArgs.ErrorCode.Ok, pack);
+            else if (header == Protocol.PROTOCOL_REMOVE_CLIENT)
+                OnRemoveClientResult(RemoveClientEventArgs.ErrorCode.Ok, pack);
+            else if (header == Protocol.PROTOCOL_GET_MEMBERS)
+                OnGetMembersResult(pack[0] == '1', pack.Remove(0, 1));
         }
 
         private void OnLoginResult(bool successed, string pack)
@@ -183,20 +189,81 @@ namespace PC3API_dn
         {
             if (e == AddClientEventArgs.ErrorCode.Ok)
             {
-                string[] id_nick = pack.Split('\n');
-                uint room_id = Convert.ToUInt32(id_nick[0]);
+                string[] id_member = pack.Split('\n');
+                uint room_id = Convert.ToUInt32(id_member[0]);
 
                 Room rm = Rooms_.Find(r => { return r.ID == room_id; } );
 
-                rm.Members_.Add(id_nick[1]);
+                Member added_member = Member.ToMember(id_member[1]);
+                rm.Members_.Add(added_member);
 
                 if (OnAddClient != null)
-                    OnAddClient(this, new AddClientEventArgs(e, room_id, id_nick[1]));
+                    OnAddClient(this, new AddClientEventArgs(e, room_id, added_member));
             }
             else
             {
                 if (OnAddClient != null)
                     OnAddClient(this, new AddClientEventArgs(e, null, null));
+            }
+        }
+
+        private void OnRemoveClientResult(RemoveClientEventArgs.ErrorCode e, string pack)
+        {
+            if (e == RemoveClientEventArgs.ErrorCode.Ok)
+            {
+                string[] id_nick = pack.Split('\n');
+                uint room_id = Convert.ToUInt32(id_nick[0]);
+
+                Room rm = Rooms_.Find(r => { return r.ID == room_id; });
+
+                rm.Members_.RemoveAll(m => { return m.Nickname == id_nick[1]; });
+
+                if (OnRemoveClient != null)
+                {
+                    OnRemoveClient(this, new RemoveClientEventArgs(RemoveClientEventArgs.ErrorCode.Ok, room_id, id_nick[1]));
+                }
+            }
+            else
+            {
+                if (OnRemoveClient != null)
+                {
+                    OnRemoveClient(this, new RemoveClientEventArgs(e, null, null));
+                }
+            }
+        }
+
+        private void OnGetMembersResult(bool successed, string pack)
+        {
+            if (successed)
+            {
+                string[] temp = pack.Split('\n');
+
+                uint room_id = Convert.ToUInt32(temp[0]);
+                string[] temp2 = temp[1].Split('\a');
+
+                Room rm = Rooms_.Find(r => { return r.ID == room_id; });
+                List<Member> tempMembers = new List<Member>();
+
+                foreach (string s in temp2)
+                {
+                    Member m = Member.ToMember(s);
+
+                    rm.Members_.Add(m);
+                    tempMembers.Add(m);
+                }
+
+                if (OnGetMembers != null)
+                {
+                    OnGetMembers(this, new GetMembersEventArgs(GetMembersEventArgs.ErrorCode.Ok, room_id,
+                        tempMembers.ToArray()));
+                }
+            }
+            else
+            {
+                if (OnGetMembers != null)
+                {
+                    OnGetMembers(this, new GetMembersEventArgs((GetMembersEventArgs.ErrorCode)Convert.ToByte(pack), null, null));
+                }
             }
         }
     }

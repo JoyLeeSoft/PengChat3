@@ -228,4 +228,10 @@
   <data name="Str_AlreadyLogged" xml:space="preserve">
     <value>이미 같은 닉네임으로 접속해있습니다.</value>
   </data>
+  <data name="Str_AddClient" xml:space="preserve">
+    <value>님께서 들어오셨습니다.</value>
+  </data>
+  <data name="Str_RemoveClient" xml:space="preserve">
+    <value>님께서 퇴장하셨습니다.</value>
+  </data>
 </root>

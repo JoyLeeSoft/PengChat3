@@ -4,6 +4,37 @@ using System.Text;
 
 namespace PC3API_dn
 {
+    public class Member
+    {
+        public string Nickname { get; private set; }
+
+        public enum MemberState : byte
+        {
+            Online,
+            Busy,
+        }
+
+        public MemberState State { get; private set; }
+
+        internal static Member ToMember(string pack)
+        {
+            var s = pack.Split('\t');
+
+            if (s.Length == 2)
+            {
+                Member m = new Member();
+                m.Nickname = s[0];
+                m.State = (MemberState)Convert.ToByte(s[1]);
+
+                return m;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
     public class Room
     {
         public uint ID { get; private set; }
@@ -16,9 +47,9 @@ namespace PC3API_dn
 
         public bool IsNeedPassword { get; private set; }
 
-        internal List<string> Members_ = new List<string>();
+        internal List<Member> Members_ = new List<Member>();
 
-        public string[] Members { get { return Members_.ToArray(); } }
+        public Member[] Members { get { return Members_.ToArray(); } }
 
         internal static Room ToRoom(string pack)
         {

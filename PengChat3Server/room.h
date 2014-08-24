@@ -29,6 +29,22 @@
 
 #define PASSWORD_NOTUSED "\a"
 
+struct member
+{
+	string nick;
+	enum class member_state : uint8_t
+	{
+		online,
+		busy,
+	} state;
+	cnt_socket *sock;
+
+	static packet to_packet(const member &m)
+	{
+		return (m.nick + '\t' + to_string((uint8_t)m.state));
+	}
+};
+
 struct room
 {
 	typedef uint16_t max_connector_type;
@@ -40,7 +56,7 @@ struct room
 	max_connector_type max_num;
 	string password;
 	
-	vector<cnt_socket *> members;
+	list<member> members;
 
 	void broad_cast(const packet_type *header, const packet &pack);
 
