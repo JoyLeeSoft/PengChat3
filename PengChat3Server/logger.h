@@ -41,4 +41,12 @@ public:
 	void logging(const string &msg);
 };
 
+extern logger *g_log;
+
+#ifdef PENGCHAT3_ENABLE_LOGGING
+#define LOGGING(str) g_log->logging(str)
+#else 
+#define LOGGING(str)
+#endif
+
 #endif

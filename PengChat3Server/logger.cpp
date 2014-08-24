@@ -28,7 +28,7 @@ logger::logger(const string &filename) : m_file(filename, ios_base::out | ios_ba
 {
 	if (m_file.is_open() == false)
 	{
-		throw;
+		throw -1;
 	}
 }
 
@@ -48,8 +48,16 @@ logger::~logger()
 
 void logger::logging(const string &msg)
 {
+	using namespace chrono;
+
 	lock_guard<mutex> lg(m_mtx);
 
-	m_file << msg;
+	std::time_t t = system_clock::to_time_t(system_clock::now());
+	string time_str(std::ctime(&t));
+	time_str.erase(time_str.find_last_of('\n'));
+
+	string temp = "[" + time_str + "] ";
+
+	m_file << temp + msg + '\n';
 	m_file.flush();
 }

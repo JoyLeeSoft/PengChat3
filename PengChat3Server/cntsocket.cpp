@@ -110,7 +110,7 @@ cnt_socket::~cnt_socket()
 	{
 		lock_guard<mutex> lg(g_room_mutex);
 
-		for (auto rm : g_room_list)
+		for (auto &rm : g_room_list)
 		{
 			auto it = find_if(rm.members.begin(), rm.members.end(), [this](const member &m)
 			{
@@ -127,8 +127,8 @@ cnt_socket::~cnt_socket()
 
 	stringstream ss;
 	ss << "Client disconnected. ip = " << m_epnt.address().to_string() << " port = "
-		<< m_epnt.port() << '\n';
-	g_log->logging(ss.str());
+		<< m_epnt.port();
+	LOGGING(ss.str());
 }
 
 void cnt_socket::recv_func()
@@ -366,6 +366,8 @@ bool cnt_socket::on_login(const packet &id, const packet &pw)
 
 		send_packet(PROTOCOL_LOGIN, to_string(1) + nick);
 
+		LOGGING("Client logged. nick: " + nick);
+
 		return true;
 	}
 	catch (runtime_error &)
@@ -425,6 +427,14 @@ void cnt_socket::on_create_room(const packet &name, room::max_connector_type max
 
 	// Send add client
 	new_room.broad_cast(PROTOCOL_ADD_CLIENT, to_string(new_room.id) + '\n' + member::to_packet(master));
+
+	stringstream ss;
+	ss << "Room created. name: " << new_room.name << ", master: " << new_room.master;
+	LOGGING(ss.str());
+
+	ss.clear();
+	ss << "Member joined into room \'" << new_room.name << "\'. nick: " << new_room.master;
+	LOGGING(ss.str());
 }
 
 void cnt_socket::on_delete_room(room::id_type id)
@@ -446,7 +456,10 @@ void cnt_socket::on_delete_room(room::id_type id)
 			return;
 		}
 
+		string name = it->name;
 		g_room_list.erase(it);
+
+		LOGGING("Room destroyed. name: " + name);
 	}
 
 	broad_cast(PROTOCOL_SUB_ROOM, to_string(id));
@@ -498,6 +511,11 @@ void cnt_socket::on_entry_to_room(room::id_type id, const packet &pw)
 
 	it->members.push_back(new_member);
 	it->broad_cast(PROTOCOL_ADD_CLIENT, to_string(it->id) + '\n' + member::to_packet(new_member));
+
+	stringstream ss;
+	ss << "Member joined into room \'" << it->name << "\'. nick: " << new_member.nick;
+
+	LOGGING(ss.str());
 }
 
 void cnt_socket::on_exit_from_room(room::id_type id)
@@ -519,6 +537,11 @@ void cnt_socket::on_exit_from_room(room::id_type id)
 	{
 		return m.nick == m_client_state.nick;
 	});	
+
+	stringstream ss;
+	ss << "Member exited from room \'" << it->name << "\'. nick: " << m_client_state.nick;
+
+	LOGGING(ss.str());
 }
 
 void cnt_socket::on_get_members(room::id_type id)

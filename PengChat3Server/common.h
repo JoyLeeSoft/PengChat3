@@ -46,6 +46,7 @@
 #include <thread>
 #include <mutex>
 #include <random>
+#include <chrono>
 
 // Boost library
 #include <boost/asio.hpp> // Async I/O
@@ -77,7 +78,6 @@ class cnt_socket;
 typedef std::shared_ptr<cnt_socket> cnt_ptr;
 extern list<cnt_ptr> g_clients;
 class logger;
-extern logger *g_log;
 
 // Defines constant
 #define SERVER_PORT_NUMBER 13333

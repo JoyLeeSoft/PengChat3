@@ -44,7 +44,18 @@ int main(int argc, char *argv[])
 	EnableMenuItem(GetSystemMenu(GetConsoleWindow(), FALSE), SC_CLOSE, MF_DISABLED);
 #endif
 
-	g_log = new logger("PengChat3Server.log");
+#ifdef PENGCHAT3_ENABLE_LOGGING
+	try
+	{
+		g_log = new logger("PengChat3Server.log");
+	}
+	catch (int)
+	{
+		cerr << "Fatal error : Cannot create log file";
+		cin.get();
+		return EXIT_FAILURE;
+	}
+#endif
 
 	/*g_room_list.push_back({ "TestRoom1", "Master1", 0, "" });
 	g_room_list.push_back({ "TestRoom2", "Master2", 100, "" });
@@ -81,7 +92,7 @@ int main(int argc, char *argv[])
 #endif
 
 		clog << "PengChat3 server is running... Please press enter to exit server.\n";
-		g_log->logging("PengChat3 server is running now.\n");
+		LOGGING("PengChat3 server is running now.");
 
 		ip_ban_list ban_list(g_db->load_ip_ban_list());
 
@@ -104,8 +115,8 @@ int main(int argc, char *argv[])
 					return;
 
 				stringstream ss;
-				ss << "Could not accept client. error code = " << err.value() << "\n" + err.message() + '\n';
-				g_log->logging(ss.str());
+				ss << "Could not accept client. error code = " << err.value() << "\n" + err.message();
+				LOGGING(ss.str());
 			}
 			/*=====================================================================================================*/
 
@@ -115,16 +126,16 @@ int main(int argc, char *argv[])
 				delete client;
 				stringstream ss;
 				ss << "Client " << client_epnt.address().to_string() << ":" << client_epnt.port() << 
-					" is already banned, Disconnected." << '\n';
-				g_log->logging(ss.str());
+					" is already banned, Disconnected.";
+				LOGGING(ss.str());
 				continue;
 			}
 			/*=====================================================================================================*/
 
 			stringstream ss;
-			ss << "Client connected. ip = " << client_epnt.address().to_string() << " port = "
-				<< client_epnt.port() << '\n';
-			g_log->logging(ss.str());
+			ss << "Client connected. ip: " << client_epnt.address().to_string() << ", port: "
+				<< client_epnt.port();
+			LOGGING(ss.str());
 
 			/* Try to create client */
 			cnt_socket *cnt = nullptr;
@@ -167,8 +178,8 @@ int main(int argc, char *argv[])
 				/*=====================================================================================================*/
 
 				stringstream ss;
-				ss << "Unhandled exception! error code = " << e.code().value() << " message = " << e.code().message() + '\n';
-				g_log->logging(ss.str());
+				ss << "Unhandled exception! error code = " << e.code().value() << " message = " << e.code().message();
+				LOGGING(ss.str());
 				cin.putback('\n');
 
 				break;
@@ -188,8 +199,11 @@ int main(int argc, char *argv[])
 	if (acpt_thrd.joinable())
 		acpt_thrd.join();
 
-	g_log->logging("PengChat3 server is stopping now.\n");
+	LOGGING("PengChat3 server is stopping now.");
+
+#ifdef PENGCHAT3_ENABLE_LOGGING
 	delete g_log;
+#endif
 
 #if defined(_WIN32) || defined(_WIN64)
 	EnableMenuItem(GetSystemMenu(GetConsoleWindow(), FALSE), SC_CLOSE, MF_ENABLED);
