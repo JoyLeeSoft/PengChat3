@@ -41,6 +41,7 @@ const packet_type PROTOCOL_REMOVE_CLIENT[] = { 'R', 'V', 'C', 'T', 0x00 };
 const packet_type PROTOCOL_ENTRY_ROOM[] = { 'E', 'T', 'R', 'M', 0x00 };
 const packet_type PROTOCOL_EXIT_ROOM[] = { 'E', 'X', 'R', 'M', 0x00 };
 const packet_type PROTOCOL_GET_MEMBERS[] = { 'G', 'T', 'M', 'B', 0x00 };
+const packet_type PROTOCOL_CHANGE_STATE[] = { 'C', 'H', 'S', 'T', 0x00 };
 
 enum class login_error : uint8_t
 {
@@ -77,6 +78,12 @@ enum class exit_from_room_error : uint8_t
 };
 
 enum class get_members_error : uint8_t
+{
+	unknown_room_id = 1,
+	room_not_exist,
+};
+
+enum class change_status_error : uint8_t
 {
 	unknown_room_id = 1,
 	room_not_exist,

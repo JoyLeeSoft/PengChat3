@@ -298,5 +298,23 @@ namespace PengChat3
                 }
             }
         }
+
+        void sock_OnChangeState(object sender, ChangeStateEventArgs e)
+        {
+            if (e.ErrCode == ChangeStateEventArgs.ErrorCode.Ok)
+            {
+                PengChat3ClientSock sock = (PengChat3ClientSock)sender;
+
+                var room = FindChatItemByIDSock(e.RoomID.Value, sock);
+
+                if (room != null)
+                {
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        room.ChangeState(e.Nickname, e.State.Value);
+                    }));
+                }
+            }
+        }
     }
 }

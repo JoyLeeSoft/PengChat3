@@ -45,6 +45,9 @@ namespace PengChat3
             textBlock_LogoutButton.Text = ResourceManager.GetStringByKey("Str_Logout");
             textBlock_CreateRoomButton.Text = ResourceManager.GetStringByKey("Str_CreateRoom");
             textBlock_GroupBoxInfo.Text = ResourceManager.GetStringByKey("Str_InfoWindow");
+            menuItem_File.Header = ResourceManager.GetStringByKey("Str_File");
+            menuItem_TabClose.Header = ResourceManager.GetStringByKey("Str_TabClose") + " Ctrl+F4";
+            menuItem_Exit.Header = ResourceManager.GetStringByKey("Str_Exit") + " Alt+F4";
 #endregion
 
 #if TEST
@@ -53,9 +56,21 @@ namespace PengChat3
             textBox_IP.Text = "127.0.0.1";
 #endif
             textBox_ID.Focus();
+        }
 
-            /*tabControl_Page.Items.Add(new ChatTabItem("ㅎㅇ"));
-            tabControl_Page.SelectedIndex = 1;*/
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Utility.DisableMaximize(this);
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            foreach (CntComboBoxItem item in comboBox_ConnectionInfo.Items)
+            {
+                item.ShutdownSocket();
+            }
+
+            comboBox_ConnectionInfo.Items.Clear();
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -74,6 +89,7 @@ namespace PengChat3
                     sock.OnAddClient += sock_OnAddClient;
                     sock.OnRemoveClient += sock_OnRemoveClient;
                     sock.OnGetMembers += sock_OnGetMembers;
+                    sock.OnChangeState += sock_OnChangeState;
 
                     sock.Connect(textBox_IP.Text, App.Port);
                     sock.Login(textBox_ID.Text, passwordBox_PW.Password);
@@ -106,16 +122,6 @@ namespace PengChat3
         {
             if (e.Key == Key.Enter)
                 LoginButton_Click(null, null);
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            foreach (CntComboBoxItem item in comboBox_ConnectionInfo.Items)
-            {
-                item.ShutdownSocket();
-            }
-
-            comboBox_ConnectionInfo.Items.Clear();
         }
 
         private void listView_RoomInfo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -165,6 +171,28 @@ namespace PengChat3
         private void DeleteRoomButton_Click(object sender, RoutedEventArgs e)
         {
             GetSelectedSock().DeleteRoom(GetSelectedRoomItem().room.ID);
+        }
+
+        private void menuItem_TabClose_Click(object sender, RoutedEventArgs e)
+        {
+            if (tabControl_Page.SelectedItem != tabItem_Main)
+            {
+                ((ChatTabItem)tabControl_Page.SelectedItem).ExitFromRoom();
+                tabControl_Page.Items.Remove(tabControl_Page.SelectedItem);
+                tabControl_Page.SelectedIndex = 0;
+            }
+            else
+            {
+                Utility.Error(ResourceManager.GetStringByKey("Str_CannotCloseMainTab"));
+            }
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) && e.Key == Key.F4)
+            {
+                menuItem_TabClose_Click(null, null);
+            }
         }
     }
 }

@@ -16,5 +16,6 @@ namespace PC3API_dn
         internal const string PROTOCOL_ENTRY_ROOM = "ETRM";
         internal const string PROTOCOL_EXIT_ROOM = "EXRM";
         internal const string PROTOCOL_GET_MEMBERS = "GTMB";
+        internal const string PROTOCOL_CHANGE_STATE = "CHST";
     }
 }

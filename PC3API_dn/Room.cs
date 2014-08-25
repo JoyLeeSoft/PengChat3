@@ -14,7 +14,7 @@ namespace PC3API_dn
             Busy,
         }
 
-        public MemberState State { get; private set; }
+        public MemberState State { get; internal set; }
 
         internal static Member ToMember(string pack)
         {

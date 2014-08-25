@@ -30,6 +30,8 @@ namespace PengChat3
         internal uint RoomID;
         private List<ListViewMemberItem> Members = new List<ListViewMemberItem>();
 
+        private Member.MemberState State = Member.MemberState.Online;
+
         static BitmapImage OnlineImg, BusyImg;
 
         internal static void InitImages()
@@ -54,6 +56,8 @@ namespace PengChat3
         public ChatTabItem(string headerText, PengChat3ClientSock sock, uint roomid)
         {
             InitializeComponent();
+            image_State.Source = OnlineImg;
+
             textBlock_HeaderText.Text = headerText;
             RoomID = roomid;
             Sock = sock;
@@ -66,7 +70,7 @@ namespace PengChat3
 
             BindingListBox();
 
-            AppendChat(m.Nickname + ' ' + ResourceManager.GetStringByKey("Str_AddClient"));
+            //AppendChat(m.Nickname + ' ' + ResourceManager.GetStringByKey("Str_AddClient"));
         }
 
         public void RemoveClient(string nick)
@@ -76,6 +80,19 @@ namespace PengChat3
             BindingListBox();
 
             AppendChat(nick + ' ' + ResourceManager.GetStringByKey("Str_RemoveClient"));
+        }
+
+        public void ChangeState(string nick, Member.MemberState state)
+        {
+            Members.Find(m => { return m.Nick == nick; }).State = (state == Member.MemberState.Online) ? OnlineImg : BusyImg;
+            
+            if (nick == Sock.Nickname)
+            {
+                image_State.Source = (state == Member.MemberState.Online) ? OnlineImg : BusyImg;
+                State = state;
+            }
+
+            BindingListBox();
         }
 
         public void AppendChat(string chat)
@@ -95,7 +112,19 @@ namespace PengChat3
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
-            Sock.ExitFromRoom(RoomID);
+            ExitFromRoom();            
+        }
+
+        public void ExitFromRoom()
+        {
+            if (MessageBox.Show(ResourceManager.GetStringByKey("Str_AreYouSureExit"), "PengChat3", MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes)
+                Sock.ExitFromRoom(RoomID);
+        }
+
+        private void image_State_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Sock.SetMyState(RoomID, State == Member.MemberState.Online ? Member.MemberState.Busy : Member.MemberState.Online);
         }
     }
 }

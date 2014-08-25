@@ -107,6 +107,8 @@ namespace PC3API_dn
                 OnRemoveClientResult(RemoveClientEventArgs.ErrorCode.Ok, pack);
             else if (header == Protocol.PROTOCOL_GET_MEMBERS)
                 OnGetMembersResult(pack[0] == '1', pack.Remove(0, 1));
+            else if (header == Protocol.PROTOCOL_CHANGE_STATE)
+                OnChangeStateResult(pack[0] == '1', pack.Remove(0, 1));
         }
 
         private void OnLoginResult(bool successed, string pack)
@@ -263,6 +265,35 @@ namespace PC3API_dn
                 if (OnGetMembers != null)
                 {
                     OnGetMembers(this, new GetMembersEventArgs((GetMembersEventArgs.ErrorCode)Convert.ToByte(pack), null, null));
+                }
+            }
+        }
+
+        private void OnChangeStateResult(bool successed, string pack)
+        {
+            if (successed)
+            {
+                string[] temp = pack.Split('\n');
+
+                uint room_id = Convert.ToUInt32(temp[0]);
+                string nick = temp[1];
+                Member.MemberState state = (Member.MemberState)Convert.ToByte(temp[2]);
+
+                Room rm = Rooms_.Find(r => { return r.ID == room_id; });
+                rm.Members_.Find(m => { return m.Nickname == nick; }).State = state;
+
+
+                if (OnChangeState != null)
+                {
+                    OnChangeState(this, new ChangeStateEventArgs(ChangeStateEventArgs.ErrorCode.Ok, room_id, nick, state));
+                }
+            }
+            else
+            {
+                if (OnChangeState != null)
+                {
+                    OnChangeState(this, new ChangeStateEventArgs((ChangeStateEventArgs.ErrorCode)Convert.ToByte(pack), 
+                        null, null, null));
                 }
             }
         }

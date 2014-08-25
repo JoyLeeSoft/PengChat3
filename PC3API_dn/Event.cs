@@ -179,6 +179,33 @@ namespace PC3API_dn
     }
     public delegate void OnGetMembersDele(object sender, GetMembersEventArgs e);
 
+    public class ChangeStateEventArgs : EventArgs
+    {
+        public enum ErrorCode : byte
+        {
+            Ok,
+            UnknownID,
+            RoomNotExist,
+        }
+
+        public ErrorCode ErrCode { get; private set; }
+
+        public uint? RoomID { get; private set; }
+
+        public string Nickname { get; private set; }
+
+        public Member.MemberState? State { get; private set; }
+
+        public ChangeStateEventArgs(ErrorCode errcode, uint? room_id, string nick, Member.MemberState? state)
+        {
+            ErrCode = errcode;
+            RoomID = room_id;
+            Nickname = nick;
+            State = state;
+        }
+    }
+    public delegate void OnChangeStateDele(object sender, ChangeStateEventArgs e);
+
     public class ReceiveChatEventArgs : EventArgs
     {
         public short RoomID { get; private set; }
@@ -209,6 +236,7 @@ namespace PC3API_dn
         public event OnAddClientDele OnAddClient;
         public event OnRemoveClientDele OnRemoveClient;
         public event OnGetMembersDele OnGetMembers;
+        public event OnChangeStateDele OnChangeState;
         public event OnReceiveChatDele OnReceiveChat;
     }
 }

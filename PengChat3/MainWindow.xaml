@@ -2,10 +2,10 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="PengChat3.MainWindow"
-        Title="PengChat3" Height="420" Width="600" Closed="Window_Closed">
+        Title="PengChat3" Height="440" Width="600" Loaded="Window_Loaded" Closed="Window_Closed" KeyDown="Window_KeyDown">
     <Grid>
-        <TabControl x:Name="tabControl_Page" HorizontalAlignment="Left" Height="389" VerticalAlignment="Top" Width="592">
-            <TabItem>
+        <TabControl x:Name="tabControl_Page" HorizontalAlignment="Left" Height="389" VerticalAlignment="Top" Width="592" Margin="0,20,0,0">
+            <TabItem x:Name="tabItem_Main">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Height="auto" Width="auto" Source="Resources/bullet-blue.png"/>
@@ -109,5 +109,19 @@
                 </Grid>
             </TabItem>
         </TabControl>
+        <Menu HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" VerticalAlignment="Top" Width="600" Background="White">
+            <MenuItem x:Name="menuItem_File">
+                <MenuItem x:Name="menuItem_TabClose" Click="menuItem_TabClose_Click">
+                    <MenuItem.Icon>
+                        <Image Height="auto" Width="auto" Source="Resources/close.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="menuItem_Exit">
+                    <MenuItem.Icon>
+                        <Image Height="auto" Width="auto" Source="Resources/exit.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
     </Grid>
 </Window>

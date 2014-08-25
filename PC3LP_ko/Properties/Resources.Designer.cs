@@ -88,6 +88,24 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   정말로 방에서 나가시겠습니까?과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_AreYouSureExit {
+            get {
+                return ResourceManager.GetString("Str_AreYouSureExit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   메인 화면은 종료할수 없습니다!과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_CannotCloseMainTab {
+            get {
+                return ResourceManager.GetString("Str_CannotCloseMainTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   PengChat3 서버에 연결할수 없습니다과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_CannotConnectToServer {
@@ -151,6 +169,15 @@ namespace PC3LP_ko.Properties {
         }
         
         /// <summary>
+        ///   나가기과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_Exit {
+            get {
+                return ResourceManager.GetString("Str_Exit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   방 만들기에 실패했습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Str_FailedToCreateRoom {
@@ -165,6 +192,15 @@ namespace PC3LP_ko.Properties {
         internal static string Str_FailedToDeleteRoom {
             get {
                 return ResourceManager.GetString("Str_FailedToDeleteRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   파일과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_File {
+            get {
+                return ResourceManager.GetString("Str_File", resourceCulture);
             }
         }
         
@@ -381,6 +417,15 @@ namespace PC3LP_ko.Properties {
         internal static string Str_SuccessedToDeleteRoom {
             get {
                 return ResourceManager.GetString("Str_SuccessedToDeleteRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   탭 종료과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Str_TabClose {
+            get {
+                return ResourceManager.GetString("Str_TabClose", resourceCulture);
             }
         }
         

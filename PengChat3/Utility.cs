@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 using PC3API_dn;
 
 namespace PengChat3
@@ -11,6 +13,21 @@ namespace PengChat3
             MessageBox.Show(msg, "PengChat3 - error", MessageBoxButton.OK, MessageBoxImage.Error);
             if (shutdown)
                 Application.Current.Shutdown(-1);
+        }
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll")]
+        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        private const int GWL_STYLE = -16;
+        private const int WS_MAXIMIZEBOX = 0x10000;
+
+        public static void DisableMaximize(Window win)
+        {
+            var hwnd = new WindowInteropHelper(win).Handle;
+            var value = GetWindowLong(hwnd, GWL_STYLE);
+            SetWindowLong(hwnd, GWL_STYLE, (int)(value & ~WS_MAXIMIZEBOX));
         }
     }
 

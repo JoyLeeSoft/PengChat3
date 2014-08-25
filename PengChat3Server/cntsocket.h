@@ -63,6 +63,7 @@ private:
 	void on_entry_to_room(room::id_type id, const packet &pw);
 	void on_exit_from_room(room::id_type id);
 	void on_get_members(room::id_type id);
+	void on_change_state(room::id_type id, member::member_state state);
 
 public:
 	void send_packet(const packet_type *header, const packet &pack);

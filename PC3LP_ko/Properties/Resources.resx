@@ -234,4 +234,19 @@
   <data name="Str_RemoveClient" xml:space="preserve">
     <value>님께서 퇴장하셨습니다.</value>
   </data>
+  <data name="Str_AreYouSureExit" xml:space="preserve">
+    <value>정말로 방에서 나가시겠습니까?</value>
+  </data>
+  <data name="Str_CannotCloseMainTab" xml:space="preserve">
+    <value>메인 화면은 종료할수 없습니다!</value>
+  </data>
+  <data name="Str_Exit" xml:space="preserve">
+    <value>나가기</value>
+  </data>
+  <data name="Str_File" xml:space="preserve">
+    <value>파일</value>
+  </data>
+  <data name="Str_TabClose" xml:space="preserve">
+    <value>탭 종료</value>
+  </data>
 </root>

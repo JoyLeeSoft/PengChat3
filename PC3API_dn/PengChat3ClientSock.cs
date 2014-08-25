@@ -153,6 +153,11 @@ namespace PC3API_dn
             SendPacket(Protocol.PROTOCOL_GET_MEMBERS, id.ToString());
         }
 
+        public void SetMyState(uint id, Member.MemberState state)
+        {
+            SendPacket(Protocol.PROTOCOL_CHANGE_STATE, id.ToString() + '\n' + ((byte)state).ToString());
+        }
+
         private void SendPacket(string header, string data = "")
         {
             byte[] buf = new byte[1024];

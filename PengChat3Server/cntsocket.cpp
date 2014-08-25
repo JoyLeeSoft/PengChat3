@@ -322,6 +322,26 @@ bool cnt_socket::packet_processor(packet &pack)
 
 		on_get_members(id);
 	}
+	else if (header.compare(PROTOCOL_CHANGE_STATE) == 0)
+	{
+		auto temp = split_packet(pack, packet("\n"));
+
+		room::id_type id = 0;
+		member::member_state state;
+
+		try
+		{
+			id = to_room_id(temp[0]);
+			state = (member::member_state)atoi(temp[1].c_str());
+		}
+		catch (const bad_lexical_cast &)
+		{
+			send_packet(PROTOCOL_CHANGE_STATE, to_string(0) + to_string((uint8_t)change_status_error::unknown_room_id));
+			return true;
+		}
+
+		on_change_state(id, state);
+	}
 
 	return true;
 }
@@ -568,6 +588,44 @@ void cnt_socket::on_get_members(room::id_type id)
 		temp.erase(temp.find_last_of('\a'));
 
 	send_packet(PROTOCOL_GET_MEMBERS, to_string(1) + to_string(it->id) + '\n' + temp);
+}
+
+void cnt_socket::on_change_state(room::id_type id, member::member_state state)
+{
+	{
+		lock_guard<mutex> lg(g_room_mutex);
+
+		auto it = find_room(id);
+
+		if (it == g_room_list.end())
+		{
+			send_packet(PROTOCOL_DELETE_ROOM, to_string(0) + to_string((uint8_t)change_status_error::room_not_exist));
+			return;
+		}
+
+		auto mem = find_if(it->members.begin(), it->members.end(), [this](const member &m)
+		{
+			return m.nick == m_client_state.nick;
+		});
+
+		mem->state = state;
+
+		it->broad_cast(PROTOCOL_CHANGE_STATE, to_string(1) + to_string(it->id) + '\n' + mem->nick + '\n' +
+			to_string((uint8_t)state));
+
+		string temp;
+
+		switch (state)
+		{
+		case member::member_state::online: temp = "online"; break;
+		case member::member_state::busy: temp = "busy"; break;
+		}
+
+		stringstream ss;
+		ss << "Member state changed. nick: " << mem->nick << " state: " << temp;
+
+		LOGGING(ss.str());
+	}
 }
 
 void cnt_socket::send_packet(const packet_type *header, const packet &pack)
