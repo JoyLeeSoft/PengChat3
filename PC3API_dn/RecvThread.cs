@@ -101,8 +101,8 @@ namespace PC3API_dn
                 OnGetRoomInfoResult(pack);
             else if (header == Protocol.PROTOCOL_CREATE_ROOM)
                 OnAddRoomResult(CheckSuccessed(pack), DeleteErrorCode(pack));
-            else if (header == Protocol.PROTOCOL_DELETE_ROOM)
-                OnDeleteRoomResult(CheckSuccessed(pack), DeleteErrorCode(pack));
+            else if (header == Protocol.PROTOCOL_REMOVE_ROOM)
+                OnRemoveRoomResult(CheckSuccessed(pack), DeleteErrorCode(pack));
             else if (header == Protocol.PROTOCOL_ADD_CLIENT)
                 OnAddClientResult(CheckSuccessed(pack), DeleteErrorCode(pack));
             else if (header == Protocol.PROTOCOL_REMOVE_CLIENT)
@@ -167,7 +167,7 @@ namespace PC3API_dn
             }
         }
 
-        private void OnDeleteRoomResult(bool successed, string pack)
+        private void OnRemoveRoomResult(bool successed, string pack)
         {
             if (successed)
             {
@@ -175,16 +175,16 @@ namespace PC3API_dn
 
                 Rooms_.RemoveAll(r => { return r.ID == id; });
 
-                if (OnDeleteRoom != null)
+                if (OnRemoveRoom != null)
                 {
-                    OnDeleteRoom(this, new DeleteRoomEventArgs(DeleteRoomEventArgs.ErrorCode.Ok, id));
+                    OnRemoveRoom(this, new RemoveRoomEventArgs(RemoveRoomEventArgs.ErrorCode.Ok, id));
                 }
             }
             else
             {
-                if (OnDeleteRoom != null)
+                if (OnRemoveRoom != null)
                 {
-                    OnDeleteRoom(this, new DeleteRoomEventArgs((DeleteRoomEventArgs.ErrorCode)Convert.ToByte(pack), null));
+                    OnRemoveRoom(this, new RemoveRoomEventArgs((RemoveRoomEventArgs.ErrorCode)Convert.ToByte(pack), null));
                 }
             }
         }

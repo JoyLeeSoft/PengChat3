@@ -145,11 +145,17 @@ namespace PengChat3
             }
         }
 
-        void sock_OnDeleteRoom(object sender, DeleteRoomEventArgs e)
+        void sock_OnRemoveRoom(object sender, RemoveRoomEventArgs e)
         {
-            if (e.ErrCode == DeleteRoomEventArgs.ErrorCode.Ok)
+            if (e.ErrCode == RemoveRoomEventArgs.ErrorCode.Ok)
             {
-                if (IsSelectedSocket((PengChat3ClientSock)sender))
+                PengChat3ClientSock sock = (PengChat3ClientSock)sender;
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+                {
+                    tabControl_Page.Items.Remove(FindChatItemByIDSock(e.ID.Value, sock));
+                }));
+
+                if (IsSelectedSocket(sock))
                 {
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
                     {

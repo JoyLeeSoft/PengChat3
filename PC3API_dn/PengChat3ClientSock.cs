@@ -20,7 +20,6 @@ namespace PC3API_dn
         private NetworkStream Stream = null;
         private bool IsAlreadyDisposed = false;
         private Thread RecvThread = null;
-        private bool WaitForLogout = false;
 
         public bool IsConnected { get; private set; }
 
@@ -143,7 +142,7 @@ namespace PC3API_dn
 
         public void DeleteRoom(uint id)
         {
-            SendPacket(Protocol.PROTOCOL_DELETE_ROOM, id.ToString());
+            SendPacket(Protocol.PROTOCOL_REMOVE_ROOM, id.ToString());
         }
 
         public void EntryToRoom(uint id, string password = Password_NotUsed)

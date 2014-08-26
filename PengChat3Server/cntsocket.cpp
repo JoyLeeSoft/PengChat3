@@ -253,7 +253,7 @@ bool cnt_socket::packet_processor(packet &pack)
 			}
 		}
 	}
-	else if (header.compare(PROTOCOL_DELETE_ROOM) == 0)
+	else if (header.compare(PROTOCOL_REMOVE_ROOM) == 0)
 	{
 		room::id_type id = 0;
 		
@@ -263,11 +263,11 @@ bool cnt_socket::packet_processor(packet &pack)
 		}
 		catch (const bad_lexical_cast &)
 		{
-			send_packet(PROTOCOL_DELETE_ROOM, FLAG_FAILED + to_string((uint8_t)delete_room_error::unknown_room_id));
+			send_packet(PROTOCOL_REMOVE_ROOM, FLAG_FAILED + to_string((uint8_t)delete_room_error::unknown_room_id));
 			return true;
 		}
 
-		on_delete_room(id);
+		on_remove_room(id);
 	}
 	else if (header.compare(PROTOCOL_ADD_CLIENT) == 0)
 	{
@@ -449,12 +449,12 @@ void cnt_socket::on_create_room(const packet &name, room::max_connector_type max
 	ss << "Room created. name: " << new_room.name << ", master: " << new_room.master;
 	LOGGING(ss.str());
 
-	ss.clear();
-	ss << "Member joined into room \'" << new_room.name << "\'. nick: " << new_room.master;
-	LOGGING(ss.str());
+	stringstream ss1;
+	ss1 << "Member joined into room \'" << new_room.name << "\'. nick: " << new_room.master;
+	LOGGING(ss1.str());
 }
 
-void cnt_socket::on_delete_room(room::id_type id)
+void cnt_socket::on_remove_room(room::id_type id)
 {
 	{
 		lock_guard<mutex> lg(g_room_mutex);
@@ -463,13 +463,13 @@ void cnt_socket::on_delete_room(room::id_type id)
 
 		if (it == g_room_list.end())
 		{
-			send_packet(PROTOCOL_DELETE_ROOM, FLAG_FAILED + to_string((uint8_t)delete_room_error::room_not_exist));
+			send_packet(PROTOCOL_REMOVE_ROOM, FLAG_FAILED + to_string((uint8_t)delete_room_error::room_not_exist));
 			return;
 		}
 
 		if (it->master != m_client_state.nick)
 		{
-			send_packet(PROTOCOL_DELETE_ROOM, FLAG_FAILED + to_string((uint8_t)delete_room_error::access_denied));
+			send_packet(PROTOCOL_REMOVE_ROOM, FLAG_FAILED + to_string((uint8_t)delete_room_error::access_denied));
 			return;
 		}
 
@@ -479,7 +479,7 @@ void cnt_socket::on_delete_room(room::id_type id)
 		LOGGING("Room destroyed. name: " + name);
 	}
 
-	broad_cast(PROTOCOL_DELETE_ROOM, FLAG_SUCCESSED + to_string(id));
+	broad_cast(PROTOCOL_REMOVE_ROOM, FLAG_SUCCESSED + to_string(id));
 }
 
 void cnt_socket::on_add_client(room::id_type id, const packet &pw)
@@ -596,7 +596,7 @@ void cnt_socket::on_change_state(room::id_type id, member::member_state state)
 
 		if (it == g_room_list.end())
 		{
-			send_packet(PROTOCOL_DELETE_ROOM, to_string(0) + to_string((uint8_t)change_status_error::room_not_exist));
+			send_packet(PROTOCOL_REMOVE_ROOM, to_string(0) + to_string((uint8_t)change_status_error::room_not_exist));
 			return;
 		}
 

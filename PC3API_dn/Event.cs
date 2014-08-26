@@ -26,7 +26,7 @@ namespace PC3API_dn
             ErrCode = errcode;
         }
     }
-    public delegate void OnLoginDele(object sender, LoginEventArgs e);
+    public delegate void OnLoginHandler(object sender, LoginEventArgs e);
 
     public class DisconnectedEventArgs : EventArgs
     {
@@ -48,7 +48,7 @@ namespace PC3API_dn
             ErrCode = errcode;
         }
     }
-    public delegate void OnDisconnectedDele(object sender, DisconnectedEventArgs e);
+    public delegate void OnDisconnectedHandler(object sender, DisconnectedEventArgs e);
 
     public class RoomInfoEventArgs : EventArgs
     {
@@ -59,7 +59,7 @@ namespace PC3API_dn
             Rooms = rooms;
         }
     }
-    public delegate void OnRoomInfoDele(object sender, RoomInfoEventArgs e);
+    public delegate void OnRoomInfoHandler(object sender, RoomInfoEventArgs e);
 
     public class CreateRoomEventArgs : EventArgs
     {
@@ -80,9 +80,9 @@ namespace PC3API_dn
             NewRoom = newroom;
         }
     }
-    public delegate void OnCreateRoomDele(object sender, CreateRoomEventArgs e);
+    public delegate void OnCreateRoomHandler(object sender, CreateRoomEventArgs e);
 
-    public class DeleteRoomEventArgs : EventArgs
+    public class RemoveRoomEventArgs : EventArgs
     {
         public enum ErrorCode
         {
@@ -96,13 +96,13 @@ namespace PC3API_dn
 
         public uint? ID { get; private set; }
 
-        public DeleteRoomEventArgs(ErrorCode errcode, uint? id)
+        public RemoveRoomEventArgs(ErrorCode errcode, uint? id)
         {
             ErrCode = errcode;
             ID = id;
         }
     }
-    public delegate void OnDeleteRoomDele(object sender, DeleteRoomEventArgs e);
+    public delegate void OnRemoveRoomHandler(object sender, RemoveRoomEventArgs e);
 
     public class AddClientEventArgs : EventArgs
     {
@@ -129,7 +129,7 @@ namespace PC3API_dn
             AddedMember = member;
         }
     }
-    public delegate void OnAddClientDele(object sender, AddClientEventArgs e);
+    public delegate void OnAddClientHandler(object sender, AddClientEventArgs e);
 
     public class RemoveClientEventArgs : EventArgs
     {
@@ -153,7 +153,7 @@ namespace PC3API_dn
             RemovedMemberNickname = member;
         }
     }
-    public delegate void OnRemoveClientDele(object sender, RemoveClientEventArgs e);
+    public delegate void OnRemoveClientHandler(object sender, RemoveClientEventArgs e);
 
     public class GetMembersEventArgs : EventArgs
     {
@@ -177,7 +177,7 @@ namespace PC3API_dn
             Members = mem;
         }
     }
-    public delegate void OnGetMembersDele(object sender, GetMembersEventArgs e);
+    public delegate void OnGetMembersHandler(object sender, GetMembersEventArgs e);
 
     public class ChangeStateEventArgs : EventArgs
     {
@@ -204,7 +204,7 @@ namespace PC3API_dn
             State = state;
         }
     }
-    public delegate void OnChangeStateDele(object sender, ChangeStateEventArgs e);
+    public delegate void OnChangeStateHandler(object sender, ChangeStateEventArgs e);
 
     public class ReceiveChatEventArgs : EventArgs
     {
@@ -224,19 +224,19 @@ namespace PC3API_dn
             IsRawMessage = raw;
         }
     }
-    public delegate void OnReceiveChatDele(object sender, ReceiveChatEventArgs e);
+    public delegate void OnReceiveChatHandler(object sender, ReceiveChatEventArgs e);
 
     public partial class PengChat3ClientSock
     {
-        public event OnLoginDele OnLogin;
-        public event OnDisconnectedDele OnDisconnected;
-        public event OnRoomInfoDele OnRoomInfo;
-        public event OnCreateRoomDele OnCreateRoom;
-        public event OnDeleteRoomDele OnDeleteRoom;
-        public event OnAddClientDele OnAddClient;
-        public event OnRemoveClientDele OnRemoveClient;
-        public event OnGetMembersDele OnGetMembers;
-        public event OnChangeStateDele OnChangeState;
-        public event OnReceiveChatDele OnReceiveChat;
+        public event OnLoginHandler OnLogin;
+        public event OnDisconnectedHandler OnDisconnected;
+        public event OnRoomInfoHandler OnRoomInfo;
+        public event OnCreateRoomHandler OnCreateRoom;
+        public event OnRemoveRoomHandler OnRemoveRoom;
+        public event OnAddClientHandler OnAddClient;
+        public event OnRemoveClientHandler OnRemoveClient;
+        public event OnGetMembersHandler OnGetMembers;
+        public event OnChangeStateHandler OnChangeState;
+        public event OnReceiveChatHandler OnReceiveChat;
     }
 }

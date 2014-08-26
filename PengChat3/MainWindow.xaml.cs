@@ -91,7 +91,7 @@ namespace PengChat3
                     sock.OnDisconnected += sock_OnDisconnected;
                     sock.OnRoomInfo += sock_OnRoomInfo;
                     sock.OnCreateRoom += sock_OnCreateRoom;
-                    sock.OnDeleteRoom += sock_OnDeleteRoom;
+                    sock.OnRemoveRoom += sock_OnRemoveRoom;
                     sock.OnAddClient += sock_OnAddClient;
                     sock.OnRemoveClient += sock_OnRemoveClient;
                     sock.OnGetMembers += sock_OnGetMembers;
