@@ -30,7 +30,6 @@ namespace PengChat3
                 Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
                 {
                     CntComboBoxItem item = new CntComboBoxItem();
-                    item.Text = e.ConnectedIP + ":" + e.ConnectedPort.ToString();
                     item.Sock = sock;
 
                     comboBox_ConnectionInfo.Items.Add(item);

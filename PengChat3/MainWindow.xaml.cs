@@ -65,9 +65,15 @@ namespace PengChat3
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            List<PengChat3ClientSock> tempSockets = new List<PengChat3ClientSock>();
             foreach (CntComboBoxItem item in comboBox_ConnectionInfo.Items)
             {
-                item.ShutdownSocket();
+                tempSockets.Add(item.Sock);
+            }
+
+            foreach (PengChat3ClientSock sock in tempSockets)
+            {
+                sock.Logout();
             }
 
             comboBox_ConnectionInfo.Items.Clear();

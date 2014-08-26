@@ -20,6 +20,7 @@ namespace PC3API_dn
         private NetworkStream Stream = null;
         private bool IsAlreadyDisposed = false;
         private Thread RecvThread = null;
+        private bool WaitForLogout = false;
 
         public bool IsConnected { get; private set; }
 
@@ -72,6 +73,12 @@ namespace PC3API_dn
             }
 
             // Delete unmanaged resources
+
+            if (IsLogged)
+            {
+                Logout();
+            }
+
             if (RecvThread != null)
             {
                 IsNormalClose = true;
@@ -114,6 +121,7 @@ namespace PC3API_dn
 
         public void Logout()
         {
+            IsLogged = false;
             Dispose();
 
             if (OnDisconnected != null)
@@ -140,12 +148,12 @@ namespace PC3API_dn
 
         public void EntryToRoom(uint id, string password = Password_NotUsed)
         {
-            SendPacket(Protocol.PROTOCOL_ENTRY_ROOM, id.ToString() + '\n' + password);
+            SendPacket(Protocol.PROTOCOL_ADD_CLIENT, id.ToString() + '\n' + password);
         }
 
         public void ExitFromRoom(uint id)
         {
-            SendPacket(Protocol.PROTOCOL_EXIT_ROOM, id.ToString());
+            SendPacket(Protocol.PROTOCOL_REMOVE_CLIENT, id.ToString());
         }
 
         public void GetMembers(uint id)

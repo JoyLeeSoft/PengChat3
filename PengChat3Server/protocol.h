@@ -34,14 +34,13 @@ const packet_type PROTOCOL_LOGIN[] = { 'L', 'G', 'I', 'N', 0x00 };
 const packet_type PROTOCOL_GET_ROOM_INFO[] = { 'G', 'T', 'R', 'I', 0x00 };
 const packet_type PROTOCOL_CREATE_ROOM[] = { 'C', 'T', 'R', 'M', 0x00 };
 const packet_type PROTOCOL_DELETE_ROOM[] = { 'D', 'T', 'R', 'M', 0x00 };
-const packet_type PROTOCOL_ADD_ROOM[] = { 'A', 'D', 'R', 'M', 0x00 };
-const packet_type PROTOCOL_SUB_ROOM[] = { 'S', 'B', 'R', 'M', 0x00 };
 const packet_type PROTOCOL_ADD_CLIENT[] = { 'A', 'D', 'C', 'T', 0x00 };
 const packet_type PROTOCOL_REMOVE_CLIENT[] = { 'R', 'V', 'C', 'T', 0x00 };
-const packet_type PROTOCOL_ENTRY_ROOM[] = { 'E', 'T', 'R', 'M', 0x00 };
-const packet_type PROTOCOL_EXIT_ROOM[] = { 'E', 'X', 'R', 'M', 0x00 };
 const packet_type PROTOCOL_GET_MEMBERS[] = { 'G', 'T', 'M', 'B', 0x00 };
 const packet_type PROTOCOL_CHANGE_STATE[] = { 'C', 'H', 'S', 'T', 0x00 };
+
+const packet_type FLAG_SUCCESSED = '1';
+const packet_type FLAG_FAILED = '0';
 
 enum class login_error : uint8_t
 {

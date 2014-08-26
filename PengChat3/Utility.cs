@@ -56,14 +56,14 @@ namespace PengChat3
         {
             if (Sock != null)
             {
-                Sock.Dispose();
+                Sock.Logout();
                 Sock = null;
             }
         }
 
         public override string ToString()
         {
-            return Text;
+            return Sock.ConnectedIP + ":" + Sock.ConnectedPort.ToString() + "   \"" + Sock.Nickname + "\"";
         }
     }
 }

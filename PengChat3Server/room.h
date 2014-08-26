@@ -66,15 +66,11 @@ struct room
 			((r.password != "") ? "1" : "0"));
 	}
 
-	/*static room_list::iterator get_room_from_id(id_type id)
+	static room::id_type to_room_id(packet pack)
 	{
-		lock_guard<mutex> lg(g_room_mutex);
-
-		return find_if(g_room_list.begin(), g_room_list.end(), [id](const room &r)
-		{
-			return r.id == id;
-		});
-	}*/
+		room::id_type id = lexical_cast<room::id_type>(pack);
+		return id;
+	}
 };
 
 typedef list<room> room_list;

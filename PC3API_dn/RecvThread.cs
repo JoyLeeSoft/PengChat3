@@ -5,6 +5,16 @@ namespace PC3API_dn
 {
     public partial class PengChat3ClientSock
     {
+        private bool CheckSuccessed(string pack)
+        {
+            return pack[0] == Protocol.FLAG_SUCCESSED;
+        }
+
+        private string DeleteErrorCode(string pack)
+        {
+            return pack.Remove(0, 1);
+        }
+
         private bool IsNormalClose = false;
 
         private void RecvThreadFunc()
@@ -86,27 +96,19 @@ namespace PC3API_dn
             pack = pack.Remove(0, PACKET_HEADER_SIZE);
 
             if (header == Protocol.PROTOCOL_LOGIN)
-                OnLoginResult(pack[0] == '1', pack.Remove(0, 1));
+                OnLoginResult(CheckSuccessed(pack), DeleteErrorCode(pack));
             else if (header == Protocol.PROTOCOL_GET_ROOM_INFO)
                 OnGetRoomInfoResult(pack);
             else if (header == Protocol.PROTOCOL_CREATE_ROOM)
-                OnAddRoomResult((CreateRoomEventArgs.ErrorCode)Convert.ToByte(pack), null);
-            else if (header == Protocol.PROTOCOL_ADD_ROOM)
-                OnAddRoomResult(CreateRoomEventArgs.ErrorCode.Ok, pack);
+                OnAddRoomResult(CheckSuccessed(pack), DeleteErrorCode(pack));
             else if (header == Protocol.PROTOCOL_DELETE_ROOM)
-                OnDeleteRoomResult((DeleteRoomEventArgs.ErrorCode)Convert.ToByte(pack), null);
-            else if (header == Protocol.PROTOCOL_SUB_ROOM)
-                OnDeleteRoomResult(DeleteRoomEventArgs.ErrorCode.Ok, pack);
-            else if (header == Protocol.PROTOCOL_ENTRY_ROOM)
-                OnAddClientResult((AddClientEventArgs.ErrorCode)Convert.ToByte(pack), null);
-            else if (header == Protocol.PROTOCOL_EXIT_ROOM)
-                OnRemoveClientResult((RemoveClientEventArgs.ErrorCode)Convert.ToByte(pack), null);
+                OnDeleteRoomResult(CheckSuccessed(pack), DeleteErrorCode(pack));
             else if (header == Protocol.PROTOCOL_ADD_CLIENT)
-                OnAddClientResult(AddClientEventArgs.ErrorCode.Ok, pack);
+                OnAddClientResult(CheckSuccessed(pack), DeleteErrorCode(pack));
             else if (header == Protocol.PROTOCOL_REMOVE_CLIENT)
-                OnRemoveClientResult(RemoveClientEventArgs.ErrorCode.Ok, pack);
+                OnRemoveClientResult(CheckSuccessed(pack), DeleteErrorCode(pack));
             else if (header == Protocol.PROTOCOL_GET_MEMBERS)
-                OnGetMembersResult(pack[0] == '1', pack.Remove(0, 1));
+                OnGetMembersResult(CheckSuccessed(pack), DeleteErrorCode(pack));
             else if (header == Protocol.PROTOCOL_CHANGE_STATE)
                 OnChangeStateResult(pack[0] == '1', pack.Remove(0, 1));
         }
@@ -144,30 +146,30 @@ namespace PC3API_dn
             OnRoomInfo(this, new RoomInfoEventArgs(Rooms_.ToArray()));
         }
 
-        private void OnAddRoomResult(CreateRoomEventArgs.ErrorCode e, string pack)
+        private void OnAddRoomResult(bool successed, string pack)
         {
-            if (e == CreateRoomEventArgs.ErrorCode.Ok)
+            if (successed)
             {
                 Room one_room = Room.ToRoom(pack);
                 Rooms_.Add(one_room);
 
                 if (OnCreateRoom != null)
                 {
-                    OnCreateRoom(this, new CreateRoomEventArgs(e, one_room));
+                    OnCreateRoom(this, new CreateRoomEventArgs(CreateRoomEventArgs.ErrorCode.Ok, one_room));
                 }
             }
             else
             {
                 if (OnCreateRoom != null)
                 {
-                    OnCreateRoom(this, new CreateRoomEventArgs(e, null));
+                    OnCreateRoom(this, new CreateRoomEventArgs((CreateRoomEventArgs.ErrorCode)Convert.ToByte(pack), null));
                 }
             }
         }
 
-        private void OnDeleteRoomResult(DeleteRoomEventArgs.ErrorCode e, string pack)
+        private void OnDeleteRoomResult(bool successed, string pack)
         {
-            if (e == DeleteRoomEventArgs.ErrorCode.Ok)
+            if (successed)
             {
                 uint id = Convert.ToUInt32(pack);
 
@@ -175,21 +177,21 @@ namespace PC3API_dn
 
                 if (OnDeleteRoom != null)
                 {
-                    OnDeleteRoom(this, new DeleteRoomEventArgs(e, id));
+                    OnDeleteRoom(this, new DeleteRoomEventArgs(DeleteRoomEventArgs.ErrorCode.Ok, id));
                 }
             }
             else
             {
                 if (OnDeleteRoom != null)
                 {
-                    OnDeleteRoom(this, new DeleteRoomEventArgs(e, null));
+                    OnDeleteRoom(this, new DeleteRoomEventArgs((DeleteRoomEventArgs.ErrorCode)Convert.ToByte(pack), null));
                 }
             }
         }
 
-        private void OnAddClientResult(AddClientEventArgs.ErrorCode e, string pack)
+        private void OnAddClientResult(bool successed, string pack)
         {
-            if (e == AddClientEventArgs.ErrorCode.Ok)
+            if (successed)
             {
                 string[] id_member = pack.Split('\n');
                 uint room_id = Convert.ToUInt32(id_member[0]);
@@ -200,18 +202,19 @@ namespace PC3API_dn
                 rm.Members_.Add(added_member);
 
                 if (OnAddClient != null)
-                    OnAddClient(this, new AddClientEventArgs(e, room_id, added_member));
+                    OnAddClient(this, new AddClientEventArgs(AddClientEventArgs.ErrorCode.Ok, room_id, added_member));
             }
             else
             {
                 if (OnAddClient != null)
-                    OnAddClient(this, new AddClientEventArgs(e, null, null));
+                    OnAddClient(this, new AddClientEventArgs((AddClientEventArgs.ErrorCode)Convert.ToByte(pack), 
+                        null, null));
             }
         }
 
-        private void OnRemoveClientResult(RemoveClientEventArgs.ErrorCode e, string pack)
+        private void OnRemoveClientResult(bool successed, string pack)
         {
-            if (e == RemoveClientEventArgs.ErrorCode.Ok)
+            if (successed)
             {
                 string[] id_nick = pack.Split('\n');
                 uint room_id = Convert.ToUInt32(id_nick[0]);
@@ -229,7 +232,8 @@ namespace PC3API_dn
             {
                 if (OnRemoveClient != null)
                 {
-                    OnRemoveClient(this, new RemoveClientEventArgs(e, null, null));
+                    OnRemoveClient(this, new RemoveClientEventArgs((RemoveClientEventArgs.ErrorCode)Convert.ToByte(pack),
+                        null, null));
                 }
             }
         }
