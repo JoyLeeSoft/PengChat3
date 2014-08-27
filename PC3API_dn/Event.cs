@@ -206,6 +206,20 @@ namespace PC3API_dn
     }
     public delegate void OnChangeStateHandler(object sender, ChangeStateEventArgs e);
 
+    public class ChangeMasterEventArgs : EventArgs
+    {
+        public uint RoomID { get; private set; }
+
+        public string NewMaster { get; private set; }
+
+        public ChangeMasterEventArgs(uint room_id, string master)
+        {
+            RoomID = room_id;
+            NewMaster = master;
+        }
+    }
+    public delegate void OnChangeMasterHandler(object sender, ChangeMasterEventArgs e);
+
     public class ReceiveChatEventArgs : EventArgs
     {
         public short RoomID { get; private set; }
@@ -238,5 +252,6 @@ namespace PC3API_dn
         public event OnGetMembersHandler OnGetMembers;
         public event OnChangeStateHandler OnChangeState;
         public event OnReceiveChatHandler OnReceiveChat;
+        public event OnChangeMasterHandler OnChangeMaster;
     }
 }

@@ -96,6 +96,7 @@ namespace PengChat3
                     sock.OnRemoveClient += sock_OnRemoveClient;
                     sock.OnGetMembers += sock_OnGetMembers;
                     sock.OnChangeState += sock_OnChangeState;
+                    sock.OnChangeMaster += sock_OnChangeMaster;
 
                     sock.Connect(textBox_IP.Text, App.Port);
                     sock.Login(textBox_ID.Text, passwordBox_PW.Password);

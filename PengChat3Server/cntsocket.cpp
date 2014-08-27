@@ -559,6 +559,28 @@ void cnt_socket::on_remove_client(room::id_type id)
 	ss << "Member exited from room \'" << it->name << "\'. nick: " << m_client_state.nick;
 
 	LOGGING(ss.str());
+
+	// If the room is empty
+	if (it->members.empty())
+	{
+		// Delete room
+		string name = it->name;
+		g_room_list.erase(it);
+
+		LOGGING("Room destroyed. name: " + name);
+
+		broad_cast(PROTOCOL_REMOVE_ROOM, FLAG_SUCCESSED + to_string(id));
+	}
+	
+	// If the master is exited
+	if (it->master.compare(m_client_state.nick) == 0)
+	{
+		// Change master
+		it->master = it->members.begin()->nick;
+		
+		it->broad_cast(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
+		send_packet(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
+	}
 }
 
 void cnt_socket::on_get_members(room::id_type id)

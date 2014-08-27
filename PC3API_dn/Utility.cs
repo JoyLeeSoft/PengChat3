@@ -5,13 +5,6 @@ namespace PC3API_dn
 {
     internal static class Utility
     {
-        public static T[] SubArray<T>(T[] data, int index, int length)
-        {
-            T[] result = new T[length];
-            Array.Copy(data, index, result, 0, length);
-            return result;
-        }
-
         public static T[] CombineArray<T>(params T[][] arrays)
         {
             int length = 0;

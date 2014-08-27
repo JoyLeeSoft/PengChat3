@@ -41,7 +41,7 @@ namespace PC3API_dn
 
         public string Name { get; private set; }
 
-        public string Master { get; private set; }
+        public string Master { get; internal set; }
 
         public short MaxConnectorNum { get; private set; }
 

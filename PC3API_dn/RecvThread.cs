@@ -111,6 +111,8 @@ namespace PC3API_dn
                 OnGetMembersResult(CheckSuccessed(pack), DeleteErrorCode(pack));
             else if (header == Protocol.PROTOCOL_CHANGE_STATE)
                 OnChangeStateResult(pack[0] == '1', pack.Remove(0, 1));
+            else if (header == Protocol.PROTOCOL_MASTER_CHANGE)
+                OnMasterChangeResult(pack);
         }
 
         private void OnLoginResult(bool successed, string pack)
@@ -299,6 +301,23 @@ namespace PC3API_dn
                     OnChangeState(this, new ChangeStateEventArgs((ChangeStateEventArgs.ErrorCode)Convert.ToByte(pack), 
                         null, null, null));
                 }
+            }
+        }
+
+        void OnMasterChangeResult(string pack)
+        {
+            var s = pack.Split('\n');
+
+            uint room_id = Convert.ToUInt32(s[0]);
+            string master = s[1];
+
+            Room rm = Array.Find(Rooms_.ToArray(), r => { return r.ID == room_id; });
+
+            rm.Master = master;
+
+            if (OnChangeMaster != null)
+            {
+                OnChangeMaster(this, new ChangeMasterEventArgs(room_id, master));
             }
         }
     }

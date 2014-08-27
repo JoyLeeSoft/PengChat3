@@ -32,6 +32,7 @@
                     <WrapPanel>
                         <Image Source="{Binding State}"/>
                         <TextBlock Text="{Binding Nick}"/>
+                        <Image Source="{Binding MasterState}"/>
                     </WrapPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

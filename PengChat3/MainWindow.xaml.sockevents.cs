@@ -321,5 +321,18 @@ namespace PengChat3
                 }
             }
         }
+
+        void sock_OnChangeMaster(object sender, ChangeMasterEventArgs e)
+        {
+            var room = FindChatItemByIDSock(e.RoomID, (PengChat3ClientSock)sender);
+
+            if (room != null)
+            {
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    room.ChangeMaster(e.NewMaster);
+                }));
+            }
+        }
     }
 }

@@ -38,6 +38,7 @@ const packet_type PROTOCOL_ADD_CLIENT[] = { 'A', 'D', 'C', 'T', 0x00 };
 const packet_type PROTOCOL_REMOVE_CLIENT[] = { 'R', 'V', 'C', 'T', 0x00 };
 const packet_type PROTOCOL_GET_MEMBERS[] = { 'G', 'T', 'M', 'B', 0x00 };
 const packet_type PROTOCOL_CHANGE_STATE[] = { 'C', 'H', 'S', 'T', 0x00 };
+const packet_type PROTOCOL_MASTER_CHANGE[] = { 'M', 'S', 'C', 'G', 0x00 };
 
 const packet_type FLAG_SUCCESSED = '1';
 const packet_type FLAG_FAILED = '0';

@@ -93,7 +93,7 @@ namespace PengChat3
                 ChatTabItem item = o as ChatTabItem;
                 if (item != null)
                 {
-                    if ((item.RoomID == roomid) && item.Sock == sock)
+                    if ((item.room.ID == roomid) && item.Sock == sock)
                     {
                         return item;
                     }

@@ -19,6 +19,7 @@ namespace PengChat3
     {
         public string Nick { get; set; }
         public ImageSource State { get; set; }
+        public ImageSource MasterState { get; set; }
     }
 
     /// <summary>
@@ -27,12 +28,13 @@ namespace PengChat3
     public partial class ChatTabItem
     {
         internal PengChat3ClientSock Sock = null;
-        internal uint RoomID;
+        internal Room room = null;
         private List<ListViewMemberItem> Members = new List<ListViewMemberItem>();
+        private string Master;
 
         private Member.MemberState State = Member.MemberState.Online;
 
-        static BitmapImage OnlineImg, BusyImg;
+        static BitmapImage OnlineImg, BusyImg, MasterImg;
 
         internal static void InitImages()
         {
@@ -45,6 +47,11 @@ namespace PengChat3
             BusyImg.BeginInit();
             BusyImg.UriSource = new Uri(@"Resources\bullet-red.png", UriKind.Relative);
             BusyImg.EndInit();
+
+            MasterImg = new BitmapImage();
+            MasterImg.BeginInit();
+            MasterImg.UriSource = new Uri(@"Resources\star.png", UriKind.Relative);
+            MasterImg.EndInit();
         }
 
         private void BindingListBox()
@@ -59,18 +66,21 @@ namespace PengChat3
             image_State.Source = OnlineImg;
 
             textBlock_HeaderText.Text = headerText;
-            RoomID = roomid;
             Sock = sock;
+
+            room = Array.Find(Sock.Rooms, r => { return r.ID == roomid; });
+            Master = room.Master;
         }
 
         public void AddClient(Member m)
         {
-            Members.Add(new ListViewMemberItem() {Nick = m.Nickname, 
-                State = (m.State == Member.MemberState.Online) ? OnlineImg : BusyImg});
+            Members.Add(new ListViewMemberItem() {
+                Nick = m.Nickname, 
+                State = (m.State == Member.MemberState.Online) ? OnlineImg : BusyImg, 
+                MasterState = (m.Nickname == room.Master) ? MasterImg : null
+            });
 
             BindingListBox();
-
-            //AppendChat(m.Nickname + ' ' + ResourceManager.GetStringByKey("Str_AddClient"));
         }
 
         public void RemoveClient(string nick)
@@ -91,6 +101,19 @@ namespace PengChat3
                 image_State.Source = (state == Member.MemberState.Online) ? OnlineImg : BusyImg;
                 State = state;
             }
+
+            BindingListBox();
+        }
+
+        public void ChangeMaster(string newMaster)
+        {
+            ListViewMemberItem oldMaster = Members.Find(m => { return m.Nick == Master; });
+            if (oldMaster != null)
+                oldMaster.MasterState = null;
+
+            Members.Find(m => { return m.Nick == newMaster; }).MasterState = MasterImg;
+
+            Master = newMaster;
 
             BindingListBox();
         }
@@ -119,12 +142,12 @@ namespace PengChat3
         {
             if (MessageBox.Show(ResourceManager.GetStringByKey("Str_AreYouSureExit"), "PengChat3", MessageBoxButton.YesNo,
                 MessageBoxImage.Question) == MessageBoxResult.Yes)
-                Sock.ExitFromRoom(RoomID);
+                Sock.ExitFromRoom(room.ID);
         }
 
         private void image_State_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Sock.SetMyState(RoomID, State == Member.MemberState.Online ? Member.MemberState.Busy : Member.MemberState.Online);
+            Sock.SetMyState(room.ID, State == Member.MemberState.Online ? Member.MemberState.Busy : Member.MemberState.Online);
         }
     }
 }
