@@ -250,6 +250,7 @@ namespace PC3API_dn
                 string[] temp2 = temp[1].Split('\a');
 
                 Room rm = Rooms_.Find(r => { return r.ID == room_id; });
+                rm.Members_.Clear();
                 List<Member> tempMembers = new List<Member>();
 
                 foreach (string s in temp2)

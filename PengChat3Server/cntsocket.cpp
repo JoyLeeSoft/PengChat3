@@ -570,6 +570,7 @@ void cnt_socket::on_remove_client(room::id_type id)
 		LOGGING("Room destroyed. name: " + name);
 
 		broad_cast(PROTOCOL_REMOVE_ROOM, FLAG_SUCCESSED + to_string(id));
+		return;
 	}
 	
 	// If the master is exited
