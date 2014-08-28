@@ -8,11 +8,11 @@ using System.Windows;
 // 어셈블리와 관련된 정보를 수정하려면
 // 이 특성 값을 변경하십시오.
 [assembly: AssemblyTitle("PengChat3")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("PengChat3 Client for .NET")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Lee")]
 [assembly: AssemblyProduct("PengChat3")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCopyright("Copyright © Lee 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

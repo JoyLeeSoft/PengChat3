@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // 어셈블리의 일반 정보는 다음 특성 집합을 통해 제어됩니다.
 // 어셈블리와 관련된 정보를 수정하려면
 // 이 특성 값을 변경하십시오.
-[assembly: AssemblyTitle("PC3LP_ko")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("PengChat3 language pack for Korean")]
+[assembly: AssemblyDescription("PengChat3 language pack for Korean")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Lee")]
 [assembly: AssemblyProduct("PC3LP_ko")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCopyright("Copyright © Lee 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -93,31 +93,28 @@ cnt_socket::cnt_socket(tcp::socket *client, const tcp::endpoint &epnt) : m_socke
 
 cnt_socket::~cnt_socket()
 {
-	//m_socket->shutdown(socket_base::shutdown_both);
+	for (auto it = g_room_list.begin(); it != g_room_list.end();)
+	{
+		auto mem = find_if(it->members.begin(), it->members.end(), [this](const member &m)
+		{
+			return m.nick == m_client_state.nick;
+		});
+
+		if (mem != it->members.end())
+		{
+			it->broad_cast(PROTOCOL_REMOVE_CLIENT, FLAG_SUCCESSED + to_string(it->id) + '\n' + m_client_state.nick);
+			it->members.erase(mem);
+		}
+
+		++it;
+	}
+
 	m_socket->close();
 	m_socket.reset();
 
 	if (m_no_need_join == false)
 		if (m_recv_thrd.joinable())
 			m_recv_thrd.join();
-
-	{
-		lock_guard<mutex> lg(g_room_mutex);
-
-		for (auto &rm : g_room_list)
-		{
-			auto it = find_if(rm.members.begin(), rm.members.end(), [this](const member &m)
-			{
-				return m.sock == this;
-			});
-
-			if (it != rm.members.end())
-			{
-				rm.members.erase(it);
-				rm.broad_cast(PROTOCOL_REMOVE_CLIENT, FLAG_SUCCESSED + to_string(rm.id) + '\n' + m_client_state.nick);
-			}
-		}
-	}
 
 	stringstream ss;
 	ss << "Client disconnected. ip = " << m_epnt.address().to_string() << " port = "

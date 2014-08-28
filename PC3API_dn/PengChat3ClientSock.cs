@@ -121,6 +121,20 @@ namespace PC3API_dn
         public void Logout()
         {
             IsLogged = false;
+
+            foreach (Room rm in Rooms_)
+            {
+                Member mem = rm.Members_.Find(m => { return m.Nickname == Nickname; });
+
+                if (mem != null)
+                {
+                    if (OnRemoveClient != null)
+                    {
+                        OnRemoveClient(this, new RemoveClientEventArgs(RemoveClientEventArgs.ErrorCode.Ok, rm.ID, mem.Nickname));
+                    }
+                } 
+            }
+
             Dispose();
 
             if (OnDisconnected != null)
