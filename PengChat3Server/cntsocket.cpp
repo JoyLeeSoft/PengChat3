@@ -106,6 +106,31 @@ cnt_socket::~cnt_socket()
 			it->members.erase(mem);
 		}
 
+		// If the room is empty
+		if (it->members.empty())
+		{
+			//lock_guard<mutex> lg(g_clients_mutex);
+			//Because already destructor have mutex. See Line number 211.
+
+			for (auto client : g_clients)
+			{
+				client->send_packet(PROTOCOL_REMOVE_ROOM, FLAG_SUCCESSED + to_string(it->id));
+			}
+
+			g_room_list.erase(it++);
+			continue;
+		}
+
+		// If the master is exited
+		if (it->master.compare(m_client_state.nick) == 0)
+		{
+			// Change master
+			it->master = it->members.begin()->nick;
+
+			it->broad_cast(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
+			send_packet(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
+		}
+
 		++it;
 	}
 
