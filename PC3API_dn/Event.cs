@@ -5,7 +5,7 @@ namespace PC3API_dn
     public class LoginEventArgs : EventArgs
     {
         public string ConnectedIP { get; private set; }
-        public int ConnectedPort { get; private set; }
+        public int? ConnectedPort { get; private set; }
 
         public string Nickname { get; private set; }
 
@@ -18,7 +18,7 @@ namespace PC3API_dn
 
         public ErrorCode ErrCode { get; private set; }
 
-        public LoginEventArgs(string ip, int port, string nickname, ErrorCode errcode)
+        public LoginEventArgs(string ip, int? port, string nickname, ErrorCode errcode)
         {
             ConnectedIP = ip;
             ConnectedPort = port;

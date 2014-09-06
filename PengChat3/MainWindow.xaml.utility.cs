@@ -1,106 +1,142 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#define TEST
+
+using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
+using System.Collections.ObjectModel;
+using System.Windows.Data;
+using System.Globalization;
+
 using PC3API_dn;
 
 namespace PengChat3
 {
+    [ValueConversion(typeof(Int16), typeof(String))]
+    public class MaxConnectorNumConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return "";
+
+            if (((Int16)value) != 0)
+                return value.ToString();
+            else
+                return ResourceManager.GetStringByKey("Str_Unlimited");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException("ConvertBack");
+        }
+    }
+
+    [ValueConversion(typeof(String), typeof(Boolean))]
+    public class DeleteButtonConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return false;
+
+            PengChat3ClientSock SelectedSock = App.Instance.GetSelectedSock();
+
+            if (SelectedSock != null)
+            {
+                if (SelectedSock.Nickname == (string)value)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException("ConvertBack");
+        }
+    }
+
+    [ValueConversion(typeof(Boolean), typeof(Visibility))]
+    public class ListViewVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return Visibility.Hidden;
+
+            if ((Boolean)value)
+                return Visibility.Hidden;
+            else
+                return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException("ConvertBack");
+        }
+    }
+
     public partial class MainWindow
     {
-        private void ChangeStatusRoomInfoControls(Visibility visibility, RoomListItem r, string master)
+        internal ViewModel GetSelectedViewModel()
         {
-            foreach (UIElement ui in grid_GroupBoxRoomInfo.Children)
-            {
-                if (ui != label_RoomName)
-                {
-                    ui.Visibility = visibility;
-                }
-            }
-
-            if (visibility == Visibility.Visible && r != null)
-            {
-                label_RoomName.Content = r.room.Name;
-                label_MasterValue.Content = r.room.Master;
-                label_NumValue.Content = (r.room.MaxConnectorNum != 0) ?
-                    r.room.MaxConnectorNum.ToString() : ResourceManager.GetStringByKey("Str_Unlimited");
-                passwordBox_RoomPW.IsEnabled = r.room.IsNeedPassword;
-                button_DeleteRoom.IsEnabled = (r.room.Master == master);
-            }
+            if (comboBox_CntList.SelectedItem != null)
+                return comboBox_CntList.SelectedItem as ViewModel;
             else
-            {
-                //listView_RoomInfo.Items.Clear();
-                passwordBox_RoomPW.Password = "";
-                label_RoomName.Content = ResourceManager.GetStringByKey("Str_NoSelectedRoom");
-            }
+                return null;
         }
 
-        private void ChangeStatusConnectionInfoControls(Visibility visibility)
+        internal PengChat3ClientSock GetSelectedSock()
         {
-            foreach (UIElement UIElement in grid_ConnectionInfo.Children)
-            {
-                if (UIElement != comboBox_ConnectionInfo)
-                {
-                    UIElement.Visibility = visibility;
-                }
-            }
+            ViewModel model = GetSelectedViewModel();
+
+            if (model != null)
+                return model.Sock;
+            else
+                return null;
         }
 
-        private void Logging(string msg)
-        {
-            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
-            {
-                textBox_Info.AppendText(msg + "\r\n");
-                textBox_Info.ScrollToEnd();
-            }));
+        private void SetSelectedCntItemToEnd()
+        {            
+            if (comboBox_CntList.Items.IsEmpty)
+                comboBox_CntList.SelectedItem = null;
+            else
+                comboBox_CntList.SelectedIndex = comboBox_CntList.Items.Count - 1;
         }
 
-        private PengChat3ClientSock GetSelectedSock()
+        private void InitializeSettings()
         {
-            return ((CntComboBoxItem)comboBox_ConnectionInfo.SelectedItem).Sock;
-        }
+            #region Control name settings
+            
+            tabItem_Main.Header = ResourceManager.GetStringByKey("Str_MainPage");
+            menuItem_File.Header = ResourceManager.GetStringByKey("Str_File");
+            menuItem_TabClose.Header = ResourceManager.GetStringByKey("Str_TabClose");
+            menuItem_Exit.Header = ResourceManager.GetStringByKey("Str_Exit");
+            textBlock_groupBoxLogin.Text = ResourceManager.GetStringByKey("Str_Login");
+            label_ID.Content = ResourceManager.GetStringByKey("Str_ID") + " : ";
+            label_PW.Content = ResourceManager.GetStringByKey("Str_PW") + " : ";
+            label_IP.Content = ResourceManager.GetStringByKey("Str_IP") + " : ";
+            textBlock_LoginButton.Text = ResourceManager.GetStringByKey("Str_Login");
+            textBlock_groupBoxConnectionInfo.Text = ResourceManager.GetStringByKey("Str_ConnectionInfo");
+            gridViewColumn_RoomName.Header = ResourceManager.GetStringByKey("Str_RoomName");
+            gridViewColumn_Master.Header = ResourceManager.GetStringByKey("Str_Master");
+            gridViewColumn_MaxConnectorNum.Header = ResourceManager.GetStringByKey("Str_MaxConnectorNum");
+            gridViewColumn_IsNeedPassword.Header = ResourceManager.GetStringByKey("Str_PW");
+            
+            #endregion
 
-        private RoomListItem GetSelectedRoomItem()
-        {
-            return (RoomListItem)listView_RoomInfo.SelectedItem;
-        }
+            #region Data binding
+            viewModel = new ObservableCollection<ViewModel>();
+            comboBox_CntList.ItemsSource = viewModel;
+            #endregion
 
-        private bool IsSelectedSocket(PengChat3ClientSock sock)
-        {
-            bool b = false;
-            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
-            {
-                b = (GetSelectedSock() == sock);
-            }));
+            textBox_ID.Focus();
 
-            return b;
-        }
-
-        private ChatTabItem FindChatItemByIDSock(uint roomid, PengChat3ClientSock sock)
-        {
-            foreach (object o in tabControl_Page.Items)
-            {
-                ChatTabItem item = o as ChatTabItem;
-                if (item != null)
-                {
-                    if ((item.room.ID == roomid) && item.Sock == sock)
-                    {
-                        return item;
-                    }
-                }
-            }
-
-            return null;
+#if TEST
+            textBox_ID.Text = "1";
+            textBox_PW.Password = "1";
+            textBox_IP.Text = "127.0.0.1";
+#endif
         }
     }
 }

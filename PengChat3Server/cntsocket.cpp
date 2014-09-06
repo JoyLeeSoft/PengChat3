@@ -672,7 +672,7 @@ void cnt_socket::on_change_state(room::id_type id, member::member_state state)
 
 void cnt_socket::send_packet(const packet_type *header, const packet &pack)
 {
-	if (m_client_state.is_logged)
+	if (m_client_state.is_logged || (strncmp(header, PROTOCOL_LOGIN, PACKET_HEADER_SIZE) == 0))
 	{
 		packet buf = header + pack + EOP;
 

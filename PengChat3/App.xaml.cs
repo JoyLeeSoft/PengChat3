@@ -3,22 +3,24 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace PengChat3
 {
     /// <summary>
-    /// App.xaml에 대한 상호 작용 논리
+    /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {
         internal static int Port = 13333;
+        internal static MainWindow Instance = null;
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             // PengChat3 registry
             if (RegistryManager.OpenRegistry() == false)
-                Utility.Error("Could not open registry " + RegistryManager.DefaultPath, true);
+                Utility.Error("Could not open registry " + RegistryManager.DefaultPath, false, true);
 
             // Load language pack
             string LanguagePackName;
@@ -39,10 +41,8 @@ namespace PengChat3
             }
             catch (Exception ex)
             {
-                Utility.Error("Could not load language pack \"" + LanguagePackName + "\"\n" + ex.Message, true);
+                Utility.Error("Could not load language pack \"" + LanguagePackName + "\"\n" + ex.Message, false, true);
             }
-
-            ChatTabItem.InitImages();
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)

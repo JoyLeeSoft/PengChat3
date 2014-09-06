@@ -1,69 +1,47 @@
 ﻿using System;
 using System.Windows;
-using System.Runtime.InteropServices;
-using System.Windows.Interop;
-using PC3API_dn;
+using MahApps.Metro.Controls.Dialogs;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PengChat3
 {
     internal static class Utility
     {
-        public static void Error(string msg, bool shutdown = false)
+        public static void Error(string msg, bool useWin8Style = true, bool shutdown = false)
         {
-            MessageBox.Show(msg, "PengChat3 - error", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (useWin8Style)
+            {
+                App.Instance.ShowMessageAsync("PengChat3 - error", msg, MessageDialogStyle.Affirmative);
+            }
+            else
+                MessageBox.Show(msg, "PengChat3 - error", MessageBoxButton.OK, MessageBoxImage.Error);
+
             if (shutdown)
                 Application.Current.Shutdown(-1);
         }
 
-        [DllImport("user32.dll")]
-        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-        [DllImport("user32.dll")]
-        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
-        private const int GWL_STYLE = -16;
-        private const int WS_MAXIMIZEBOX = 0x10000;
-
-        public static void DisableMaximize(Window win)
+        public static T Find<T>(this ObservableCollection<T> coll, Func<T, bool> condition)
         {
-            var hwnd = new WindowInteropHelper(win).Handle;
-            var value = GetWindowLong(hwnd, GWL_STYLE);
-            SetWindowLong(hwnd, GWL_STYLE, (int)(value & ~WS_MAXIMIZEBOX));
-        }
-    }
+            var item = coll.Where(condition);
 
-    public class RoomListItem
-    {
-        public Room room;
-
-        public RoomListItem(Room r)
-        {
-            room = r;
+            if (item != null)
+                return item.ToArray()[0];
+            else
+                return default(T);
         }
 
-        public override string ToString()
+        public static int Remove<T>(this ObservableCollection<T> coll, Func<T, bool> condition)
         {
-            return room.Name;
-        }
-    }
+            var itemsToRemove = coll.Where(condition).ToList();
 
-    public class CntComboBoxItem
-    {
-        public string Text { get; set; }
-
-        public PengChat3ClientSock Sock { get; set; }
-
-        public void ShutdownSocket()
-        {
-            if (Sock != null)
+            foreach (var itemToRemove in itemsToRemove)
             {
-                Sock.Logout();
-                Sock = null;
+                coll.Remove(itemToRemove);
             }
-        }
 
-        public override string ToString()
-        {
-            return Sock.ConnectedIP + ":" + Sock.ConnectedPort.ToString() + "   \"" + Sock.Nickname + "\"";
+            return itemsToRemove.Count;
         }
     }
 }

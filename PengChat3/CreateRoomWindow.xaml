@@ -1,12 +1,13 @@
-﻿<Window x:Class="PengChat3.CreateRoomWindow"
+﻿<controls:MetroWindow x:Class="PengChat3.CreateRoomWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         Title="" Height="180" Width="360" ResizeMode="NoResize">
     <Grid>
         <Label x:Name="label_Name" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"/>
-        <TextBox x:Name="textBox_Name" HorizontalAlignment="Left" Height="23" Margin="110,12,0,0" TextWrapping="NoWrap"  Text="" VerticalAlignment="Top" Width="220" TabIndex="0" KeyDown="textBoxes_KeyDown"/>
+        <TextBox x:Name="textBox_Name" HorizontalAlignment="Left" Height="23" Margin="110,12,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="220" TabIndex="0" KeyDown="textBoxes_KeyDown"/>
         <Label x:Name="label_MaxNum" Content="" HorizontalAlignment="Left" Margin="10,39,0,0" VerticalAlignment="Top" Width="100"/>
-        <TextBox x:Name="textBox_MaxNum" HorizontalAlignment="Left" Height="23" Margin="110,41,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="116" TabIndex="1" KeyDown="textBoxes_KeyDown"/>
+        <controls:NumericUpDown x:Name="textBox_MaxNum" Minimum="0" Maximum="10000" Interval="1" StringFormat="N0" Margin="110,0,135,83" VerticalAlignment="Bottom" Value="10"/>
         <CheckBox x:Name="checkBox_MaxNum" Content="" HorizontalAlignment="Left" Margin="231,45,0,0" VerticalAlignment="Top" Width="99" Checked="checkBox_MaxNum_CheckedChanged" Unchecked="checkBox_MaxNum_CheckedChanged" TabIndex="2"/>
         <Label x:Name="label_Password" Content="" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Width="100"/>
         <TextBox x:Name="textBox_Password" HorizontalAlignment="Left" Height="23" Margin="110,70,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="116" TabIndex="3" KeyDown="textBoxes_KeyDown"/>
@@ -19,4 +20,4 @@
         </Button>
 
     </Grid>
-</Window>
+</controls:MetroWindow>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Collections.ObjectModel;
 
 namespace PC3API_dn
 {
@@ -27,7 +28,7 @@ namespace PC3API_dn
 
         public string ConnectedIP { get; private set; }
 
-        public int ConnectedPort { get; private set; }
+        public int? ConnectedPort { get; private set; }
 
         public string Nickname { get; private set; }
 
@@ -66,6 +67,8 @@ namespace PC3API_dn
             if (IsAlreadyDisposed)
                 return;
 
+            IsAlreadyDisposed = true;
+
             if (bManaged)
             {
                 // Delete managed resources
@@ -76,6 +79,23 @@ namespace PC3API_dn
             if (IsLogged)
             {
                 Logout();
+            }
+
+            if (IsNormalClose == false)
+            {
+                if (OnDisconnected != null)
+                {
+                    OnDisconnected(this, new DisconnectedEventArgs(ConnectedIP, ConnectedPort.Value,
+                        DisconnectedEventArgs.ErrorCode.ServerError));
+                }
+            }
+            else
+            {
+                if (OnDisconnected != null)
+                {
+                    OnDisconnected(this, new DisconnectedEventArgs(ConnectedIP, ConnectedPort.Value,
+                        DisconnectedEventArgs.ErrorCode.Logout));
+                }
             }
 
             if (RecvThread != null)
@@ -95,8 +115,6 @@ namespace PC3API_dn
                 Client.Close();
                 Client = null;
             }
-
-            IsAlreadyDisposed = true;
         }
 
         public void Connect(string ip, int port)
@@ -109,6 +127,7 @@ namespace PC3API_dn
             ConnectedPort = port;
 
             RecvThread = new Thread(new ThreadStart(RecvThreadFunc));
+            RecvThread.Name = "PengChat3 receive thread";
             RecvThread.Start();
         }
 
@@ -135,13 +154,8 @@ namespace PC3API_dn
                 } 
             }
 
-            Dispose();
-
-            if (OnDisconnected != null)
-            {
-                OnDisconnected(this, new DisconnectedEventArgs(ConnectedIP, ConnectedPort,
-                    DisconnectedEventArgs.ErrorCode.Logout));
-            }
+            if (IsAlreadyDisposed == false)
+                Dispose();
         }
 
         public void GetRoomInfo()
@@ -188,6 +202,21 @@ namespace PC3API_dn
                                        new byte[1] { EOP });
 
             Stream.Write(buf, 0, buf.Length);
+        }
+
+        public override string ToString()
+        {
+            string s;
+
+            if (ConnectedIP != null && ConnectedPort != null)
+                s = ConnectedIP + ':' + ConnectedPort.Value.ToString();
+            else
+                return "";
+
+            if (string.IsNullOrEmpty(Nickname))
+                return s;
+            else
+                return s + " \"" + Nickname + "\"";
         }
     }
 }

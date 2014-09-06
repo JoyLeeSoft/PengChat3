@@ -16,7 +16,7 @@ namespace PengChat3
     /// <summary>
     /// CreateRoomWindow.xaml
     /// </summary>
-    public partial class CreateRoomWindow : Window
+    public partial class CreateRoomWindow : MahApps.Metro.Controls.MetroWindow
     {
         public string RoomName { get; private set; }
 
@@ -59,13 +59,13 @@ namespace PengChat3
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if ((textBox_Name.Text != "") && (textBox_MaxNum.Text != "" || checkBox_MaxNum.IsChecked.Value) && 
+            if ((textBox_Name.Text != "") && /*(textBox_MaxNum.Value != "" || checkBox_MaxNum.IsChecked.Value) && */
                 (textBox_Password.Text != "" || checkBox_Password.IsChecked.Value))
             {
                 try
                 {
                     RoomName = textBox_Name.Text;
-                    MaxConnectorNum = checkBox_MaxNum.IsChecked.Value ? (short)0 : Convert.ToInt16(textBox_MaxNum.Text);
+                    MaxConnectorNum = checkBox_MaxNum.IsChecked.Value ? (short)0 : Convert.ToInt16(textBox_MaxNum.Value);
                     Password = checkBox_Password.IsChecked.Value ? "\a" : textBox_Password.Text;
 
                     DialogResult = true;
@@ -73,13 +73,13 @@ namespace PengChat3
                 }
                 catch (Exception ex)
                 {
-                    Utility.Error(ex.Message);
+                    Utility.Error(ex.Message, false);
                     return;
                 }
             }
             else
             {
-                Utility.Error(ResourceManager.GetStringByKey("Str_EmptyLabel"));
+                Utility.Error(ResourceManager.GetStringByKey("Str_EmptyLabel"), false);
                 return;
             }
         }

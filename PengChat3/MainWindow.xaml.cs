@@ -1,9 +1,8 @@
-﻿#define TEST
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,180 +12,31 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+using MahApps.Metro.Controls.Dialogs;
+
 using PC3API_dn;
 
 namespace PengChat3
 {
     /// <summary>
-    /// MainWindow.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
     {
         public MainWindow()
         {
             InitializeComponent();
+            InitializeSettings();
 
-#region Control name settings
-            textBlock_tabItemMain.Text = ResourceManager.GetStringByKey("Str_MainPage");
-            textBlock_groupBoxLogin.Text = ResourceManager.GetStringByKey("Str_Login");
-            label_ID.Content = ResourceManager.GetStringByKey("Str_ID") + " : ";
-            label_PW.Content = ResourceManager.GetStringByKey("Str_PW") + " : ";
-            label_IP.Content = ResourceManager.GetStringByKey("Str_IP") + " : ";
-            textBlock_LoginButton.Text = ResourceManager.GetStringByKey("Str_Login");
-            textBlock_groupBoxConnection.Text = ResourceManager.GetStringByKey("Str_ConnectionInfo");
-            gridViewColumn_RoomName.Header = ResourceManager.GetStringByKey("Str_RoomName");
-            textBlock_GroupBoxRoomInfo.Text = ResourceManager.GetStringByKey("Str_RoomInfo");
-            label_RoomName.Content = ResourceManager.GetStringByKey("Str_NoSelectedRoom");
-            label_Master.Content = ResourceManager.GetStringByKey("Str_Master") + " : ";
-            label_Num.Content = ResourceManager.GetStringByKey("Str_MaxConnectorNum") + " : ";
-            label_PWRoom.Content = ResourceManager.GetStringByKey("Str_PW") + " : ";
-            textBlock_SigninButton.Text = ResourceManager.GetStringByKey("Str_Signin");
-            textBlock_DeleteRoomButton.Text = ResourceManager.GetStringByKey("Str_Delete");
-            textBlock_LogoutButton.Text = ResourceManager.GetStringByKey("Str_Logout");
-            textBlock_CreateRoomButton.Text = ResourceManager.GetStringByKey("Str_CreateRoom");
-            textBlock_GroupBoxInfo.Text = ResourceManager.GetStringByKey("Str_InfoWindow");
-            menuItem_File.Header = ResourceManager.GetStringByKey("Str_File");
-            menuItem_TabClose.Header = ResourceManager.GetStringByKey("Str_TabClose") + " Ctrl+F4";
-            menuItem_Exit.Header = ResourceManager.GetStringByKey("Str_Exit") + " Alt+F4";
-#endregion
-
-#if TEST
-            textBox_ID.Text = "1";
-            passwordBox_PW.Password = "1";
-            textBox_IP.Text = "127.0.0.1";
-#endif
-            textBox_ID.Focus();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            Utility.DisableMaximize(this);
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            List<PengChat3ClientSock> tempSockets = new List<PengChat3ClientSock>();
-            foreach (CntComboBoxItem item in comboBox_ConnectionInfo.Items)
-            {
-                tempSockets.Add(item.Sock);
-            }
-
-            foreach (PengChat3ClientSock sock in tempSockets)
-            {
-                sock.Logout();
-            }
-
-            comboBox_ConnectionInfo.Items.Clear();
-        }
-
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (textBox_ID.Text != "" && passwordBox_PW.Password != "" && textBox_IP.Text != "")
-            {
-                PengChat3ClientSock sock = new PengChat3ClientSock();
-
-                try
-                {
-                    sock.OnLogin += sock_OnLogin;
-                    sock.OnDisconnected += sock_OnDisconnected;
-                    sock.OnRoomInfo += sock_OnRoomInfo;
-                    sock.OnCreateRoom += sock_OnCreateRoom;
-                    sock.OnRemoveRoom += sock_OnRemoveRoom;
-                    sock.OnAddClient += sock_OnAddClient;
-                    sock.OnRemoveClient += sock_OnRemoveClient;
-                    sock.OnGetMembers += sock_OnGetMembers;
-                    sock.OnChangeState += sock_OnChangeState;
-                    sock.OnChangeMaster += sock_OnChangeMaster;
-
-                    sock.Connect(textBox_IP.Text, App.Port);
-                    sock.Login(textBox_ID.Text, passwordBox_PW.Password);
-                }
-                catch (Exception ex)
-                {
-                    Utility.Error(ResourceManager.GetStringByKey("Str_CannotConnectToServer") + '\n' + ex.Message);
-
-                    if (sock != null)
-                    {
-                        sock.Dispose();
-                        sock = null;
-                    }
-
-                    return;
-                }
-            }
-            else
-            {
-                Utility.Error(ResourceManager.GetStringByKey("Str_EmptyLabel"));
-            }
-        }
-
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
-        {
-            GetSelectedSock().Logout();
-        }
-
-        private void LoginTextboxes_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-                LoginButton_Click(null, null);
-        }
-
-        private void listView_RoomInfo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (listView_RoomInfo.Items.IsEmpty == false)
-            {
-                var r = GetSelectedRoomItem();
-
-                if (r != null)
-                    ChangeStatusRoomInfoControls(Visibility.Visible, r,
-                        GetSelectedSock().Nickname);
-            }
-        }
-
-        private void comboBox_ConnectionInfo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ChangeStatusRoomInfoControls(Visibility.Hidden, null, null);
-
-            listView_RoomInfo.Items.Clear();
-
-            if (comboBox_ConnectionInfo.Items.IsEmpty == false && comboBox_ConnectionInfo.SelectedItem != null)
-            {
-                foreach (var r in GetSelectedSock().Rooms)
-                    listView_RoomInfo.Items.Add(new RoomListItem(r));
-            }
-        }
-
-        private void CreateRoomButton_Click(object sender, RoutedEventArgs e)
-        {
-            CreateRoomWindow win = new CreateRoomWindow();
-            win.ShowDialog();
-
-            if (win.DialogResult.Value == true)
-            {
-                GetSelectedSock().CreateRoom(win.RoomName, win.MaxConnectorNum, win.Password);
-            }
-        }
-
-        private void SigninButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (passwordBox_RoomPW.Password != "")
-                GetSelectedSock().EntryToRoom(GetSelectedRoomItem().room.ID, passwordBox_RoomPW.Password);
-            else
-                GetSelectedSock().EntryToRoom(GetSelectedRoomItem().room.ID);
-        }
-
-        private void DeleteRoomButton_Click(object sender, RoutedEventArgs e)
-        {
-            GetSelectedSock().DeleteRoom(GetSelectedRoomItem().room.ID);
+            App.Instance = this;
         }
 
         private void menuItem_TabClose_Click(object sender, RoutedEventArgs e)
         {
             if (tabControl_Page.SelectedItem != tabItem_Main)
             {
-                ((ChatTabItem)tabControl_Page.SelectedItem).ExitFromRoom();
                 tabControl_Page.Items.Remove(tabControl_Page.SelectedItem);
-                tabControl_Page.SelectedIndex = 0;
             }
             else
             {
@@ -194,12 +44,46 @@ namespace PengChat3
             }
         }
 
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void comboBox_CntList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) && e.Key == Key.F4)
+            ViewModel model = GetSelectedViewModel();
+
+            if (model != null)
+                listView_RoomList.ItemsSource = model.Rooms;
+            else
+                listView_RoomList.ItemsSource = null;
+        }
+
+        private void button_CreateRoom_Click(object sender, RoutedEventArgs e)
+        {
+            CreateRoomWindow win = new CreateRoomWindow();
+            win.ShowDialog();
+        }
+
+        private void button_Logout_Click(object sender, RoutedEventArgs e)
+        {
+            PengChat3ClientSock sock = GetSelectedSock();
+
+            if (sock != null)
             {
-                menuItem_TabClose_Click(null, null);
+                sock.Logout();
             }
+        }
+
+        private void window_Main_Closed(object sender, EventArgs e)
+        {
+            List<PengChat3ClientSock> tempSockets = new List<PengChat3ClientSock>();
+            foreach (var model in viewModel)
+            {
+                tempSockets.Add(model.Sock);
+            }
+
+            foreach (PengChat3ClientSock sock in tempSockets)
+            {
+                sock.Logout();
+            }
+
+            viewModel.Clear();
         }
     }
 }

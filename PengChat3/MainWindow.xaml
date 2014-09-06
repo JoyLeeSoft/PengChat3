@@ -1,127 +1,162 @@
-﻿<Window
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="PengChat3.MainWindow"
-        Title="PengChat3" Height="440" Width="600" ResizeMode="CanMinimize"  Loaded="Window_Loaded" Closed="Window_Closed" KeyDown="Window_KeyDown">
+﻿<controls:MetroWindow x:Class="PengChat3.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:local="clr-namespace:PengChat3"
+    x:Name="window_Main" Title="PengChat3" Height="480" Width="600" Closed="window_Main_Closed">
+    
+    <controls:MetroWindow.Resources>
+        <local:MaxConnectorNumConverter x:Key="MaxConnectorNumConverter"/>
+        <local:DeleteButtonConverter x:Key="DeleteButtonConverter"/>
+        <local:ListViewVisibilityConverter x:Key="ListViewVisibilityConverter"/>
+    </controls:MetroWindow.Resources>
+    
     <Grid>
-        <TabControl x:Name="tabControl_Page" HorizontalAlignment="Left" Height="389" VerticalAlignment="Top" Width="592" Margin="0,20,0,0">
+        <Menu HorizontalAlignment="Left" VerticalAlignment="Top" Background="Pink" Height="30" Width="{Binding ElementName=window_Main, Path=ActualWidth}">
+            <MenuItem x:Name="menuItem_File">
+                <MenuItem x:Name="menuItem_TabClose" Click="menuItem_TabClose_Click">
+                    <MenuItem.Icon>
+                        <Image Height="Auto" Width="Auto" Source="Resources/close.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="menuItem_Exit">
+                    <MenuItem.Icon>
+                        <Image Height="Auto" Width="Auto" Source="Resources/exit.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <TabControl x:Name="tabControl_Page" Margin="0,31,0,0" BorderBrush="Blue">
             <TabItem x:Name="tabItem_Main">
-                <TabItem.Header>
+                <!--<TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <Image Height="auto" Width="auto" Source="Resources/bullet-blue.png"/>
-                        <TextBlock x:Name="textBlock_tabItemMain" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
+                        <Image Height="Auto" Width="Auto" Source="Resources/bullet-blue.png"/>
+                        <TextBlock x:Name="textBlock_tabItemMain" VerticalAlignment="Center"/>
                     </StackPanel>
-                </TabItem.Header>
-                <Grid Background="White" Margin="0,0,0,0">
-                    <GroupBox HorizontalAlignment="Left" Margin="7,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.458,0.435" Height="160" Width="271">
+                </TabItem.Header>-->
+                <Grid ShowGridLines="True">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox Grid.Row="0" Grid.Column="0" Margin="0,0,5,5" BorderBrush="Green">
                         <GroupBox.Header>
                             <StackPanel Orientation="Horizontal">
-                                <Image Height="auto" Width="auto" Source="Resources/groupbox-login.png"/>
-                                <TextBlock x:Name="textBlock_groupBoxLogin" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
+                                <Image Height="Auto" Width="Auto" Source="Resources/groupbox-login.png"/>
+                                <TextBlock x:Name="textBlock_groupBoxLogin" VerticalAlignment="Center"/>
                             </StackPanel>
                         </GroupBox.Header>
-                        <Grid HorizontalAlignment="Left" Height="136" VerticalAlignment="Top" Width="261" Margin="0,0,-2,-2">
-                            <Label x:Name="label_ID" HorizontalAlignment="Left" Margin="6,7,0,0" VerticalAlignment="Top" Width="80"/>
-                            <Label x:Name="label_PW" HorizontalAlignment="Left" Margin="6,38,0,0" VerticalAlignment="Top" Width="80"/>
-                            <Label x:Name="label_IP" HorizontalAlignment="Left" Margin="6,69,0,0" VerticalAlignment="Top" Width="80"/>
-                            <TextBox x:Name="textBox_ID" HorizontalAlignment="Left" Height="23" Margin="91,10,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="166" KeyDown="LoginTextboxes_KeyDown" TabIndex="0"/>
-                            <TextBox x:Name="textBox_IP" HorizontalAlignment="Left" Height="23" Margin="91,72,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="166" KeyDown="LoginTextboxes_KeyDown" TabIndex="2"/>
-                            <PasswordBox x:Name="passwordBox_PW" HorizontalAlignment="Left" Margin="91,41,0,0" VerticalAlignment="Top" Height="23" Width="166" KeyDown="LoginTextboxes_KeyDown" TabIndex="1"/>
-                            <Button HorizontalAlignment="Left" Margin="127,101,0,0" VerticalAlignment="Top" Width="130" Background="Yellow" Height="26" Click="LoginButton_Click" TabIndex="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="40"/>
+                            </Grid.RowDefinitions>
+                            <Label x:Name="label_ID" Grid.Row="0" Grid.Column="0" Height="30"/>
+                            <TextBox x:Name="textBox_ID" Grid.Row="0" Grid.Column="1" Height="20" TabIndex="0" controls:TextboxHelper.ClearTextButton="True" Margin="5" KeyDown="textBox_login_KeyDown"/>
+                            <Label x:Name="label_PW" Grid.Row="1" Grid.Column="0" Height="30"/>
+                            <PasswordBox x:Name="textBox_PW" Grid.Row="1" Grid.Column="1" Height="20" TabIndex="1" controls:TextboxHelper.ClearTextButton="True" Margin="5" KeyDown="textBox_login_KeyDown"/>
+                            <Label x:Name="label_IP" Grid.Row="2" Grid.Column="0" Height="30"/>
+                            <TextBox x:Name="textBox_IP" Grid.Row="2" Grid.Column="1" Height="20" TabIndex="2" controls:TextboxHelper.ClearTextButton="True" Margin="5" KeyDown="textBox_login_KeyDown"/>
+                            <Button Grid.Row="4" Grid.ColumnSpan="2" Margin="5,5,5,5" Background="Yellow" TabIndex="3" Click="loginButton_Click">
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Height="auto" Width="auto" Source="Resources/login.png"/>
-                                    <TextBlock x:Name="textBlock_LoginButton" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
+                                    <Image Height="Auto" Width="Auto" Source="Resources/login.png"/>
+                                    <TextBlock x:Name="textBlock_LoginButton"/>
                                 </StackPanel>
                             </Button>
                         </Grid>
                     </GroupBox>
-                    <GroupBox HorizontalAlignment="Left" Margin="283,2,0,0" VerticalAlignment="Top" Width="293" Height="160">
+                    <GroupBox Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="0,0,5,5" BorderBrush="Green">
                         <GroupBox.Header>
                             <StackPanel Orientation="Horizontal">
-                                <Image Height="auto" Width="auto" Source="Resources/connection-info.png"/>
-                                <TextBlock x:Name="textBlock_groupBoxConnection" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
+                                <Image Height="Auto" Width="Auto" Source="Resources/connection-info.png"/>
+                                <TextBlock x:Name="textBlock_groupBoxConnectionInfo" VerticalAlignment="Center"/>
                             </StackPanel>
                         </GroupBox.Header>
-                        <Grid x:Name="grid_ConnectionInfo" HorizontalAlignment="Left" Height="141" VerticalAlignment="Top" Width="283" Margin="0,0,-2,-3">
-                            <ComboBox x:Name="comboBox_ConnectionInfo" HorizontalAlignment="Left" VerticalAlignment="Top" Width="263" Margin="10,10,0,0" SelectionChanged="comboBox_ConnectionInfo_SelectionChanged"/>
-                            <ListView x:Name="listView_RoomInfo" HorizontalAlignment="Left" Height="64" Margin="10,37,0,0" VerticalAlignment="Top" Width="263" ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" SelectionChanged="listView_RoomInfo_SelectionChanged" SelectionMode="Single">
+                        <Grid ShowGridLines="False">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="25"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox x:Name="comboBox_CntList" Grid.Row="0" Grid.ColumnSpan="2" Height="20" SelectionChanged="comboBox_CntList_SelectionChanged">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=Sock}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <ListView x:Name="listView_RoomList" Grid.Row="1" Grid.ColumnSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionMode="Single" Visibility="{Binding ElementName=comboBox_CntList, Path=Items.IsEmpty, Converter={StaticResource ListViewVisibilityConverter}}">
                                 <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn x:Name="gridViewColumn_RoomName" Width="263">
-                                        </GridViewColumn>
+                                    <GridView ColumnHeaderTemplate="{Binding Path=Rooms}">
+                                        <GridView.Columns>
+                                            <GridViewColumn x:Name="gridViewColumn_RoomName">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Label Content="{Binding Path=Name}"/>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="gridViewColumn_Master">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Label Content="{Binding Path=Master}"/>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="gridViewColumn_MaxConnectorNum">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Label Content="{Binding Path=MaxConnectorNum, Converter={StaticResource MaxConnectorNumConverter}}"/>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="gridViewColumn_IsNeedPassword">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <PasswordBox MinWidth="100" IsEnabled="{Binding Path=IsNeedPassword}"/>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="gridViewColumn_EntryButton">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button Content="입장"/>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="gridViewColumn_DeleteButton">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button x:Name="button_DeleteRoom" Content="삭제" IsEnabled="{Binding Path=Master, Converter={StaticResource DeleteButtonConverter}}">
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                        </GridView.Columns>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <Button x:Name="button_CreateRoom" HorizontalAlignment="Left" Margin="10,106,0,0" VerticalAlignment="Top" Width="130" Visibility="Hidden" Height="25" Background="Beige" Click="CreateRoomButton_Click">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Height="auto" Width="auto" Source="Resources/create-room.png"/>
-                                    <TextBlock x:Name="textBlock_CreateRoomButton" Text="" Margin="2,0,0,0" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
-                            <Button x:Name="button_Logout" HorizontalAlignment="Left" Margin="143,106,0,0" VerticalAlignment="Top" Width="130" Click="LogoutButton_Click" Visibility="Hidden" Height="25" Background="Pink">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Height="auto" Width="auto" Source="Resources/logout.png"/>
-                                    <TextBlock x:Name="textBlock_LogoutButton" Text="" Margin="2,0,0,0" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
-                        </Grid>
-                    </GroupBox>
-                    <GroupBox HorizontalAlignment="Left" Margin="283,167,0,0" VerticalAlignment="Top" Width="293" Height="176">
-                        <GroupBox.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <Image Height="auto" Width="auto" Source="Resources/room.png"/>
-                                <TextBlock x:Name="textBlock_GroupBoxRoomInfo" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </GroupBox.Header>
-                        <Grid x:Name="grid_GroupBoxRoomInfo" HorizontalAlignment="Left" Height="156" Margin="0,0,-2,-2" VerticalAlignment="Top" Width="283">
-                            <Label x:Name="label_RoomName" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="263"/>
-                            <Label x:Name="label_Master" Content="" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top" Width="77" Visibility="Hidden"/>
-                            <Label x:Name="label_MasterValue" Content="" HorizontalAlignment="Left" Margin="107,46,0,0" VerticalAlignment="Top" Width="77" Visibility="Hidden"/>
-                            <Label x:Name="label_Num" Content="" HorizontalAlignment="Left" Margin="10,77,0,0" VerticalAlignment="Top" Width="96" Visibility="Hidden"/>
-                            <Label x:Name="label_NumValue" Content="" HorizontalAlignment="Left" Margin="107,77,0,0" VerticalAlignment="Top" Width="77" Visibility="Hidden"/>
-                            <Label x:Name="label_PWRoom" Content="" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden"/>
-                            <PasswordBox x:Name="passwordBox_RoomPW" HorizontalAlignment="Left" Margin="115,112,0,0" VerticalAlignment="Top" Width="69" Height="26" Visibility="Hidden"/>
-                            <Button HorizontalAlignment="Left" Margin="196,64,0,0" VerticalAlignment="Top" Width="67" Height="31" Visibility="Hidden" Background="Aqua" Click="SigninButton_Click">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Height="auto" Width="auto" Source="Resources/login.png"/>
-                                    <TextBlock x:Name="textBlock_SigninButton" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
-                                </StackPanel>
-                            </Button>
-                            <Button x:Name="button_DeleteRoom" HorizontalAlignment="Left" Margin="196,108,0,0" VerticalAlignment="Top" Width="67" Height="31" Visibility="Hidden" Background="Orange" Click="DeleteRoomButton_Click">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Height="auto" Width="auto" Source="Resources/login.png"/>
-                                    <TextBlock x:Name="textBlock_DeleteRoomButton" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
-                                </StackPanel>
-                            </Button>
-                        </Grid>
-                    </GroupBox>
-                    <GroupBox HorizontalAlignment="Left" Margin="10,167,0,0" VerticalAlignment="Top" Width="268" Height="176">
-                        <GroupBox.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <Image Height="auto" Width="auto" Source="Resources/info.png"/>
-                                <TextBlock x:Name="textBlock_GroupBoxInfo" Text="" Margin="2,0,0,0" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </GroupBox.Header>
-                        <Grid HorizontalAlignment="Left" Height="166" Margin="0,0,-2,-12" VerticalAlignment="Top" Width="258">
-                            <TextBox x:Name="textBox_Info" HorizontalAlignment="Left" Height="146" Margin="0,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="258" IsReadOnly="True" VerticalScrollBarVisibility="Visible" AcceptsReturn="True"/>
+                            <Button x:Name="button_CreateRoom" Grid.Row="2" Grid.Column="0" Height="20" Visibility="{Binding ElementName=comboBox_CntList, Path=Items.IsEmpty, Converter={StaticResource ListViewVisibilityConverter}}" Click="button_CreateRoom_Click"/>
+                            <Button x:Name="button_Logout" Grid.Row="2" Grid.Column="1" Height="20" Visibility="{Binding ElementName=comboBox_CntList, Path=Items.IsEmpty, Converter={StaticResource ListViewVisibilityConverter}}" Click="button_Logout_Click"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
             </TabItem>
         </TabControl>
-        <Menu HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" VerticalAlignment="Top" Width="600" Background="White">
-            <MenuItem x:Name="menuItem_File">
-                <MenuItem x:Name="menuItem_TabClose" Click="menuItem_TabClose_Click">
-                    <MenuItem.Icon>
-                        <Image Height="auto" Width="auto" Source="Resources/close.png"/>
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem x:Name="menuItem_Exit">
-                    <MenuItem.Icon>
-                        <Image Height="auto" Width="auto" Source="Resources/exit.png"/>
-                    </MenuItem.Icon>
-                </MenuItem>
-            </MenuItem>
-        </Menu>
     </Grid>
-</Window>
+</controls:MetroWindow>

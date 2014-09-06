@@ -35,11 +35,11 @@ namespace PC3API_dn
                 }
                 catch (Exception)
                 {
-                    goto delete_client;
+                    return;
                 }
 
                 if (read_bytes <= 0)
-                    goto delete_client;
+                    return;
 
                 buf.RemoveRange(read_bytes, MAX_BYTES_NUMBER - read_bytes);
 
@@ -71,17 +71,6 @@ namespace PC3API_dn
                     Array.Copy(real_buf.ToArray(), tmp_str, j - 1);
 
                     PacketProcessor(DefaultEncoding.GetString(tmp_str));
-                }
-
-            }
-
-        delete_client:
-            if (IsNormalClose == false)
-            {
-                if (OnDisconnected != null)
-                {
-                    OnDisconnected(this, new DisconnectedEventArgs(ConnectedIP, ConnectedPort, 
-                        DisconnectedEventArgs.ErrorCode.ServerError));
                 }
             }
         }
@@ -128,7 +117,7 @@ namespace PC3API_dn
             else
             {
                 if (OnLogin != null)
-                    OnLogin(this, new LoginEventArgs(null, 0, null, (LoginEventArgs.ErrorCode)Convert.ToByte(pack)));
+                    OnLogin(this, new LoginEventArgs(null, null, null, (LoginEventArgs.ErrorCode)Convert.ToByte(pack)));
             }
         }
         
@@ -145,7 +134,8 @@ namespace PC3API_dn
                 }
             }
 
-            OnRoomInfo(this, new RoomInfoEventArgs(Rooms_.ToArray()));
+            if (OnRoomInfo != null)
+                OnRoomInfo(this, new RoomInfoEventArgs(Rooms_.ToArray()));
         }
 
         private void OnAddRoomResult(bool successed, string pack)
