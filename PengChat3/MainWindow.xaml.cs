@@ -58,6 +58,11 @@ namespace PengChat3
         {
             CreateRoomWindow win = new CreateRoomWindow();
             win.ShowDialog();
+
+            if (win.DialogResult.Value == true)
+            {
+                GetSelectedSock().CreateRoom(win.RoomName, win.MaxConnectorNum, win.Password);
+            }
         }
 
         private void button_Logout_Click(object sender, RoutedEventArgs e)
@@ -84,6 +89,45 @@ namespace PengChat3
             }
 
             viewModel.Clear();
+        }
+
+        private void button_Entry_Click(object sender, RoutedEventArgs e)
+        {
+            Button b = (Button)sender;
+
+            var rooms = listView_RoomList.Items.Cast<Room>().ToList();
+            var room = rooms.Find(r =>
+            {
+                return r.ID ==
+                    Convert.ToUInt32(b.Tag);
+            });
+            var generator = listView_RoomList.ItemContainerGenerator;
+
+            ListViewItem container = (ListViewItem)generator.ContainerFromItem(room);
+
+            PasswordBox pwd = (PasswordBox)VisualTreeHelperExtensions.FindVisualChild<PasswordBox>(container);
+            
+            if (room.IsNeedPassword)
+            {
+                if (pwd.Password == "")
+                {
+                    Utility.Error(ResourceManager.GetStringByKey("Str_NeedPassword"));
+                    return;
+                }
+
+                GetSelectedSock().EntryToRoom(room.ID, pwd.Password);
+            }
+            else
+            {
+                GetSelectedSock().EntryToRoom(room.ID);
+            }
+        }
+
+        private void button_Delete_Click(object sender, RoutedEventArgs e)
+        {
+            Button b = (Button)sender;
+
+            GetSelectedSock().DeleteRoom(Convert.ToUInt32(b.Tag));
         }
     }
 }

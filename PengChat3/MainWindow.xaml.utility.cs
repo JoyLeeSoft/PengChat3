@@ -11,71 +11,6 @@ using PC3API_dn;
 
 namespace PengChat3
 {
-    [ValueConversion(typeof(Int16), typeof(String))]
-    public class MaxConnectorNumConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null)
-                return "";
-
-            if (((Int16)value) != 0)
-                return value.ToString();
-            else
-                return ResourceManager.GetStringByKey("Str_Unlimited");
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException("ConvertBack");
-        }
-    }
-
-    [ValueConversion(typeof(String), typeof(Boolean))]
-    public class DeleteButtonConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null)
-                return false;
-
-            PengChat3ClientSock SelectedSock = App.Instance.GetSelectedSock();
-
-            if (SelectedSock != null)
-            {
-                if (SelectedSock.Nickname == (string)value)
-                    return true;
-            }
-
-            return false;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException("ConvertBack");
-        }
-    }
-
-    [ValueConversion(typeof(Boolean), typeof(Visibility))]
-    public class ListViewVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null)
-                return Visibility.Hidden;
-
-            if ((Boolean)value)
-                return Visibility.Hidden;
-            else
-                return Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException("ConvertBack");
-        }
-    }
-
     public partial class MainWindow
     {
         internal ViewModel GetSelectedViewModel()
@@ -94,6 +29,12 @@ namespace PengChat3
                 return model.Sock;
             else
                 return null;
+        }
+
+        internal ViewModel GetViewModelBySocket(PengChat3ClientSock sock)
+        {
+            ViewModel model = viewModel.Find(m => { return m.Sock == sock; });
+            return model;
         }
 
         private void SetSelectedCntItemToEnd()
@@ -122,12 +63,18 @@ namespace PengChat3
             gridViewColumn_Master.Header = ResourceManager.GetStringByKey("Str_Master");
             gridViewColumn_MaxConnectorNum.Header = ResourceManager.GetStringByKey("Str_MaxConnectorNum");
             gridViewColumn_IsNeedPassword.Header = ResourceManager.GetStringByKey("Str_PW");
-            
+            textBlock_CreateRoomButton.Text = ResourceManager.GetStringByKey("Str_CreateRoom");
+            textBlock_LogoutButton.Text = ResourceManager.GetStringByKey("Str_Logout");
+            textBlock_GroupBoxInfo.Text = ResourceManager.GetStringByKey("Str_InfoWindow");
             #endregion
 
             #region Data binding
             viewModel = new ObservableCollection<ViewModel>();
             comboBox_CntList.ItemsSource = viewModel;
+
+            LogType.InitLogImages();
+            logViewModel = new ObservableCollection<LogType>();
+            listView_Log.ItemsSource = logViewModel;
             #endregion
 
             textBox_ID.Focus();

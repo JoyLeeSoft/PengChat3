@@ -13,9 +13,6 @@ using System.Windows.Shapes;
 
 namespace PengChat3
 {
-    /// <summary>
-    /// CreateRoomWindow.xaml
-    /// </summary>
     public partial class CreateRoomWindow : MahApps.Metro.Controls.MetroWindow
     {
         public string RoomName { get; private set; }

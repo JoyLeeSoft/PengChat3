@@ -3,12 +3,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:local="clr-namespace:PengChat3"
-    x:Name="window_Main" Title="PengChat3" Height="480" Width="600" Closed="window_Main_Closed">
+    x:Name="window_Main" Title="PengChat3" Height="480" Width="600" TitleCaps="False" Closed="window_Main_Closed">
     
     <controls:MetroWindow.Resources>
         <local:MaxConnectorNumConverter x:Key="MaxConnectorNumConverter"/>
+        <local:DeleteButtonVisibilityConverter x:Key="DeleteButtonVisibilityConverter"/>
+        <local:VisibilityConverter x:Key="VisibilityConverter"/>
+        <local:LogTypeConverter x:Key="LogTypeConverter"/>
+        <local:EntryButtonConverter x:Key="EntryButtonConverter"/>
         <local:DeleteButtonConverter x:Key="DeleteButtonConverter"/>
-        <local:ListViewVisibilityConverter x:Key="ListViewVisibilityConverter"/>
+        <local:EntryButtonTagConverter x:Key="EntryButtonTagConverter"/>
     </controls:MetroWindow.Resources>
     
     <Grid>
@@ -35,9 +39,9 @@
                         <TextBlock x:Name="textBlock_tabItemMain" VerticalAlignment="Center"/>
                     </StackPanel>
                 </TabItem.Header>-->
-                <Grid ShowGridLines="True">
+                <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
@@ -83,7 +87,7 @@
                                 <TextBlock x:Name="textBlock_groupBoxConnectionInfo" VerticalAlignment="Center"/>
                             </StackPanel>
                         </GroupBox.Header>
-                        <Grid ShowGridLines="False">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="*"/>
@@ -100,18 +104,18 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <ListView x:Name="listView_RoomList" Grid.Row="1" Grid.ColumnSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionMode="Single" Visibility="{Binding ElementName=comboBox_CntList, Path=Items.IsEmpty, Converter={StaticResource ListViewVisibilityConverter}}">
+                            <ListView x:Name="listView_RoomList" Grid.Row="1" Grid.ColumnSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionMode="Single" Visibility="{Binding ElementName=comboBox_CntList, Path=Items.IsEmpty, Converter={StaticResource VisibilityConverter}}">
                                 <ListView.View>
                                     <GridView ColumnHeaderTemplate="{Binding Path=Rooms}">
                                         <GridView.Columns>
-                                            <GridViewColumn x:Name="gridViewColumn_RoomName">
+                                            <GridViewColumn x:Name="gridViewColumn_RoomName" Width="100">
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <Label Content="{Binding Path=Name}"/>
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
                                             </GridViewColumn>
-                                            <GridViewColumn x:Name="gridViewColumn_Master">
+                                            <GridViewColumn x:Name="gridViewColumn_Master" Width="100">
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <Label Content="{Binding Path=Master}"/>
@@ -128,21 +132,36 @@
                                             <GridViewColumn x:Name="gridViewColumn_IsNeedPassword">
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <PasswordBox MinWidth="100" IsEnabled="{Binding Path=IsNeedPassword}"/>
+                                                        <PasswordBox x:Name="passwordBox_PW" MinWidth="100" IsEnabled="{Binding Path=IsNeedPassword}"/>
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
                                             </GridViewColumn>
                                             <GridViewColumn x:Name="gridViewColumn_EntryButton">
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <Button Content="입장"/>
+                                                        <Button Background="Aqua" Click="button_Entry_Click">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Image Height="Auto" Width="Auto" Source="Resources/login.png"/>
+                                                                <TextBlock Text="{Binding Converter={StaticResource EntryButtonConverter}}" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <Button.Tag>
+                                                                <Binding Path="ID"/>
+                                                            </Button.Tag>
+                                                        </Button>
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
                                             </GridViewColumn>
                                             <GridViewColumn x:Name="gridViewColumn_DeleteButton">
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <Button x:Name="button_DeleteRoom" Content="삭제" IsEnabled="{Binding Path=Master, Converter={StaticResource DeleteButtonConverter}}">
+                                                        <Button Background="Orange" Click="button_Delete_Click" IsEnabled="{Binding Path=Master, Converter={StaticResource DeleteButtonVisibilityConverter}}">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Image Height="Auto" Width="Auto" Source="Resources/login.png"/>
+                                                                <TextBlock Text="{Binding Converter={StaticResource DeleteButtonConverter}}" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <Button.Tag>
+                                                                <Binding Path="ID"/>
+                                                            </Button.Tag>
                                                         </Button>
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
@@ -151,9 +170,54 @@
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <Button x:Name="button_CreateRoom" Grid.Row="2" Grid.Column="0" Height="20" Visibility="{Binding ElementName=comboBox_CntList, Path=Items.IsEmpty, Converter={StaticResource ListViewVisibilityConverter}}" Click="button_CreateRoom_Click"/>
-                            <Button x:Name="button_Logout" Grid.Row="2" Grid.Column="1" Height="20" Visibility="{Binding ElementName=comboBox_CntList, Path=Items.IsEmpty, Converter={StaticResource ListViewVisibilityConverter}}" Click="button_Logout_Click"/>
+                            <Button x:Name="button_CreateRoom" Grid.Row="2" Grid.Column="0" Height="20" Visibility="{Binding ElementName=comboBox_CntList, Path=Items.IsEmpty, Converter={StaticResource VisibilityConverter}}" Background="Beige" Click="button_CreateRoom_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Height="Auto" Width="Auto" Source="Resources/create-room.png"/>
+                                    <TextBlock x:Name="textBlock_CreateRoomButton" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="button_Logout" Grid.Row="2" Grid.Column="1" Height="20" Visibility="{Binding ElementName=comboBox_CntList, Path=Items.IsEmpty, Converter={StaticResource VisibilityConverter}}" Background="Pink" Click="button_Logout_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Height="auto" Width="auto" Source="Resources/logout.png"/>
+                                    <TextBlock x:Name="textBlock_LogoutButton" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
                         </Grid>
+                    </GroupBox>
+                    <GroupBox Grid.Row="1" Grid.Column="0" Margin="0,0,5,5" BorderBrush="Green">
+                        <GroupBox.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Height="Auto" Width="Auto" Source="Resources/info.png"/>
+                                <TextBlock x:Name="textBlock_GroupBoxInfo" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </GroupBox.Header>
+                        <ListView x:Name="listView_Log" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionMode="Single">
+                            <ListView.View>
+                                <GridView>
+                                    <GridView.ColumnHeaderContainerStyle>
+                                        <Style TargetType="{x:Type GridViewColumnHeader}">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </Style>
+                                    </GridView.ColumnHeaderContainerStyle>
+                                    <GridView.Columns>
+                                        <GridViewColumn>
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Image Height="Auto" Width="Auto" Source="{Binding Kind, Converter={StaticResource LogTypeConverter}}"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn>
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Label Content="{Binding Path=Message}" Width="400"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView.Columns>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                     </GroupBox>
                 </Grid>
             </TabItem>

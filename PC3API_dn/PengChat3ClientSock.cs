@@ -81,15 +81,15 @@ namespace PC3API_dn
                 Logout();
             }
 
-            if (IsNormalClose == false)
-            {
-                if (OnDisconnected != null)
-                {
-                    OnDisconnected(this, new DisconnectedEventArgs(ConnectedIP, ConnectedPort.Value,
-                        DisconnectedEventArgs.ErrorCode.ServerError));
-                }
-            }
-            else
+//             if (IsNormalClose == false)
+//             {
+//                 if (OnDisconnected != null)
+//                 {
+//                     OnDisconnected(this, new DisconnectedEventArgs(ConnectedIP, ConnectedPort.Value,
+//                         DisconnectedEventArgs.ErrorCode.ServerError));
+//                 }
+//             }
+            if (IsNormalClose)
             {
                 if (OnDisconnected != null)
                 {
@@ -100,10 +100,9 @@ namespace PC3API_dn
 
             if (RecvThread != null)
             {
-                IsNormalClose = true;
                 Stream.Close();
+
                 RecvThread.Join();
-                RecvThread = null;
             }
             if (Stream != null)
             {
@@ -155,7 +154,10 @@ namespace PC3API_dn
             }
 
             if (IsAlreadyDisposed == false)
+            {
+                IsNormalClose = true;
                 Dispose();
+            }
         }
 
         public void GetRoomInfo()

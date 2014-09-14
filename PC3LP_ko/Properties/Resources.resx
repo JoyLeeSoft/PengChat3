@@ -168,7 +168,7 @@
   <data name="Str_RoomName" xml:space="preserve">
     <value>방제</value>
   </data>
-  <data name="Str_Signin" xml:space="preserve">
+  <data name="Str_Entry" xml:space="preserve">
     <value>입장</value>
   </data>
   <data name="Str_NotSuccessedConnect" xml:space="preserve">
@@ -204,17 +204,8 @@
   <data name="Str_AccessDenied" xml:space="preserve">
     <value>권한이 없습니다.</value>
   </data>
-  <data name="Str_FailedToDeleteRoom" xml:space="preserve">
-    <value>방 삭제에 실패했습니다.</value>
-  </data>
-  <data name="Str_RoomNotExist" xml:space="preserve">
-    <value>그런 방 ID는 존재하지 않습니다.</value>
-  </data>
   <data name="Str_SuccessedToDeleteRoom" xml:space="preserve">
     <value>방을 성공적으로 삭제했습니다.</value>
-  </data>
-  <data name="Str_UnknownRoomID" xml:space="preserve">
-    <value>방 ID가 잘못되었습니다</value>
   </data>
   <data name="Str_CannotEntryToRoom" xml:space="preserve">
     <value>방에 입장하실수 없습니다.</value>
@@ -248,5 +239,8 @@
   </data>
   <data name="Str_TabClose" xml:space="preserve">
     <value>탭 종료</value>
+  </data>
+  <data name="Str_NeedPassword" xml:space="preserve">
+    <value>비밀번호가 필요합니다.</value>
   </data>
 </root>

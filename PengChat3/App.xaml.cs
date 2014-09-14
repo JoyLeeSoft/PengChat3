@@ -18,6 +18,8 @@ namespace PengChat3
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             // PengChat3 registry
             if (RegistryManager.OpenRegistry() == false)
                 Utility.Error("Could not open registry " + RegistryManager.DefaultPath, false, true);
@@ -49,6 +51,16 @@ namespace PengChat3
         {
             if (RegistryManager.IsOpened())
                 RegistryManager.CloseRegistry();
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = (Exception)e.ExceptionObject;
+
+            Utility.Error("Fatal error : PengChat3 unhandled exception!" + '\n' +
+                ex.Message + '\n' + "HRESULT : " + ex.HResult, false, true);
+
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
     }
 }

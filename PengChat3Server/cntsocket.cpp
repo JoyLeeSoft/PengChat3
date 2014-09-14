@@ -41,7 +41,7 @@ namespace
 	{
 		random_device rd;
 		mt19937 mt(rd());
-		uniform_int_distribution<unsigned int> dist(0, numeric_limits<room::id_type>::max());
+		uniform_int_distribution<room::id_type> dist(0, numeric_limits<room::id_type>::max());
 		room::id_type id = dist(mt);
 
 		{
@@ -106,29 +106,11 @@ cnt_socket::~cnt_socket()
 			it->members.erase(mem);
 		}
 
-		// If the room is empty
-		if (it->members.empty())
-		{
-			//lock_guard<mutex> lg(g_clients_mutex);
-			//Because already destructor have mutex. See Line number 211.
-
-			for (auto client : g_clients)
-			{
-				client->send_packet(PROTOCOL_REMOVE_ROOM, FLAG_SUCCESSED + to_string(it->id));
-			}
-
-			g_room_list.erase(it++);
-			continue;
-		}
-
 		// If the master is exited
 		if (it->master.compare(m_client_state.nick) == 0)
 		{
-			// Change master
-			it->master = it->members.begin()->nick;
-
-			it->broad_cast(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
-			send_packet(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
+			broad_cast(PROTOCOL_REMOVE_ROOM, FLAG_SUCCESSED + to_string(it->id));
+			g_room_list.erase(it++);
 		}
 
 		++it;
@@ -137,9 +119,10 @@ cnt_socket::~cnt_socket()
 	m_socket->close();
 	m_socket.reset();
 
-	if (m_no_need_join == false)
-		if (m_recv_thrd.joinable())
-			m_recv_thrd.join();
+// 	if (m_no_need_join == false)
+// 		if (m_recv_thrd.joinable())
+// 			m_recv_thrd.join();
+	m_recv_thrd.detach();
 
 	stringstream ss;
 	ss << "Client disconnected. ip = " << m_epnt.address().to_string() << " port = "
@@ -163,10 +146,16 @@ void cnt_socket::recv_func()
 
 		if ((m_latest_error == asio::error::connection_reset) ||
 			(m_latest_error == asio::error::eof))
+		{
+			//detach_thread();
 			goto delete_client;
+		}
 
 		if (read_bytes <= 0)
+		{
+			//detach_thread();
 			goto delete_client;
+		}
 
 		buf.erase(buf.begin() + read_bytes, buf.end());
 
@@ -202,9 +191,6 @@ void cnt_socket::recv_func()
 	}
 
 delete_client:
-	m_recv_thrd.detach(); // Thread detach
-	m_no_need_join = true;
-
 	/* Delete this */
 	{
 		extern mutex g_clients_mutex;
@@ -214,6 +200,7 @@ delete_client:
 			return p.get() == this;
 		});
 	}
+	return;
 }
 
 bool cnt_socket::packet_processor(packet &pack)
@@ -455,8 +442,6 @@ void cnt_socket::on_create_room(const packet &name, room::max_connector_type max
 
 		id = create_room_id();
 		new_room = { id, name, m_client_state.nick, max_num, (pw.compare(PASSWORD_NOTUSED) == 0) ? "" : pw };
-		master = { m_client_state.nick, member::member_state::online, this };
-		new_room.members.push_back(master);
 
 		g_room_list.push_back(new_room);
 	}
@@ -464,16 +449,9 @@ void cnt_socket::on_create_room(const packet &name, room::max_connector_type max
 	// Send room has created.
 	broad_cast(PROTOCOL_CREATE_ROOM, FLAG_SUCCESSED + room::to_packet(new_room));
 
-	// Send add client
-	new_room.broad_cast(PROTOCOL_ADD_CLIENT, FLAG_SUCCESSED + to_string(new_room.id) + '\n' + member::to_packet(master));
-
 	stringstream ss;
 	ss << "Room created. name: " << new_room.name << ", master: " << new_room.master;
 	LOGGING(ss.str());
-
-	stringstream ss1;
-	ss1 << "Member joined into room \'" << new_room.name << "\'. nick: " << new_room.master;
-	LOGGING(ss1.str());
 }
 
 void cnt_socket::on_remove_room(room::id_type id)
@@ -583,7 +561,7 @@ void cnt_socket::on_remove_client(room::id_type id)
 	LOGGING(ss.str());
 
 	// If the room is empty
-	if (it->members.empty())
+	/*if (it->members.empty())
 	{
 		// Delete room
 		string name = it->name;
@@ -603,7 +581,7 @@ void cnt_socket::on_remove_client(room::id_type id)
 		
 		it->broad_cast(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
 		send_packet(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
-	}
+	}*/
 }
 
 void cnt_socket::on_get_members(room::id_type id)

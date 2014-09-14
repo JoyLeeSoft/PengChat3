@@ -55,6 +55,12 @@ private:
 	void recv_func();
 	bool packet_processor(packet &pack);
 
+// 	void detach_thread()
+// 	{
+// 		m_recv_thrd.detach();
+// 		m_no_need_join = true;
+// 	}
+
 	bool on_check_real(const packet &pack);
 	bool on_login(const packet &id, const packet &pw);
 	void on_get_room_info();

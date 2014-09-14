@@ -35,11 +35,15 @@ namespace PC3API_dn
                 }
                 catch (Exception)
                 {
-                    return;
+                    System.Diagnostics.Debug.WriteLine(string.Format("Thread #{0} destroying", System.Threading.Thread.CurrentThread.ManagedThreadId));
+                    goto delete_client;
                 }
 
                 if (read_bytes <= 0)
-                    return;
+                {
+                    System.Diagnostics.Debug.WriteLine(string.Format("Thread #{0} destroying", System.Threading.Thread.CurrentThread.ManagedThreadId));
+                    goto delete_client;
+                }
 
                 buf.RemoveRange(read_bytes, MAX_BYTES_NUMBER - read_bytes);
 
@@ -71,6 +75,16 @@ namespace PC3API_dn
                     Array.Copy(real_buf.ToArray(), tmp_str, j - 1);
 
                     PacketProcessor(DefaultEncoding.GetString(tmp_str));
+                }
+            }
+
+        delete_client:
+            if (IsNormalClose == false)
+            {
+                if (OnDisconnected != null)
+                {
+                    OnDisconnected(this, new DisconnectedEventArgs(ConnectedIP, ConnectedPort.Value,
+                        DisconnectedEventArgs.ErrorCode.ServerError));
                 }
             }
         }
