@@ -145,7 +145,26 @@ namespace PengChat3
 
         private void sock_OnAddClient(object sender, AddClientEventArgs e)
         {
-            
+            if (e.ErrCode == AddClientEventArgs.ErrorCode.Ok)
+            {
+                PengChat3ClientSock sock = (PengChat3ClientSock)sender;
+
+                if (e.AddedMember.Nickname == sock.Nickname)
+                {
+                    var room = GetViewModelBySocket(sock).Rooms.Find(r => { return r.ID == e.RoomID.Value; });
+
+                    Dispatcher.Invoke(new Action(delegate()
+                    {
+                        ChatTab tab = new ChatTab(sock, room);
+                        tabControl_Page.Items.Add(tab);
+                        tabControl_Page.SelectedItem = tab;
+                    }));
+                }
+                else
+                {
+
+                }
+            }
         }
     }
 }

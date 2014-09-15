@@ -41,7 +41,7 @@ namespace PengChat3
                     sock.Connect(textBox_IP.Text, App.Port);
                     sock.Login(textBox_ID.Text, textBox_PW.Password);
                 }
-                catch (Exception ex)
+                catch (System.Net.Sockets.SocketException ex)
                 {
                     Utility.Error(ResourceManager.GetStringByKey("Str_CannotConnectToServer") + '\n' + ex.Message);
 

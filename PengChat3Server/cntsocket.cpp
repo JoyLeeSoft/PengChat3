@@ -65,13 +65,23 @@ namespace
 		}
 	}
 
-	void broad_cast(const packet_type *header, const packet &pack)
+	void broad_cast(const packet_type *header, const packet &pack, bool lock = true)
 	{
-		lock_guard<mutex> lg(g_clients_mutex);
-
-		for (auto client : g_clients)
+		if (lock)
 		{
-			client->send_packet(header, pack);
+			lock_guard<mutex> lg(g_clients_mutex);
+
+			for (auto client : g_clients)
+			{
+				client->send_packet(header, pack);
+			}
+		}
+		else
+		{
+			for (auto client : g_clients)
+			{
+				client->send_packet(header, pack);
+			}
 		}
 	}
 
@@ -88,7 +98,7 @@ namespace
 
 cnt_socket::cnt_socket(tcp::socket *client, const tcp::endpoint &epnt) : m_socket(client), m_epnt(epnt), m_client_state({ false, false }), m_no_need_join(false)
 {
-	
+
 }
 
 cnt_socket::~cnt_socket()
@@ -109,8 +119,9 @@ cnt_socket::~cnt_socket()
 		// If the master is exited
 		if (it->master.compare(m_client_state.nick) == 0)
 		{
-			broad_cast(PROTOCOL_REMOVE_ROOM, FLAG_SUCCESSED + to_string(it->id));
+			broad_cast(PROTOCOL_REMOVE_ROOM, FLAG_SUCCESSED + to_string(it->id), false);
 			g_room_list.erase(it++);
+			continue;
 		}
 
 		++it;
@@ -119,9 +130,9 @@ cnt_socket::~cnt_socket()
 	m_socket->close();
 	m_socket.reset();
 
-// 	if (m_no_need_join == false)
-// 		if (m_recv_thrd.joinable())
-// 			m_recv_thrd.join();
+	// 	if (m_no_need_join == false)
+	// 		if (m_recv_thrd.joinable())
+	// 			m_recv_thrd.join();
 	m_recv_thrd.detach();
 
 	stringstream ss;
@@ -238,7 +249,7 @@ bool cnt_socket::packet_processor(packet &pack)
 				return false;
 		}
 	}
-	
+
 	// After, client can using all protocols.
 	if (header.compare(PROTOCOL_GET_ROOM_INFO) == 0)
 	{
@@ -265,7 +276,7 @@ bool cnt_socket::packet_processor(packet &pack)
 	else if (header.compare(PROTOCOL_REMOVE_ROOM) == 0)
 	{
 		room::id_type id = 0;
-		
+
 		try
 		{
 			id = room::to_room_id(pack);
@@ -523,7 +534,7 @@ void cnt_socket::on_add_client(room::id_type id, const packet &pw)
 		send_packet(PROTOCOL_ADD_CLIENT, FLAG_FAILED + to_string((uint8_t)entry_to_room_error::already_entered));
 		return;
 	}
-		
+
 	member new_member = { m_client_state.nick, member::member_state::online, this };
 
 	it->members.push_back(new_member);
@@ -553,7 +564,7 @@ void cnt_socket::on_remove_client(room::id_type id)
 	it->members.remove_if([this](const member &m)
 	{
 		return m.nick == m_client_state.nick;
-	});	
+	});
 
 	stringstream ss;
 	ss << "Member exited from room \'" << it->name << "\'. nick: " << m_client_state.nick;
@@ -563,24 +574,24 @@ void cnt_socket::on_remove_client(room::id_type id)
 	// If the room is empty
 	/*if (it->members.empty())
 	{
-		// Delete room
-		string name = it->name;
-		g_room_list.erase(it);
+	// Delete room
+	string name = it->name;
+	g_room_list.erase(it);
 
-		LOGGING("Room destroyed. name: " + name);
+	LOGGING("Room destroyed. name: " + name);
 
-		broad_cast(PROTOCOL_REMOVE_ROOM, FLAG_SUCCESSED + to_string(id));
-		return;
+	broad_cast(PROTOCOL_REMOVE_ROOM, FLAG_SUCCESSED + to_string(id));
+	return;
 	}
-	
+
 	// If the master is exited
 	if (it->master.compare(m_client_state.nick) == 0)
 	{
-		// Change master
-		it->master = it->members.begin()->nick;
-		
-		it->broad_cast(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
-		send_packet(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
+	// Change master
+	it->master = it->members.begin()->nick;
+
+	it->broad_cast(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
+	send_packet(PROTOCOL_MASTER_CHANGE, to_string(it->id) + '\n' + it->master);
 	}*/
 }
 
