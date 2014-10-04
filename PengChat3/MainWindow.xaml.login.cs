@@ -33,8 +33,9 @@ namespace PengChat3
                     sock.OnCreateRoom += sock_OnCreateRoom;
                     sock.OnRemoveRoom += sock_OnRemoveRoom;
                     sock.OnAddClient += sock_OnAddClient;
-                    //sock.OnRemoveClient += sock_OnRemoveClient;
-                    //sock.OnGetMembers += sock_OnGetMembers;
+                    sock.OnRemoveClient += sock_OnRemoveClient;
+                    sock.OnGetMembers += sock_OnGetMembers;
+                    sock.OnReceiveChat += sock_OnReceiveChat;
                     //sock.OnChangeState += sock_OnChangeState;
                     //sock.OnChangeMaster += sock_OnChangeMaster;
 

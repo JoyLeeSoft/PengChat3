@@ -23,8 +23,9 @@ namespace PengChat3
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+#if !TEST
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
+#endif
             // PengChat3 registry
             if (RegistryManager.OpenRegistry() == false)
                 Utility.Error("Could not open registry " + RegistryManager.DefaultPath, false, true);
@@ -50,6 +51,8 @@ namespace PengChat3
             {
                 Utility.Error("Could not load language pack \"" + LanguagePackName + "\"\n" + ex.Message, false, true);
             }
+
+            ChatTab.InitImages();
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)

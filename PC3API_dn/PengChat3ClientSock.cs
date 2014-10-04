@@ -98,11 +98,12 @@ namespace PC3API_dn
                 }
             }
 
-            if (RecvThread != null)
+            //if (RecvThread != null)
             {
-                Stream.Close();
+                //Stream.Close();
 
-                RecvThread.Join();
+                /*if (RecvThread != Thread.CurrentThread)
+                    RecvThread.Join();*/
             }
             if (Stream != null)
             {
@@ -142,6 +143,16 @@ namespace PC3API_dn
 
             foreach (Room rm in Rooms_)
             {
+                if (rm.Master == Nickname)
+                {
+                    if (OnRemoveRoom != null)
+                    {
+                        OnRemoveRoom(this, new RemoveRoomEventArgs(RemoveRoomEventArgs.ErrorCode.Ok, rm.ID));
+                    }
+
+                    continue;
+                }
+
                 Member mem = rm.Members_.Find(m => { return m.Nickname == Nickname; });
 
                 if (mem != null)
@@ -185,7 +196,7 @@ namespace PC3API_dn
             SendPacket(Protocol.PROTOCOL_REMOVE_CLIENT, id.ToString());
         }
 
-        public void GetMembers(uint id)
+        public void GetMembersInfo(uint id)
         {
             SendPacket(Protocol.PROTOCOL_GET_MEMBERS, id.ToString());
         }
@@ -193,6 +204,11 @@ namespace PC3API_dn
         public void SetMyState(uint id, Member.MemberState state)
         {
             SendPacket(Protocol.PROTOCOL_CHANGE_STATE, id.ToString() + '\n' + ((byte)state).ToString());
+        }
+
+        public void SendChat(uint id, string sender, string chat)
+        {
+            SendPacket(Protocol.PROTOCOL_SEND_CHAT, id.ToString() + '\n' + sender + '\n' + chat);
         }
 
         private void SendPacket(string header, string data = "")

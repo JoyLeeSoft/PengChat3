@@ -28,7 +28,7 @@ namespace PengChat3
         {
             var item = coll.Where(condition);
 
-            if (item != null)
+            if (item.Count() > 0)
                 return item.ToArray()[0];
             else
                 return default(T);

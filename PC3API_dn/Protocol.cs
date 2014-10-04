@@ -17,5 +17,6 @@ namespace PC3API_dn
         internal const string PROTOCOL_GET_MEMBERS = "GTMB";
         internal const string PROTOCOL_CHANGE_STATE = "CHST";
         internal const string PROTOCOL_MASTER_CHANGE = "MSCG";
+        internal const string PROTOCOL_SEND_CHAT = "SDCT";
     }
 }

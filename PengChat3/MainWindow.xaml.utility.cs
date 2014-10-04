@@ -37,6 +37,30 @@ namespace PengChat3
             return model;
         }
 
+        internal ChatTab GetChatTabBySocketAndRoomID(PengChat3ClientSock sock, uint roomid)
+        {
+            foreach (var tab in tabControl_Page.Items)
+            {
+                if (tab == tabItem_Main)
+                    continue;
+
+                ChatTab item = (ChatTab)tab;
+                if (item.Sock == sock && item.Room.ID == roomid)
+                    return item;
+            }
+
+            return null;
+        }
+
+        internal void RemoveChatTab(ChatTab tab)
+        {
+            if (tab != null)
+            {
+                tabControl_Page.Items.Remove(tab);
+                tabControl_Page.SelectedItem = tabItem_Main;
+            }
+        }
+
         private void SetSelectedCntItemToEnd()
         {            
             if (comboBox_CntList.Items.IsEmpty)

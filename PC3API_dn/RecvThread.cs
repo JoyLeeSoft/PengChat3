@@ -33,15 +33,19 @@ namespace PC3API_dn
                     read_bytes = Stream.Read(temp_buf, 0, MAX_BYTES_NUMBER);
                     buf.InsertRange(0, temp_buf);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(string.Format("Thread #{0} destroying", System.Threading.Thread.CurrentThread.ManagedThreadId));
+#if TRACE
+                    System.Diagnostics.Debug.Write(ex.GetType().FullName + ex.Message);
+#endif
                     goto delete_client;
                 }
 
                 if (read_bytes <= 0)
                 {
-                    System.Diagnostics.Debug.WriteLine(string.Format("Thread #{0} destroying", System.Threading.Thread.CurrentThread.ManagedThreadId));
+#if TRACE
+                    System.Diagnostics.Debug.Write("readbytes 0");
+#endif
                     goto delete_client;
                 }
 
@@ -79,6 +83,9 @@ namespace PC3API_dn
             }
 
         delete_client:
+#if TRACE
+            System.Diagnostics.Debug.WriteLine(string.Format("Thread #{0} destroying", System.Threading.Thread.CurrentThread.ManagedThreadId));
+#endif         
             if (IsNormalClose == false)
             {
                 if (OnDisconnected != null)
@@ -113,9 +120,11 @@ namespace PC3API_dn
             else if (header == Protocol.PROTOCOL_GET_MEMBERS)
                 OnGetMembersResult(CheckSuccessed(pack), DeleteErrorCode(pack));
             else if (header == Protocol.PROTOCOL_CHANGE_STATE)
-                OnChangeStateResult(pack[0] == '1', pack.Remove(0, 1));
+                OnChangeStateResult(CheckSuccessed(pack), DeleteErrorCode(pack));
             else if (header == Protocol.PROTOCOL_MASTER_CHANGE)
                 OnMasterChangeResult(pack);
+            else if (header == Protocol.PROTOCOL_SEND_CHAT)
+                OnSendChatResult(CheckSuccessed(pack), DeleteErrorCode(pack));
         }
 
         private void OnLoginResult(bool successed, string pack)
@@ -323,6 +332,27 @@ namespace PC3API_dn
             if (OnChangeMaster != null)
             {
                 OnChangeMaster(this, new ChangeMasterEventArgs(room_id, master));
+            }
+        }
+
+        private void OnSendChatResult(bool successed, string pack)
+        {
+            if (successed)
+            {
+                var s = pack.Split('\n');
+
+                uint room_id = Convert.ToUInt32(s[0]);
+                string sender = s[1];
+                string chat = s[2];
+
+                if (OnReceiveChat != null)
+                {
+                    OnReceiveChat(this, new ReceiveChatEventArgs(room_id, sender, chat, false));
+                }
+            }
+            else
+            {
+                /* Error... */
             }
         }
     }

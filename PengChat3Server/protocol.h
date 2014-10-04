@@ -39,6 +39,7 @@ const packet_type PROTOCOL_REMOVE_CLIENT[] = { 'R', 'V', 'C', 'T', 0x00 };
 const packet_type PROTOCOL_GET_MEMBERS[] = { 'G', 'T', 'M', 'B', 0x00 };
 const packet_type PROTOCOL_CHANGE_STATE[] = { 'C', 'H', 'S', 'T', 0x00 };
 const packet_type PROTOCOL_MASTER_CHANGE[] = { 'M', 'S', 'C', 'G', 0x00 };
+const packet_type PROTOCOL_SEND_CHAT[] = { 'S', 'D', 'C', 'T', 0x00 };
 
 const packet_type FLAG_SUCCESSED = '1';
 const packet_type FLAG_FAILED = '0';
@@ -84,6 +85,12 @@ enum class get_members_error : uint8_t
 };
 
 enum class change_status_error : uint8_t
+{
+	unknown_room_id = 1,
+	room_not_exist,
+};
+
+enum class send_chat_error : uint8_t
 {
 	unknown_room_id = 1,
 	room_not_exist,

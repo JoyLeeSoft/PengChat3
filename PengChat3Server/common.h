@@ -91,4 +91,10 @@ class logger;
 #define _SCL_SECURE_NO_WARNINGS
 #endif
 
+#ifdef _MSC_VER
+#ifdef _DEBUG
+#define PENGCHAT3SERVER_DEBUG_MODE
+#endif
+#endif
+
 #endif

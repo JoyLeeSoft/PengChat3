@@ -222,7 +222,7 @@ namespace PC3API_dn
 
     public class ReceiveChatEventArgs : EventArgs
     {
-        public short RoomID { get; private set; }
+        public uint? RoomID { get; private set; }
 
         public string Sender { get; private set; }
 
@@ -230,7 +230,7 @@ namespace PC3API_dn
 
         public bool IsRawMessage { get; private set; }
 
-        public ReceiveChatEventArgs(short room_id, string sender, string message, bool raw)
+        public ReceiveChatEventArgs(uint? room_id, string sender, string message, bool raw)
         {
             RoomID = room_id;
             Sender = sender;

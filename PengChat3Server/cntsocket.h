@@ -70,6 +70,7 @@ private:
 	void on_remove_client(room::id_type id);
 	void on_get_members(room::id_type id);
 	void on_change_state(room::id_type id, member::member_state state);
+	void on_send_chat(room::id_type id, const string &sender, const string &chat);
 
 public:
 	void send_packet(const packet_type *header, const packet &pack);

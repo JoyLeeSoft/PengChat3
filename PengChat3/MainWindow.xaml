@@ -6,6 +6,10 @@
     x:Name="window_Main" Title="PengChat3" Height="480" Width="600" TitleCaps="False" Closed="window_Main_Closed">
     
     <controls:MetroWindow.Resources>
+        <Style x:Key="listViewHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="Visibility" Value="Collapsed"/>
+        </Style>
+        
         <local:MaxConnectorNumConverter x:Key="MaxConnectorNumConverter"/>
         <local:DeleteButtonVisibilityConverter x:Key="DeleteButtonVisibilityConverter"/>
         <local:VisibilityConverter x:Key="VisibilityConverter"/>
@@ -193,12 +197,7 @@
                         </GroupBox.Header>
                         <ListView x:Name="listView_Log" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectionMode="Single">
                             <ListView.View>
-                                <GridView>
-                                    <GridView.ColumnHeaderContainerStyle>
-                                        <Style TargetType="{x:Type GridViewColumnHeader}">
-                                            <Setter Property="IsEnabled" Value="False"/>
-                                        </Style>
-                                    </GridView.ColumnHeaderContainerStyle>
+                                <GridView ColumnHeaderContainerStyle="{StaticResource listViewHeaderStyle}">
                                     <GridView.Columns>
                                         <GridViewColumn>
                                             <GridViewColumn.CellTemplate>

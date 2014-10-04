@@ -36,7 +36,7 @@ namespace PengChat3
         {
             if (tabControl_Page.SelectedItem != tabItem_Main)
             {
-                tabControl_Page.Items.Remove(tabControl_Page.SelectedItem);
+                ((ChatTab)tabControl_Page.SelectedItem).CloseChat();
             }
             else
             {

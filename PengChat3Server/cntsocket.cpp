@@ -202,6 +202,10 @@ void cnt_socket::recv_func()
 	}
 
 delete_client:
+#if defined(_MSC_VER) && defined(PENGCHAT3SERVER_DEBUG_MODE)
+	OutputDebugString(TEXT("Receive thread destroying\n"));
+#endif
+
 	/* Delete this */
 	{
 		extern mutex g_clients_mutex;
@@ -353,11 +357,31 @@ bool cnt_socket::packet_processor(packet &pack)
 		}
 		catch (const bad_lexical_cast &)
 		{
-			send_packet(PROTOCOL_CHANGE_STATE, to_string(0) + to_string((uint8_t)change_status_error::unknown_room_id));
+			send_packet(PROTOCOL_CHANGE_STATE, FLAG_FAILED + to_string((uint8_t)change_status_error::unknown_room_id));
 			return true;
 		}
 
 		on_change_state(id, state);
+	}
+	else if (header.compare(PROTOCOL_SEND_CHAT) == 0)
+	{
+		auto temp = split_packet(pack, packet("\n"));
+
+		room::id_type id = 0;
+
+		try
+		{
+			id = room::to_room_id(temp[0]);
+		}
+		catch (const bad_lexical_cast &)
+		{
+			send_packet(PROTOCOL_SEND_CHAT, FLAG_FAILED + to_string((uint8_t)send_chat_error::unknown_room_id));
+			return true;
+		}
+
+		string sender = temp[1];
+		string chat = temp[2];
+		on_send_chat(id, sender, chat);
 	}
 
 	return true;
@@ -630,7 +654,7 @@ void cnt_socket::on_change_state(room::id_type id, member::member_state state)
 
 		if (it == g_room_list.end())
 		{
-			send_packet(PROTOCOL_REMOVE_ROOM, to_string(0) + to_string((uint8_t)change_status_error::room_not_exist));
+			send_packet(PROTOCOL_REMOVE_ROOM, FLAG_FAILED + to_string((uint8_t)change_status_error::room_not_exist));
 			return;
 		}
 
@@ -641,7 +665,7 @@ void cnt_socket::on_change_state(room::id_type id, member::member_state state)
 
 		mem->state = state;
 
-		it->broad_cast(PROTOCOL_CHANGE_STATE, to_string(1) + to_string(it->id) + '\n' + mem->nick + '\n' +
+		it->broad_cast(PROTOCOL_CHANGE_STATE, FLAG_SUCCESSED + to_string(it->id) + '\n' + mem->nick + '\n' +
 			to_string((uint8_t)state));
 
 		string temp;
@@ -656,6 +680,23 @@ void cnt_socket::on_change_state(room::id_type id, member::member_state state)
 		ss << "Member state changed. nick: " << mem->nick << " state: " << temp;
 
 		LOGGING(ss.str());
+	}
+}
+
+void cnt_socket::on_send_chat(room::id_type id, const string &sender, const string &chat)
+{
+	{
+		lock_guard<mutex> lg(g_room_mutex);
+
+		auto it = find_room(id);
+
+		if (it == g_room_list.end())
+		{
+			send_packet(PROTOCOL_SEND_CHAT, FLAG_FAILED + to_string((uint8_t)send_chat_error::room_not_exist));
+			return;
+		}
+
+		it->broad_cast(PROTOCOL_SEND_CHAT, FLAG_SUCCESSED + to_string(it->id) + '\n' + sender + '\n' + chat);
 	}
 }
 
